@@ -1,0 +1,49 @@
+#region menu bar
+# create new shader
+new: New
+# open a list of saved shaders
+load: Load
+share: Share
+export: Export
+options: Options
+fullscreen: Fullscreen
+# support the author
+donate: Donate
+
+link-copied: Link copied into the clipboard
+#endregion
+
+#region load modal
+delete-shader: Delete shader
+#endregion
+
+#region export modal
+# Expand #include directives
+expand: Expand
+directives: directives
+
+# Replace <...> #includes by "..."
+replace: Replace
+by: "#includes by"
+
+rename-symbols: Rename symbols
+inputs: Inputs
+uniforms: Uniforms
+
+result: Result code
+
+click: Click to copy or
+download: download as file
+
+shader-copied: Shader code copied into the clipboard
+#endregion
+
+#region options modal
+npm: NPM Packages Provider
+cache: Cache packages on local storage (so they can be used offline)
+clear-cache: Clear Offline Cache
+#endregion
+
+#region donate modal
+address-copied: Address copied into the clipboard
+#endregion

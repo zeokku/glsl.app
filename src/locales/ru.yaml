@@ -1,0 +1,12 @@
+#region menu bar
+
+# create new shader
+new: Создать
+# open saved shader
+load: Загрузить
+share: Поделиться
+export: Экспорт
+options: Настройки
+# support the author
+donate: Поддержать
+#endregion

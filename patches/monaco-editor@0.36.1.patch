@@ -1,0 +1,84 @@
+diff --git a/esm/vs/base/browser/markdownRenderer.js b/esm/vs/base/browser/markdownRenderer.js
+index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..8c1e0e85fee8490e4b5444521dc56ba691991d5b 100644
+--- a/esm/vs/base/browser/markdownRenderer.js
++++ b/esm/vs/base/browser/markdownRenderer.js
+@@ -311,7 +311,8 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
+                     return;
+                 }
+                 else if (e.attrName === 'class') {
+-                    e.keepAttr = /^codicon codicon-[a-z\-]+( codicon-modifier-[a-z\-]+)?$/.test(e.attrValue);
++                    // @note edit: allow code highlighting classes
++                    e.keepAttr = /^codicon codicon-[a-z\-]+( codicon-modifier-[a-z\-]+)?|mtk\w+$/.test(e.attrValue);
+                     return;
+                 }
+             }
+diff --git a/esm/vs/base/common/codicons.js b/esm/vs/base/common/codicons.js
+index 7db7374670fede4a7441e87df24a05290befa586..c20268f8107f897ab01c2acf227707bc77ab33e0 100644
+--- a/esm/vs/base/common/codicons.js
++++ b/esm/vs/base/common/codicons.js
+@@ -524,6 +524,7 @@ export const Codicon = {
+     layoutSidebarRightOff: register('layout-sidebar-right-off', 0xec00),
+     layoutPanelOff: register('layout-panel-off', 0xec01),
+     layoutSidebarLeftOff: register('layout-sidebar-left-off', 0xec02),
++    sparkle: register('sparkle', 0xec10),
+     target: register('target', 0xebf8),
+     indent: register('indent', 0xebf9),
+     recordSmall: register('record-small', 0xebfa),
+diff --git a/esm/vs/editor/common/languages.js b/esm/vs/editor/common/languages.js
+index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..848fa61f32e8381a6dbcc55c4dac0c71b68c267c 100644
+--- a/esm/vs/editor/common/languages.js
++++ b/esm/vs/editor/common/languages.js
+@@ -79,6 +79,22 @@ export var CompletionItemKinds;
+     byKind.set(24 /* CompletionItemKind.TypeParameter */, Codicon.symbolTypeParameter);
+     byKind.set(25 /* CompletionItemKind.User */, Codicon.account);
+     byKind.set(26 /* CompletionItemKind.Issue */, Codicon.issues);
++    // custom
++    byKind.set(100, Codicon.circuitBoard);
++    byKind.set(101, Codicon.extensions);
++    byKind.set(102, Codicon.fileCode);
++    byKind.set(103, Codicon.flame);
++    byKind.set(104, Codicon.filter);
++    byKind.set(105, Codicon.heart);
++    byKind.set(106, Codicon.pass);
++    byKind.set(107, Codicon.primitiveSquare);
++    byKind.set(108, Codicon.rocket);
++    byKind.set(109, Codicon.ruby);
++    byKind.set(110, Codicon.save);
++    byKind.set(111, Codicon.sparkle);
++    byKind.set(112, Codicon.starEmpty);
++    byKind.set(113, Codicon.symbolMisc);
++    
+     /**
+      * @internal
+      */
+diff --git a/esm/vs/editor/editor.all.js b/esm/vs/editor/editor.all.js
+index 53d39b8c062de3143d96b77af1a09abbdd347ae5..3641f41c0e6298ff469c209323e1085fb5e5354a 100644
+--- a/esm/vs/editor/editor.all.js
++++ b/esm/vs/editor/editor.all.js
+@@ -22,7 +22,7 @@ import './contrib/dnd/browser/dnd.js';
+ import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
+ import './contrib/find/browser/findController.js';
+ import './contrib/folding/browser/folding.js';
+-import './contrib/fontZoom/browser/fontZoom.js';
++// import './contrib/fontZoom/browser/fontZoom.js';
+ import './contrib/format/browser/formatActions.js';
+ import './contrib/documentSymbols/browser/documentSymbols.js';
+ import './contrib/inlineCompletions/browser/ghostText.contribution.js';
+diff --git a/esm/vs/editor/editor.main.js b/esm/vs/editor/editor.main.js
+index 97bfc6b8de457c98a5670df6c77510bf172c60ac..5a345be93ad31bfe9753ddeda0f82bf97345b4f3 100644
+--- a/esm/vs/editor/editor.main.js
++++ b/esm/vs/editor/editor.main.js
+@@ -1,7 +1,8 @@
+-import '../basic-languages/monaco.contribution';
+-import '../language/css/monaco.contribution';
+-import '../language/html/monaco.contribution';
+-import '../language/json/monaco.contribution';
+-import '../language/typescript/monaco.contribution';
++// @note remove other languages support (when importing stuff from 'monaco-editor') since it's not tree-shaken
++// import '../basic-languages/monaco.contribution';
++// import '../language/css/monaco.contribution';
++// import '../language/html/monaco.contribution';
++// import '../language/json/monaco.contribution';
++// import '../language/typescript/monaco.contribution';
+ 
+ export * from './edcore.main';

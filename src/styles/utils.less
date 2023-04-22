@@ -1,0 +1,13 @@
+.colored-pseudo-svg(@svg-str) {
+  // @blog @star
+  // e results in a string without quotes
+  @inline-url: e(escape(@svg-str));
+  --data-svg: url("data:image/svg+xml,@{inline-url}");
+
+  // @note bruh you can't apply fill to pseudo rip
+  // https://stackoverflow.com/questions/21509982/change-svg-fill-color-in-before-or-after-css
+  -webkit-mask: var(--data-svg) no-repeat 50% 50%;
+  mask: var(--data-svg) no-repeat 50% 50%;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}

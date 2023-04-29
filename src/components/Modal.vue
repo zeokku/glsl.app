@@ -139,6 +139,11 @@ watch(useMouse(), mouse => {
     border-radius: 2rem;
 
     font-size: 1rem;
+
+    a {
+        // -webkit-link
+        color: rgb(158, 158, 255);
+    }
 }
 
 

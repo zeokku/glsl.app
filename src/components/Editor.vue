@@ -53,6 +53,7 @@ import { renameBindings } from '@shaderfrog/glsl-parser/utils';
 import { Pane } from 'tweakpane';
 import { ExtractUnion } from '@/utils';
 
+import parsedLygia from '@/glsl-lang/parsedLygia.json'
 
 
 // @note 'monaco-editor/esm/vs/editor/contrib/message/browser/messageController.js'
@@ -147,7 +148,7 @@ onMounted(async () => {
     const editorInstance = editor.create(editorContainer!, {
         theme: "glsl-theme",
 
-        wordBasedSuggestions: true,
+        wordBasedSuggestions: false,
 
         cursorBlinking: 'smooth',
         // cursorSmoothCaretAnimation: 'on',
@@ -163,7 +164,9 @@ onMounted(async () => {
         },
 
         suggest: {
-            showInlineDetails: true
+            showInlineDetails: true,
+            // @note thanks https://stackoverflow.com/questions/62325624/how-to-allow-completion-suggestions-to-appear-while-inside-a-snippet-in-monaco-e
+            snippetsPreventQuickSuggestions: false,
         },
 
         "semanticHighlighting.enabled": true
@@ -465,9 +468,11 @@ onMounted(async () => {
             let nextCharAfterWord = model.getValueInRange(new Range(position.lineNumber, word.endColumn, position.lineNumber, word.endColumn + 1))
             let lineBeforeWord = model.getValueInRange(new Range(position.lineNumber, 1, position.lineNumber, word.startColumn)).trim()
 
-            console.log('completion I (lineBeforeWord):', lineBeforeWord)
+            // @note handle this in prop completion
             if (lineBeforeWord.at(-1) === '.') return;
 
+            // @note handle includes separately
+            if (/[ \t]*#[ \t]*include/.test(lineBeforeWord)) return;
 
             // @note since variables and structs can be ghosted, we use map
             // so later definitions overwrite higher scope defs
@@ -643,6 +648,125 @@ onMounted(async () => {
             },
         })
     }
+    //#endregion
+
+    //#region lygia autocompletion
+
+    {
+        const lygiaIncludeRegex = /lygia\/(?:\w+\/)*$/;
+        const packageInclude = /^[ \t]*#[ \t]*include[ \t]+<\w*$/;
+
+        languages.registerCompletionItemProvider('glsl', {
+            // triggerCharacters: ['/'],
+            // @ts-ignore
+            provideCompletionItems(model, position, context, token) {
+                let lineUntilCursor = model.getValueInRange(Range.fromPositions(
+                    new Position(position.lineNumber, 1),
+                    position
+                ));
+
+                let wordUnderCursor = model.getWordAtPosition(position);
+
+                let collapsedRange = Range.fromPositions(
+                    position,
+                    position
+                );
+
+                let wordRange = wordUnderCursor ?
+                    new Range(
+                        position.lineNumber,
+                        wordUnderCursor.startColumn,
+                        position.lineNumber,
+                        wordUnderCursor.endColumn
+                    ) : collapsedRange;
+
+                let match = lineUntilCursor.match(lygiaIncludeRegex);
+
+                if (!match) {
+                    console.log('lygia', lineUntilCursor, wordUnderCursor, position)
+
+
+                    if (!packageInclude.test(lineUntilCursor)) return { suggestions: [] };
+
+
+
+
+                    return {
+                        suggestions: [
+                            {
+                                label: 'lygia',
+                                insertText: 'lygia/',
+                                documentation: 'LYGIA Shader Library',
+                                kind: CustomCompletionItemKind.Star,
+                                insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                                // @note using insert/replace range
+                                // insert is used for suggestion filtering, so we just specify collapsed range, so it provides full list of suggestions
+                                // while replace is used to "replace" the part of text when accepting suggestion
+                                // @note no, it doesn't actually work like that....
+                                range: collapsedRange,
+
+                                // @note remove word
+                                additionalTextEdits: wordUnderCursor ? [{
+                                    range: wordRange,
+                                }] : undefined,
+
+                                command: {
+                                    id: "editor.action.triggerSuggest",
+                                },
+
+                            }
+                        ]
+
+                    }
+
+                }
+
+                // editorInstance.getSelection()
+                let path = match[0].split('/').filter(f => f);
+                console.log(path);
+
+                let suggestions: languages.CompletionItem[] = [];
+
+                let obj = parsedLygia;
+
+                path.forEach(p => {
+                    obj = obj[p] as object | null;
+                })
+
+                if (obj) {
+                    let items = Object.keys(obj);
+
+                    items.forEach(i => {
+                        let isDir = obj[i];
+
+                        suggestions.push({
+                            label: i,
+                            insertText: isDir ? (i + '/') : i.slice(0, -5),
+
+                            // @todo
+                            kind: isDir ? languages.CompletionItemKind.Folder : languages.CompletionItemKind.File,
+                            range: Range.fromPositions(position, position),
+
+                            // @ts-expect-error
+                            additionalTextEdits: wordUnderCursor ? [{
+                                range: wordRange,
+                            }] : undefined,
+
+                            // @note sort dirs first
+                            sortText: isDir ? 'a' : 'b',
+
+                            command: isDir ? {
+                                id: "editor.action.triggerSuggest",
+                            } : undefined
+                        })
+                    })
+                }
+
+                return { suggestions };
+            },
+        })
+    }
+
     //#endregion
 
     //#region semantic tokens
@@ -2822,6 +2946,15 @@ onMounted(async () => {
 }
 
 .codicon-filter {
-    color: yellow;
+    // @note directive token colors
+    color: #c27ba0;
+}
+
+.codicon-symbol-folder {
+    color: #ffb400 !important;
+}
+
+.codicon-symbol-file {
+    color: white !important;
 }
 </style>

@@ -7,19 +7,19 @@ import { getDocsLinkFor } from "@/utils/getOpenGLDocsUrl";
 // @note due to circular import the enum was undefined\
 // https://stackoverflow.com/a/54443914/14776286
 export const enum CustomCompletionItemKind {
-  Circuit = 100, // circuit-board
-  Extensions = 101, // extensions
-  FileCode = 102, // file-code
+  Circuit = 100, // circuit-board [gl_vars]
+  Extensions = 101, // extensions [include <>]
+  FileCode = 102, // file-code [include ""]
   Flame = 103, // flame
-  Filter = 104, // filter
+  Filter = 104, // filter [macro defines]
   Heart = 105, // heart
   Pass = 106, // pass (checkmark)
-  Square = 107, // primitive-square
+  Square = 107, // primitive-square [glsl builtin funcs]
   Rocket = 108, // rocket
   Ruby = 109, // ruby
   Save = 110, // save
   Sparkle = 111, // sparkle, @todo not included?
-  Star = 112, // star-empty
+  Star = 112, // star-empty [package includes, lygia]
   Misc = 113, // symbol-misc
 }
 
@@ -46,8 +46,12 @@ export const staticSuggestions = [
     kind: CustomCompletionItemKind.Extensions,
     documentation: "Include code from NPM package",
     insertText: "#include <${1:pacakge}>",
+    // insertText: "#include <$0>",
     insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
     sortText: "a",
+    command: {
+      id: "editor.action.triggerSuggest",
+    },
   },
   {
     label: '#include "..."',

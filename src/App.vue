@@ -235,11 +235,6 @@ button {
   color: inherit;
 }
 
-a {
-  // -webkit-link
-  color: rgb(158, 158, 255);
-}
-
 textarea {
   color: inherit;
 }

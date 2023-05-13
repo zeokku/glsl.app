@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "application.hostname",
+      "type": "java.lang.String",
+      "description": "External hostname that application runs on (will be used for cookie domain)."
+    },
+    {
+      "name": "application.jwt-secret",
+      "type": "java.lang.String",
+      "description": "Secret that is used in JWT token signing."
+    },
+    {
+      "name": "application.successful-auth-redirect-url",
+      "type": "java.lang.String",
+      "description": "Url that user will be redirect to after successful OAuth2 authentication."
+    }
+  ]
+}

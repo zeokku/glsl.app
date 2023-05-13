@@ -1,10 +1,34 @@
-spring:
-    datasource:
-      url: jdbc:postgresql://${POSTGRES_URL}
-      username: ${POSTGRES_USERNAME}
-      password: ${POSTGRES_PASSWORD}
+application:
+  hostname: ${HOSTNAME}
+  jwt-secret: ${JWT_SECRET}
+  successful-auth-redirect-url: ${AUTH_CALLBACK_URL}
+  login-page-url: ${LOGIN_REDIRECT_URL}
 
-    jpa:
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: info
+        web: info

@@ -6,9 +6,9 @@ plugins {
     id("io.spring.dependency-management") version "1.1.0"
     id("com.netflix.dgs.codegen") version "5.7.3"
     id("org.jetbrains.dokka") version "1.8.10"
-    kotlin("jvm") version "1.7.22"
-    kotlin("plugin.spring") version "1.7.22"
-    kotlin("plugin.jpa") version "1.7.22"
+    kotlin("jvm") version "1.8.21"
+    kotlin("plugin.spring") version "1.8.21"
+    kotlin("plugin.jpa") version "1.8.21"
 }
 
 group = "app.glsl"
@@ -41,6 +41,8 @@ dependencies {
     implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release"))
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter")
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
+    implementation("com.auth0:java-jwt:4.4.0")
+    implementation("io.github.thibaultmeyer:cuid:2.0.2")
 }
 
 tasks.withType<KotlinCompile> {

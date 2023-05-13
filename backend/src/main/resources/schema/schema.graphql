@@ -1,3 +1,4 @@
 type Query {
     hello: String!
+    secret: String!
 }

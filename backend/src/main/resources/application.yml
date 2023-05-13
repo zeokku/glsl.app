@@ -1,0 +1,10 @@
+spring:
+    datasource:
+      url: jdbc:postgresql://${POSTGRES_URL}
+      username: ${POSTGRES_USERNAME}
+      password: ${POSTGRES_PASSWORD}
+
+    jpa:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect

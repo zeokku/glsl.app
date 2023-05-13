@@ -11,7 +11,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { resolve } from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     cssm({
       scriptTransform: true,
@@ -96,6 +96,8 @@ export default defineConfig({
     ],
   },
 
+  publicDir: command === "build" ? false : "public",
+
   build: {
     // sourcemap: true, // @todo 'hidden'
     minify: "terser",
@@ -117,4 +119,4 @@ export default defineConfig({
   //     input: "index.html",
   //   },
   // },
-});
+}));

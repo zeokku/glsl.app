@@ -27,6 +27,7 @@
     "@types/lodash.throttle": "^4.1.7",
     "@vitejs/plugin-vue": "^4.1.0",
     "rollup-plugin-visualizer": "^5.9.0",
+    "sitemap": "^7.1.1",
     "typescript": "^5.0.2",
     "vite": "^4.2.1",
     "vite-plugin-pwa": "^0.14.7",

@@ -22,13 +22,13 @@ Contributions are welcome, especially UI **translations**!
 
 If you want to add a new language, please check [`/src/locales/`](https://github.com/zeokku/glsl.app/blob/main/src/locales/en.yaml) folder and use `en.yaml` as the base for your translation. It contains useful comments to help with the context.
 
-But if you're in the mood to provide something big, make sure to start with checking out **[updates project](https://github.com/orgs/zeokku/projects/2)**
+But if you're in the mood to provide something big, make sure to start with checking out **[project updates board](https://github.com/orgs/zeokku/projects/2)**
 
 ## 🖥️ Local development
 
 ```sh
 # clone a fork of glsl parser
-git clone -b modern-package+maps --single-branch https://github.com/Lutymane/glsl-parser.git
+git clone -b modern-package+maps --single-branch --depth 1 https://github.com/Lutymane/glsl-parser.git
 
 # clone this repository
 git clone https://github.com/zeokku/glsl.app.git
@@ -47,5 +47,6 @@ cd ../glsl.app
 # link parser package to our repo
 pnpm link ../glsl-parser
 
+# install app's dependencies
 pnpm i
 ```

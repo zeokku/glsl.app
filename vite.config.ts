@@ -63,6 +63,18 @@ export default defineConfig({
       },
     },
 
+    {
+      name: "Index.html",
+      transformIndexHtml(html) {
+        return html
+          .replaceAll("%title", "GLSL Editor and Playground")
+          .replaceAll(
+            "%desc",
+            `Modern GLSL Shaders Editor and Playground. Write complex shaders with ease thanks to advanced IntelliSense and autocompletion features. It also allows you to include other shaders in your work for added composability and featuring a user-friendly interface for tweaking values and colors`
+          );
+      },
+    },
+
     visualizer({
       filename: "stats-compressed.html",
       gzipSize: true,

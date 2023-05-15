@@ -5,7 +5,6 @@ import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
-import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 
 @Entity
@@ -15,10 +14,9 @@ class Author(
     var githubId: Int,
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = Shader::class)
-    var shaders: List<Shader>? = null,
+    var shaders: List<Shader> = emptyList(),
 
-    @CreationTimestamp
-    var createdAt: Instant? = null,
+    var createdAt: Instant = Instant.now(),
 
     @Id
     var id: String = CUID.randomCUID2().toString()

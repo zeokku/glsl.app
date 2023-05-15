@@ -2,7 +2,6 @@ package app.glsl.backend.domain
 
 import io.github.thibaultmeyer.cuid.CUID
 import jakarta.persistence.*
-import org.hibernate.annotations.CreationTimestamp
 import java.time.Instant
 
 @Entity
@@ -14,13 +13,12 @@ class Shader(
     var parent: Shader? = null,
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = Shader::class, mappedBy = "parent")
-    var children: List<Shader>? = null,
+    var children: List<Shader> = emptyList(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     var author: Author? = null,
 
-    @CreationTimestamp
-    var createdAt: Instant? = null,
+    var createdAt: Instant = Instant.now(),
 
     @Id
     var id: String = CUID.randomCUID2().toString()

@@ -1,4 +1,28 @@
+scalar Instant
+
+type Author {
+    id: ID!
+    name: String!
+    githubId: Int!
+    shaders(limit: Int, offset: Int, childrenOf: ID): [Shader!]!
+    createdAt: Instant!
+}
+
+type Shader {
+    id: ID!
+    parent: Shader
+    children(limit: Int, offset: Int, authoredBy: ID): [Shader!]!
+    author: Author
+    body: String!
+    createdAt: Instant!
+}
+
 type Query {
-    hello: String!
-    secret: String!
+    shader(id: ID!): Shader
+    shaders(limit: Int, offset: Int, authoredBy: ID, childrenOf: ID): [Shader!]!
+}
+
+type Mutation {
+    shareShader(shader: String!, parentId: ID): Shader!
+    publishShader(shader: String!, parentId: ID): Shader!
 }

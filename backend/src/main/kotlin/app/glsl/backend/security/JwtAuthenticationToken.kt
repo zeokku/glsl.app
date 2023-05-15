@@ -1,11 +1,12 @@
 package app.glsl.backend.security
 
+import app.glsl.backend.domain.Author
 import com.auth0.jwt.interfaces.DecodedJWT
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-class JwtAuthenticationToken(private val credentials: DecodedJWT) : Authentication {
+class JwtAuthenticationToken(private val credentials: DecodedJWT, private val author: Author) : Authentication {
     private val subject = credentials.subject
 
     private val authorities: MutableCollection<out GrantedAuthority> =
@@ -26,7 +27,7 @@ class JwtAuthenticationToken(private val credentials: DecodedJWT) : Authenticati
 
     override fun getDetails(): Nothing? = null
 
-    override fun getPrincipal(): Any = subject
+    override fun getPrincipal(): Author = author
 
     override fun isAuthenticated(): Boolean = authenticated
 

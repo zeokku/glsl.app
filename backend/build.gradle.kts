@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm") version "1.8.21"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("plugin.jpa") version "1.8.21"
+    kotlin("plugin.allopen") version "1.8.21"
 }
 
 group = "app.glsl"
@@ -43,6 +44,10 @@ dependencies {
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("io.github.thibaultmeyer:cuid:2.0.2")
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
 }
 
 tasks.withType<KotlinCompile> {

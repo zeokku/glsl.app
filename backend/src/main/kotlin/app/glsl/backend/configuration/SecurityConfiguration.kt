@@ -37,7 +37,7 @@ class SecurityConfiguration(
                 loginPage = applicationProperties.loginPageUrl
                 authenticationSuccessHandler = authenticationSuccessHandler()
             }
-            addFilterBefore<OAuth2LoginAuthenticationFilter>(JwtCookieFilter(jwtService))
+            addFilterBefore<OAuth2LoginAuthenticationFilter>(JwtCookieFilter(jwtService, authorService))
         }
 
         return httpSecurity.build()
@@ -45,6 +45,19 @@ class SecurityConfiguration(
 
     private fun authenticationSuccessHandler() =
         AuthenticationSuccessHandler { _, response, authentication ->
+            val principal = authentication.principal
+
+            if (
+                principal !is OAuth2AuthenticatedPrincipal
+                || "id" !in principal.attributes
+                || "name" !in principal.attributes
+            ) return@AuthenticationSuccessHandler
+
+            val author = authorService.findOrCreateAuthor(
+                principal.attributes["id"] as Int,
+                principal.attributes["name"] as String
+            )
+
             val authorities =
                 if (authentication.authorities.any { it.authority == "OAUTH2_USER" })
                     listOf(SimpleGrantedAuthority("AUTHOR"))
@@ -52,26 +65,14 @@ class SecurityConfiguration(
 
             val jwtToken =
                 jwtService.createJwtToken(
-                    authentication.name,
+                    author.id,
                     authorities,
-                    600
+                    604800
                 )
-
-            val principal = authentication.principal
-            if (
-                principal is OAuth2AuthenticatedPrincipal
-                && "id" in principal.attributes
-                && "name" in principal.attributes
-            ) {
-                authorService.trySaveAuthor(
-                    principal.attributes["id"] as Int,
-                    principal.attributes["name"] as String
-                )
-            }
 
             val cookie = Cookie("access_token", jwtToken).apply {
                 isHttpOnly = true
-                maxAge = 600
+                maxAge = 604800
                 path = "/"
                 domain = applicationProperties.hostname
             }

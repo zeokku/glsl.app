@@ -8,7 +8,7 @@ fun Author.toDto() = AuthorDto(
     name = name,
     githubId = githubId,
     shaders = emptyList(),
-    createdAt = createdAt!!
+    createdAt = createdAt
 )
 
 fun Shader.toDto(): ShaderDto = ShaderDto(
@@ -17,5 +17,5 @@ fun Shader.toDto(): ShaderDto = ShaderDto(
     children = emptyList(),
     author = null,
     body = body,
-    createdAt = createdAt!!
+    createdAt = createdAt
 )

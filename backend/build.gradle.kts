@@ -46,6 +46,12 @@ dependencies {
     implementation("io.github.thibaultmeyer:cuid:2.0.2")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release")
+    }
+}
+
 allOpen {
     annotation("jakarta.persistence.Entity")
 }

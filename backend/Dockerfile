@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./gradlew build --no-daemon
+RUN chmod +x ./gradlew
 
-CMD [ "java", "-jar", "/app/build/libs/backend-0.0.1-SNAPSHOT.jar" ]
+RUN ./gradlew build -x test --no-daemon
+
+CMD [ "java", "-jar", "/app/build/libs/Backend-0.0.1-SNAPSHOT.jar" ]

@@ -27,11 +27,7 @@ class SecurityConfiguration(
         httpSecurity {
             csrf { disable() }
             authorizeRequests {
-                authorize("/", permitAll)
-                authorize("/index.html", permitAll)
-                authorize("/graphql", permitAll)
-                authorize("/graphiql", permitAll)
-                authorize(anyRequest, authenticated)
+                authorize(anyRequest, permitAll)
             }
             oauth2Login {
                 loginPage = applicationProperties.loginPageUrl

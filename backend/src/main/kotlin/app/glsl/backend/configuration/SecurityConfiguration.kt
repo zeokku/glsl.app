@@ -43,15 +43,16 @@ class SecurityConfiguration(
         AuthenticationSuccessHandler { _, response, authentication ->
             val principal = authentication.principal
 
-            if (
-                principal !is OAuth2AuthenticatedPrincipal
-                || "id" !in principal.attributes
-                || "name" !in principal.attributes
-            ) return@AuthenticationSuccessHandler
+            if (principal !is OAuth2AuthenticatedPrincipal) return@AuthenticationSuccessHandler
+            val userData = principal.attributes
+
+            if ("id" !in userData || ("name" !in userData && "login" !in userData)) return@AuthenticationSuccessHandler
 
             val author = authorService.findOrCreateAuthor(
-                principal.attributes["id"] as Int,
-                principal.attributes["name"] as String
+                userData["id"] as Int,
+                userData.getOrElse("name") {
+                    userData.getOrElse("login") { return@AuthenticationSuccessHandler }
+                } as String
             )
 
             val authorities =

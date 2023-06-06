@@ -20,7 +20,7 @@ The tool is still in **beta**! If you encounter any bugs, feel free to open an i
 
 Contributions are welcome, especially UI **translations**!
 
-If you want to add a new language, please check [`/src/locales/`](https://github.com/zeokku/glsl.app/blob/main/src/locales/en.yaml) folder and use `en.yaml` as the base for your translation. It contains useful comments to help with the context.
+If you want to add a new language, please check [`/src/locales/`](https://github.com/zeokku/glsl.app/blob/main/frontend/src/locales/en.yaml) folder and use `en.yaml` as the base for your translation. It contains useful comments to help with the context.
 
 But if you're in the mood to provide something big, make sure to start with checking out **[project updates board](https://github.com/orgs/zeokku/projects/2)**
 

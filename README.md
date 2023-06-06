@@ -36,6 +36,9 @@ git clone https://github.com/zeokku/glsl.app.git
 # enter parser folder and build it
 cd glsl-parser
 
+# install deps
+pnpm i
+
 # linux
 ./build.sh
 # OR windows

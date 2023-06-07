@@ -44,6 +44,11 @@ menu.menu(ref="menu" @scroll="onScroll")
             template(#icon) 
                 Discord
             | Discord
+    li
+        Button(@click="onGithubClick")
+            template(#icon) 
+                Github
+            | GitHub
     Modal(:visible="modalVisible" @close="modalVisible = false")
         component(:is="currentModalComponent")
 </template>
@@ -61,6 +66,7 @@ import ScreenFull from '+/icons/screen-full.vue';
 import Gear from '+/icons/gear.vue';
 import Heart from '+/icons/heart.vue';
 import Discord from '+/icons/discord.vue';
+import Github from '+/icons/github.vue';
 
 import Modal from '+/Modal.vue';
 
@@ -187,6 +193,12 @@ const onDiscordClick = () => {
     gtagEvent('discord_click')
 
     window.open('https://zeokku.com/discord', '_blank')
+}
+
+const onGithubClick = () => {
+    gtagEvent('github_click');
+
+    window.open('https://github.com/zeokku/glsl.app', '_blank')
 }
 
 </script>

@@ -16,6 +16,8 @@ type TEvents = {
   crypto_click: { name: "ETH" | "BTC" | "LTC" | "XTZ" };
 
   discord_click: never;
+
+  github_click: never;
 };
 
 declare global {

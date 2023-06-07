@@ -24,6 +24,7 @@ export default defineConfig(({ command }) => ({
       include: "./src/locales/*.yaml",
       defaultSFCLang: "yaml",
     }),
+    // false &&
     pwa({
       registerType: "autoUpdate",
       manifest: {
@@ -40,6 +41,7 @@ export default defineConfig(({ command }) => ({
         ],
       },
     }),
+
     // ssr({
     //   prerender: true,
     // }),
@@ -67,11 +69,12 @@ export default defineConfig(({ command }) => ({
       name: "Index.html",
       transformIndexHtml(html) {
         return html
-          .replaceAll("%title", "GLSL Editor and Playground")
+          .replaceAll("%title", "WebGL Shaders Editor and Playground")
           .replaceAll(
             "%desc",
-            `Modern GLSL Shaders Editor and Playground. Write complex shaders with ease thanks to advanced IntelliSense and autocompletion features. It also allows you to include other shaders in your work for added composability and featuring a user-friendly interface for tweaking values and colors`
-          );
+            `Modern WebGL (GLSL) Shaders Editor and Playground. Write complex shaders with ease thanks to advanced IntelliSense and autocompletion features and a user-friendly interface for tweaking values and colors. You're also allowed to include other shaders in your code for added composability`
+          )
+          .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png");
       },
     },
 
@@ -111,6 +114,10 @@ export default defineConfig(({ command }) => ({
         //passes: 2,
       },
     },
+
+    // rollupOptions: {
+    //   input: "index.html",
+    // },
   },
 
   // build: {

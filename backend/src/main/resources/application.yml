@@ -26,6 +26,9 @@ spring:
             client-id: ${GITHUB_CLIENT_ID}
             client-secret: ${GITHUB_CLIENT_SECRET}
 
+server:
+  forward-headers-strategy: framework
+
 logging:
   level:
     org:

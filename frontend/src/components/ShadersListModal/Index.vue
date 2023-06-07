@@ -335,7 +335,7 @@ watch(useMouse(), (mouse) => {
 
     flex: 1;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-auto-rows: max-content;
 
     justify-items: center;

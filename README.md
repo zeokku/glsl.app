@@ -1,6 +1,6 @@
 # 🌅 [glsl.app](https://glsl.app)
 
-⚡ Modern GLSL Shaders Editor, a powerful web application designed for developers and enthusiasts who want to create stunning graphics and effects.
+⚡ Modern WebGL GLSL Shaders Editor, a powerful web application designed for developers and enthusiasts who want to create stunning graphics and effects.
 
 ⚡ You can write complex shaders with ease thanks to advanced **intellisense** and **autocompletion** features that help you write clean, efficient code quickly. It goes beyond the basics, also allowing you to **include other shaders** in your work for added **composability** and featuring a user-friendly interface for **tweaking values and colors**.
 

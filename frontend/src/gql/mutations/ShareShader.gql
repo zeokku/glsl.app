@@ -1,0 +1,5 @@
+mutation ShareShader($shader: String!, $parentId: ID) {
+    shareShader(shader: $shader, parentId: $parentId) {
+        id
+    }
+}

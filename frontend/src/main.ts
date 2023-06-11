@@ -9,6 +9,7 @@ import messages from "@intlify/unplugin-vue-i18n/messages";
 
 import App from "./App.vue";
 import { vMovable } from "./directives/movable";
+import urql, { cacheExchange, fetchExchange } from '@urql/vue';
 
 declare global {
   var app: HTMLDivElement;
@@ -21,6 +22,10 @@ createApp(App) //
       messages,
     })
   )
+  .use(urql, {
+    url: "https://glslapp.gamerzero.dev/graphql",
+    exchanges: [cacheExchange, fetchExchange]
+  })
   .directive("movable", vMovable)
   .mount(app);
 

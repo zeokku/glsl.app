@@ -3,6 +3,7 @@ application:
   jwt-secret: ${JWT_SECRET}
   successful-auth-redirect-url: ${AUTH_CALLBACK_URL}
   login-page-url: ${LOGIN_REDIRECT_URL}
+  cors-origins: ${CORS_ORIGINS}
 
 spring:
   datasource:

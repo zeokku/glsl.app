@@ -1,14 +1,17 @@
+import { renameLocalStorageEntry } from "./utils/storageMigration";
+
 interface ISettings {
+  offlineShare: boolean;
   npmPackageProvider: string;
   cachePackages: boolean;
 }
 
-const settingsStorageKey = "\0settings";
-
-// localStorage[settingsStorageKey] ??= {};
+const settingsStorageKey = "\0glsl-app-settings";
+renameLocalStorageEntry('\0settings', settingsStorageKey)
 
 const settings: ISettings = Object.assign(
   {
+    offlineShare: false,
     npmPackageProvider: "https://www.unpkg.com/",
     cachePackages: false,
   } as ISettings,

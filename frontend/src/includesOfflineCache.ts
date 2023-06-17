@@ -10,8 +10,13 @@ import {
   values,
   clear,
 } from "idb-keyval";
+import { moveIndexedDb } from "./utils/storageMigration";
 
-const cacheStore = createStore("cache", "store");
+const dbName = 'glsl-app-offline-cache'
+const storeName = 'store'
+
+const cacheStore = createStore(dbName, storeName);
+await moveIndexedDb("cache", "store", dbName, storeName)
 
 // @todo
 // export const getCachedItems = (paths: string[]) => getMany(paths, cacheStore);

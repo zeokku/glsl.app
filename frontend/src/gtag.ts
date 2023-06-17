@@ -10,7 +10,7 @@ document.head.append(script);
 type TEvents = {
   export_click: never;
 
-  share_click: never;
+  share_click: { type: 'online' } | undefined;
 
   donate_click: never;
   crypto_click: { name: "ETH" | "BTC" | "LTC" | "XTZ" };
@@ -36,7 +36,8 @@ declare global {
     // @note deriving type in <> works but can't be used for rest parameter?
     // O = TEvents[N] extends never ? [] : [TEvents[N]]
     // @blog
-    <N extends keyof TEvents>(name: N, ...opt: TEvents[N] extends never ? [] : [TEvents[N]]): void;
+    // never extends undefined
+    <N extends keyof TEvents, E = TEvents[N]>(name: N, ...opt: E extends undefined ? [] : [E]): void;
 
     // <N extends keyof TEvents, O = TEvents[N] extends undefined ? never : TEvents[N]>(
     //   name: N,
@@ -58,4 +59,4 @@ gtag("js", new Date());
 gtag("config", id, { transport_type: "beacon" });
 gtag("consent", "ad_storage", "denied");
 
-export {};
+export { };

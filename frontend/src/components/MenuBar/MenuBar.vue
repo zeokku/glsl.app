@@ -90,6 +90,10 @@ import { encode85, decode85 } from '@/utils/base85';
 
 import { useToast } from '@/composition/useToast';
 
+import { useMutation } from '@urql/vue'
+import { graphql } from '@/gql'
+import { getSetting } from '@/settings';
+
 const { t, locale } = useI18n();
 
 const menu = $shallowRef<HTMLMenuElement>()
@@ -137,40 +141,68 @@ const onExportClick = () => {
     currentModalComponent = ExportModal;
 }
 
-const onShareLinkClick = async () => {
-    gtagEvent('share_click')
+const { executeMutation } = useMutation(graphql(/* GraphQL */ `
+    mutation ShareShader($shader: String!, $parentId: ID) {
+        shareShader(shader: $shader, parentId: $parentId) {
+            id
+        }
+    }`
+));
 
-    const { compress, decompressSync } = await import('fflate');
+const onShareLinkClick = async () => {
 
     let code = getModel().getValue();
 
-    compress(new TextEncoder().encode(code), {
-        level: 9,
-        mem: 12
-    }, (error, data) => {
-        if (error) { alert(error); return }
+    if (getSetting('offlineShare')) {
+        gtagEvent('share_click')
 
-        // console.log('size reduction:', code.length, '->', data.length, ' :: ', data.length / code.length, "%")
+        const { compress } = await import('fflate');
 
-        // @note add padding to fill to mod4 bytes
-        let padSize = 4 - data.length % 4;
-        let buf = new Uint8Array(data.length + padSize)
+        compress(new TextEncoder().encode(code), {
+            level: 9,
+            mem: 12
+        }, (error, data) => {
+            if (error) { alert(error); return }
 
-        // @note first byte is pad size, other pad bytes are undefined (most probably zero)
-        buf[0] = padSize
-        buf.set(data, padSize)
+            // console.log('size reduction:', code.length, '->', data.length, ' :: ', data.length / code.length, "%")
 
-        let b85 = encode85(buf)
+            // @note add padding to fill to mod4 bytes
+            let padSize = 4 - data.length % 4;
+            let buf = new Uint8Array(data.length + padSize)
 
-        // {
-        //     console.log(b85)
-        //     let d85 = decode85(b85)!;
-        //     let decomp = decompressSync(d85.slice(d85[0]));
-        //     console.log(new TextDecoder().decode(decomp))
-        // }
+            // @note first byte is pad size, other pad bytes are undefined (most probably zero)
+            buf[0] = padSize
+            buf.set(data, padSize)
 
-        navigator.clipboard.writeText('https://glsl.app#' + b85).then(() => useToast(t('link-copied')))
-    })
+            let b85 = encode85(buf)
+
+            // {
+            //     console.log(b85)
+            //     let d85 = decode85(b85)!;
+            //     let decomp = decompressSync(d85.slice(d85[0]));
+            //     console.log(new TextDecoder().decode(decomp))
+            // }
+
+            navigator.clipboard.writeText('https://glsl.app#' + b85).then(() => useToast(t('link-copied')))
+        })
+    }
+    else {
+        gtagEvent('share_click', { type: 'online' })
+
+        let { data, error } = await executeMutation({ shader: code });
+
+        if (error) {
+            alert(error.message)
+            return;
+        }
+
+        let hash = '~' + data?.shareShader.id;
+        location.hash = '#' + hash;
+
+        // @todo store the hash in db for current shader
+
+        navigator.clipboard.writeText('https://glsl.app#' + hash).then(() => useToast(t('link-copied')))
+    }
 }
 
 const onOptionsClick = () => {

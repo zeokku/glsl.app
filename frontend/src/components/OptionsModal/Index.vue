@@ -3,6 +3,9 @@
     section(ref="sectionRef")
         h1.App__font-shade {{ t('options') }} 
         section.flex
+            label
+                input(type="checkbox" v-model="offlineShareLink")
+                | {{ t('offline-link') }}
             label.cdn-input
                 .CExportModal_Index__label {{ t('npm') }}
                 .App__input-wrap.App__glow-element-wrap 
@@ -35,14 +38,15 @@ import { updateElGlow } from '@/stylingUtils/updateGlow';
 import { useI18n } from 'petite-vue-i18n';
 import { clearPersistentCache } from '@/includesOfflineCache';
 
-
 const { t, locale } = useI18n();
 
+let offlineShareLink = $shallowRef<boolean>(getSetting('offlineShare'))
 let npmCdn = $shallowRef<string>(getSetting('npmPackageProvider'))
 let cachePackagesOffline = $shallowRef<boolean>(getSetting('cachePackages'));
 
-watch([$$(npmCdn), $$(cachePackagesOffline)], () => {
+watch([$$(offlineShareLink), $$(npmCdn), $$(cachePackagesOffline)], () => {
     setSetting({
+        'offlineShare': offlineShareLink,
         'npmPackageProvider': npmCdn,
         'cachePackages': cachePackagesOffline
     })
@@ -76,6 +80,10 @@ watch(useMouse(), (mouse) => {
 .options {
     // same as for export modal
     font-size: 1.25rem;
+
+    button {
+        font-size: 1.1rem;
+    }
 }
 
 .flex {

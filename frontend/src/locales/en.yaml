@@ -39,6 +39,7 @@ shader-copied: Shader code copied into the clipboard
 #endregion
 
 #region options modal
+offline-link: Use Offline method for generating shareable links
 npm: NPM Packages Provider
 cache: Cache packages on local storage (so they can be used offline)
 clear-cache: Clear Offline Cache

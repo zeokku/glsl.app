@@ -54,6 +54,8 @@ import { Pane } from 'tweakpane';
 import { ExtractUnion } from '@/utils';
 
 import parsedLygia from '@/glsl-lang/parsedLygia.json'
+import { useQuery } from '@urql/vue';
+import { graphql } from '@/gql';
 
 
 // @note 'monaco-editor/esm/vs/editor/contrib/message/browser/messageController.js'
@@ -82,32 +84,68 @@ onMounted(async () => {
     {
         let code: string;
 
+        /**
+         * string without #
+         */
         const hash = decodeURI(location.hash).slice(1);
 
         if (hash) {
             location.hash = '';
 
             try {
-                const [{ decode85 }, { decompressSync }] = await Promise.all([
-                    import('@/utils/base85'),
-                    import('fflate')
-                ])
+                // online
+                if (hash[0] === '~') {
+                    // @note omfg why does mutation require setup level, while query can be called anywhere
+                    // it's so stupid
+                    const { data, error } = await useQuery({
+                        query: graphql(/* GraphQL */ `
+                            query Shader($id: ID!) {
+                              shader(id: $id){
+                              	body
+                              }
+                            }`),
+                        variables: {
+                            id: hash.slice(1)
+                        }
+                        // pause: true
+                    });
 
-                let d85 = decode85(hash);
+                    if (error.value) {
+                        throw error.value.message
+                    }
 
-                code = new TextDecoder().decode(decompressSync(d85.slice(d85[0])));
+                    let { shader } = data.value!;
 
-                // @todo encode name of the shader?
-                // and do alert when you already have a shader under that name
-                shaderName.value = await findNonConflictingName();
+                    if (shader) {
+                        code = shader.body;
+                        shaderName.value = await findNonConflictingName();
+                    }
+                    else {
+                        throw 'Shader with this ID is not found'
+                    }
+                }
+                else {
 
-                // @note updating ref value without triggering reactivity
-                // shaderName._value = newName
-                // shaderName._rawValue = newName
+                    const [{ decode85 }, { decompressSync }] = await Promise.all([
+                        import('@/utils/base85'),
+                        import('fflate')
+                    ])
 
+                    let d85 = decode85(hash);
+
+                    code = new TextDecoder().decode(decompressSync(d85.slice(d85[0])));
+
+                    // @todo encode name of the shader?
+                    // and do alert when you already have a shader under that name
+                    shaderName.value = await findNonConflictingName();
+
+                    // @note updating ref value without triggering reactivity
+                    // shaderName._value = newName
+                    // shaderName._rawValue = newName
+                }
             }
             catch (e) {
-                alert('Failed to parse the shader from URL. Check console for errors')
+                alert('Failed to open shader. Check console for errors\n' + e)
 
                 // throw e;
 

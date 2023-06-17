@@ -52,4 +52,10 @@ pnpm link ../glsl-parser
 
 # install app's dependencies
 pnpm i
+
+# generate GraphQL files with auto update
+pnpm run gql-gen:watch
+
+# run dev server (run the command in a separate terminal)
+pnpm run dev
 ```

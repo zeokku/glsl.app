@@ -105,13 +105,10 @@ export default defineConfig(({ command }) => ({
     // sourcemap: true, // @todo 'hidden'
     minify: "terser",
     terserOptions: {
-      mangle: {
-        keep_classnames: false,
-        keep_fnames: false,
-      },
       compress: {
         drop_console: true,
-        //passes: 2,
+        toplevel: true,
+        passes: 2,
       },
     },
 
@@ -119,6 +116,8 @@ export default defineConfig(({ command }) => ({
     //   input: "index.html",
     // },
   },
+
+  envPrefix: ['VITE_', 'APP_'],
 
   // build: {
   //   rollupOptions: {

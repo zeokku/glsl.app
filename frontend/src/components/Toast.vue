@@ -94,7 +94,7 @@ defineProps<{
         width: 1.25em;
     }
 
-    animation: toast 2s ease-out;
+    animation: toast 1s ease-out;
 
     will-change: transform;
 }

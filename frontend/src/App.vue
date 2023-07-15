@@ -139,7 +139,7 @@ const onShaderCompile = (log: string) => {
   background-position-y: -100%;
   background-repeat: no-repeat;
 
-  transition: background-position-y 400ms ease-out, outline 300ms ease-out;
+  transition: background-position-y 300ms ease-out, outline 300ms ease-out;
 
   &:hover {
     background-position-y: 0%;

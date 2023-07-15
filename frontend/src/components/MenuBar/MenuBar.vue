@@ -49,54 +49,62 @@ menu.menu(ref="menu" @scroll="onScroll")
             template(#icon) 
                 Github
             | GitHub
+
+    li
+        Button(@click="onChangelogClick")
+            template(#icon)
+                Log
+            | Changelog
     Modal(:visible="modalVisible" @close="modalVisible = false")
         component(:is="currentModalComponent")
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'petite-vue-i18n';
+import { useI18n } from "petite-vue-i18n";
 
-import Button from './Button.vue';
+import Button from "./Button.vue";
 
-import Plus from '+/icons/diff-added.vue';
-import FileDirectory from '+/icons/file-directory.vue';
-import Upload from '+/icons/upload.vue';
-import Link from '+/icons/link.vue';
-import ScreenFull from '+/icons/screen-full.vue';
-import Gear from '+/icons/gear.vue';
-import Heart from '+/icons/heart.vue';
-import Discord from '+/icons/discord.vue';
-import Github from '+/icons/github.vue';
+import Plus from "+/icons/diff-added.vue";
+import FileDirectory from "+/icons/file-directory.vue";
+import Upload from "+/icons/upload.vue";
+import Link from "+/icons/link.vue";
+import ScreenFull from "+/icons/screen-full.vue";
+import Gear from "+/icons/gear.vue";
+import Heart from "+/icons/heart.vue";
+import Discord from "+/icons/discord.vue";
+import Github from "+/icons/github.vue";
+import Log from "+/icons/log.vue";
 
-import Modal from '+/Modal.vue';
+import Modal from "+/Modal.vue";
 
-import { getCurrentScope, onMounted, watch } from 'vue';
-import { useMouse } from '@/composition/useMouse';
-import { getRadiusOffset, updateElGlow } from '@/stylingUtils/updateGlow';
-import { createdTimestamp, shaderName } from '@/App.vue';
-import { findNonConflictingName, setLastOpenShader } from '@/storage';
-import { getCanvas } from '../Canvas.vue';
+import { getCurrentScope, onMounted, watch } from "vue";
+import { useMouse } from "@/composition/useMouse";
+import { getRadiusOffset, updateElGlow } from "@/stylingUtils/updateGlow";
+import { createdTimestamp, shaderName } from "@/App.vue";
+import { findNonConflictingName, setLastOpenShader } from "@/storage";
+import { getCanvas } from "../Canvas.vue";
 
-import ShadersList from '+/ShadersListModal/Index.vue';
-import ExportModal from '+/ExportModal/Index.vue';
-import OptionsModal from '+/OptionsModal/Index.vue';
-import DonateModal from '+/DonateModal/Index.vue';
+import ShadersList from "+/ShadersListModal/Index.vue";
+import ExportModal from "+/ExportModal/Index.vue";
+import OptionsModal from "+/OptionsModal/Index.vue";
+import DonateModal from "+/DonateModal/Index.vue";
+import ChangelogModal from "+/ChangelogModal/Index.vue";
 
-import { getModel } from '../Editor.vue';
+import { getModel } from "../Editor.vue";
 
-import minShader from '@/min.frag?raw';
+import minShader from "@/min.frag?raw";
 
-import { encode85, decode85 } from '@/utils/base85';
+import { encode85, decode85 } from "@/utils/base85";
 
-import { useToast } from '@/composition/useToast';
+import { useToast } from "@/composition/useToast";
 
-import { useMutation } from '@urql/vue'
-import { graphql } from '@/gql'
-import { getSetting } from '@/settings';
+import { useMutation } from "@urql/vue";
+import { graphql } from "@/gql";
+import { getSetting } from "@/settings";
 
 const { t, locale } = useI18n();
 
-const menu = $shallowRef<HTMLMenuElement>()
+const menu = $shallowRef<HTMLMenuElement>();
 
 let modalVisible = $shallowRef<boolean>(false);
 let currentModalComponent = $shallowRef<typeof ShadersList>();
@@ -104,148 +112,164 @@ let currentModalComponent = $shallowRef<typeof ShadersList>();
 let glowItems: HTMLElement[];
 
 onMounted(() => {
-    glowItems = [...menu!.children].map(li => li.firstElementChild as HTMLElement);
-})
+  glowItems = [...menu!.children].map(li => li.firstElementChild as HTMLElement);
+});
 
-watch(useMouse(), (mouse) => {
-    if (!glowItems) return;
+watch(useMouse(), mouse => {
+  if (!glowItems) return;
 
-    glowItems.forEach(el => updateElGlow(el, mouse));
-})
+  glowItems.forEach(el => updateElGlow(el, mouse));
+});
 
 const onScroll = () => glowItems.forEach(el => updateElGlow(el, useMouse(), true));
 
 const onNewClick = async (e: MouseEvent) => {
-    createdTimestamp.value = Date.now();
-    // using $shallow macro causes a problem that import can't be used as var
-    let nextName = await findNonConflictingName()
+  createdTimestamp.value = Date.now();
+  // using $shallow macro causes a problem that import can't be used as var
+  let nextName = await findNonConflictingName();
 
-    // @note first set storage
-    setLastOpenShader(nextName)
+  // @note first set storage
+  setLastOpenShader(nextName);
 
-    shaderName.value = nextName
+  shaderName.value = nextName;
 
-    // @note use min shader when clicking new
-    getModel().setValue(minShader)
-}
+  // @note use min shader when clicking new
+  getModel().setValue(minShader);
+};
 
 const onLoadClick = () => {
-    modalVisible = true;
-    currentModalComponent = ShadersList
-}
+  modalVisible = true;
+  currentModalComponent = ShadersList;
+};
 
 const onExportClick = () => {
-    gtagEvent('export_click')
+  gtagEvent("export_click");
 
-    modalVisible = true;
-    currentModalComponent = ExportModal;
-}
+  modalVisible = true;
+  currentModalComponent = ExportModal;
+};
 
-const { executeMutation } = useMutation(graphql(/* GraphQL */ `
+const { executeMutation } = useMutation(
+  graphql(/* GraphQL */ `
     mutation ShareShader($shader: String!, $parentId: ID) {
-        shareShader(shader: $shader, parentId: $parentId) {
-            id
-        }
-    }`
-));
+      shareShader(shader: $shader, parentId: $parentId) {
+        id
+      }
+    }
+  `)
+);
 
 const onShareLinkClick = async () => {
+  let code = getModel().getValue();
 
-    let code = getModel().getValue();
+  if (getSetting("offlineShare")) {
+    gtagEvent("share_click");
 
-    if (getSetting('offlineShare')) {
-        gtagEvent('share_click')
+    const { compress } = await import("fflate");
 
-        const { compress } = await import('fflate');
-
-        compress(new TextEncoder().encode(code), {
-            level: 9,
-            mem: 12
-        }, (error, data) => {
-            if (error) { alert(error); return }
-
-            // console.log('size reduction:', code.length, '->', data.length, ' :: ', data.length / code.length, "%")
-
-            // @note add padding to fill to mod4 bytes
-            let padSize = 4 - data.length % 4;
-            let buf = new Uint8Array(data.length + padSize)
-
-            // @note first byte is pad size, other pad bytes are undefined (most probably zero)
-            buf[0] = padSize
-            buf.set(data, padSize)
-
-            let b85 = encode85(buf)
-
-            // {
-            //     console.log(b85)
-            //     let d85 = decode85(b85)!;
-            //     let decomp = decompressSync(d85.slice(d85[0]));
-            //     console.log(new TextDecoder().decode(decomp))
-            // }
-
-            navigator.clipboard.writeText('https://glsl.app#' + b85).then(() => useToast(t('link-copied')))
-        })
-    }
-    else {
-        gtagEvent('share_click', { type: 'online' })
-
-        let { data, error } = await executeMutation({ shader: code });
-
+    compress(
+      new TextEncoder().encode(code),
+      {
+        level: 9,
+        mem: 12,
+      },
+      (error, data) => {
         if (error) {
-            alert(error.message)
-            return;
+          alert(error);
+          return;
         }
 
-        let hash = '~' + data?.shareShader.id;
-        location.hash = '#' + hash;
+        // console.log('size reduction:', code.length, '->', data.length, ' :: ', data.length / code.length, "%")
 
-        // @todo store the hash in db for current shader
+        // @note add padding to fill to mod4 bytes
+        let padSize = 4 - (data.length % 4);
+        let buf = new Uint8Array(data.length + padSize);
 
-        navigator.clipboard.writeText('https://glsl.app#' + hash).then(() => useToast(t('link-copied')))
+        // @note first byte is pad size, other pad bytes are undefined (most probably zero)
+        buf[0] = padSize;
+        buf.set(data, padSize);
+
+        let b85 = encode85(buf);
+
+        // {
+        //     console.log(b85)
+        //     let d85 = decode85(b85)!;
+        //     let decomp = decompressSync(d85.slice(d85[0]));
+        //     console.log(new TextDecoder().decode(decomp))
+        // }
+
+        navigator.clipboard
+          .writeText("https://glsl.app#" + b85)
+          .then(() => useToast(t("link-copied")));
+      }
+    );
+  } else {
+    gtagEvent("share_click", { type: "online" });
+
+    let { data, error } = await executeMutation({ shader: code });
+
+    if (error) {
+      alert(error.message);
+      return;
     }
-}
+
+    let hash = "~" + data?.shareShader.id;
+    location.hash = "#" + hash;
+
+    // @todo store the hash in db for current shader
+
+    navigator.clipboard
+      .writeText("https://glsl.app#" + hash)
+      .then(() => useToast(t("link-copied")));
+  }
+};
 
 const onOptionsClick = () => {
-    modalVisible = true;
-    currentModalComponent = OptionsModal
-}
+  modalVisible = true;
+  currentModalComponent = OptionsModal;
+};
 
 const onFullscreenClick = () => {
-    getCanvas()?.requestFullscreen();
-}
+  getCanvas()?.requestFullscreen();
+};
 
 const onDonateClick = () => {
-    gtagEvent('donate_click')
+  gtagEvent("donate_click");
 
-    modalVisible = true;
-    currentModalComponent = DonateModal
-}
+  modalVisible = true;
+  currentModalComponent = DonateModal;
+};
 
 const onDiscordClick = () => {
-    gtagEvent('discord_click')
+  gtagEvent("discord_click");
 
-    window.open('https://zeokku.com/discord', '_blank')
-}
+  window.open("https://zeokku.com/discord", "_blank");
+};
 
 const onGithubClick = () => {
-    gtagEvent('github_click');
+  gtagEvent("github_click");
 
-    window.open('https://github.com/zeokku/glsl.app', '_blank')
-}
+  window.open("https://github.com/zeokku/glsl.app", "_blank");
+};
 
+const onChangelogClick = () => {
+  gtagEvent("changelog_click");
+
+  modalVisible = true;
+  currentModalComponent = ChangelogModal;
+};
 </script>
 
 <style module lang="less">
 .menu {
-    display: flex;
+  display: flex;
 
-    flex: 0 0;
-    gap: 1em;
+  flex: 0 0;
+  gap: 1em;
 
-    list-style: none;
+  list-style: none;
 
-    // @note make it scrollable on narrow layout
-    overflow-x: auto;
-
+  // @note make it scrollable on narrow layout
+  overflow-x: auto;
 }
 </style>

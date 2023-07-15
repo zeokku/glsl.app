@@ -8,73 +8,80 @@ Canvas(@compile="onShaderCompile" v-bind="{ shaderCode }")
 export let createdTimestamp = shallowRef(Date.now());
 
 // last open shader or new
-// hmm will it always be last doe except very first app opening, which should just be the default one? 
-export let shaderName = shallowRef<string | null>(
-  null
-)
+// hmm will it always be last doe except very first app opening, which should just be the default one?
+export let shaderName = shallowRef<string | null>(null);
 </script>
 
 <script setup lang="ts">
-import TopControls from './components/TopControls.vue';
-import Editor, { getModel } from './components/Editor.vue'
-import Canvas from './components/Canvas.vue'
-import throttle from 'lodash.throttle';
-import debounce from 'lodash.debounce'
-import { renameShader, saveShader, getLastOpenShader, setLastOpenShader } from './storage';
-import { shallowRef, watch } from 'vue';
+import TopControls from "./components/TopControls.vue";
+import Editor, { getModel } from "./components/Editor.vue";
+import Canvas from "./components/Canvas.vue";
+import throttle from "lodash.throttle";
+import debounce from "lodash.debounce";
+import { renameShader, saveShader, getLastOpenShader, setLastOpenShader } from "./storage";
+import { shallowRef, watch } from "vue";
 
-let shaderCode = $shallowRef<string>('');
-let infoLog = $shallowRef<String>('');
+let shaderCode = $shallowRef<string>("");
+let infoLog = $shallowRef<String>("");
 // @todo bruh did smth change in ts, why does it infer type as "0" and not as number
 // let compileTimestamp = $shallowRef<number>(0);
 
 // @todo flush on clicking new or exiting the page (use confirm dialog)
-const save = debounce(() => {
-  let code = getModel().getValue();
+const save = debounce(
+  () => {
+    let code = getModel().getValue();
 
-  return saveShader(shaderName.value!, {
-    // @todo reactive var bug
-    created: createdTimestamp.value,
-    // modified: Date.now(),
-    code
-  }).then(() => {
-    setLastOpenShader(shaderName.value!)
+    return saveShader(shaderName.value!, {
+      // @todo reactive var bug
+      created: createdTimestamp.value,
+      // modified: Date.now(),
+      code,
+    }).then(() => {
+      setLastOpenShader(shaderName.value!);
 
-    console.log(shaderName.value, 'saved')
-  })
-}, 1000, { trailing: true })
+      console.log(shaderName.value, "saved");
+    });
+  },
+  1000,
+  { trailing: true }
+);
 
-const rename = debounce((newName: string | null, oldName: string | null) => {
-  // @note when clicking new, prevent rename
-  if (newName === getLastOpenShader() || oldName === null) return;
+const rename = debounce(
+  (newName: string | null, oldName: string | null) => {
+    // @note when clicking new, prevent rename
+    if (newName === getLastOpenShader() || oldName === null) return;
 
-  return renameShader(getLastOpenShader()!, newName!).then(() => {
-    setLastOpenShader(newName!)
+    return renameShader(getLastOpenShader()!, newName!)
+      .then(() => {
+        setLastOpenShader(newName!);
 
-    console.log('shader renamed', newName, '<-', getLastOpenShader())
-  }).catch(() => {
-    alert('Shader with this name already exists! Changes will overwrite old data!');
-  })
-}, 1000, { trailing: true });
+        console.log("shader renamed", newName, "<-", getLastOpenShader());
+      })
+      .catch(() => {
+        alert("Shader with this name already exists! Changes will overwrite old data!");
+      });
+  },
+  1000,
+  { trailing: true }
+);
 
-watch(shaderName, rename)
+watch(shaderName, rename);
 
 const onShaderCodeChange = (code: string) => {
   shaderCode = code;
 
-  save()
-}
+  save();
+};
 
 const onShaderCompile = (log: string) => {
   // @note a hack to always trigger watcher, even when the string doesn't change
   // since we wrap string in an object, reference changes
   infoLog = new String(log);
-}
+};
 </script>
 
 <style module lang="less">
 .glow-element-wrap {
-
   --gr: 3rem;
   --gd: calc(2 * var(--gr));
 
@@ -83,7 +90,6 @@ const onShaderCompile = (log: string) => {
 
   --bw: 2px;
   padding: var(--bw);
-
 
   // initial pos hidden
   // @note exprs are not evaluated for css vars
@@ -105,29 +111,25 @@ const onShaderCompile = (log: string) => {
     --gs: 0.4;
   }
 
-  // move border grad 
+  // move border grad
   background: linear-gradient(to bottom, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%),
-  radial-gradient(circle, rgba(var(--glow-rgb), var(--gs)), transparent var(--gr));
+    radial-gradient(circle, rgba(var(--glow-rgb), var(--gs)), transparent var(--gr));
 
-  background-size: 100% 100%,
-  var(--gd) var(--gd);
+  background-size: 100% 100%, var(--gd) var(--gd);
 
   @glow-position: calc(var(--mx) - var(--gr)) calc(var(--my) - var(--gr));
 
-  background-position: 0 0,
-  @glow-position;
+  background-position: 0 0, @glow-position;
 
   background-repeat: no-repeat;
 }
 
 .glow-element {
-
   // @note @todo normally we should reduce the border-radius of inner element by border width, but it's small enough so we may ignore it
   // @note use inherit so you define radius only on wrap element
   // border-radius: inherit;
   // @note ok bruh let's correct it as on bigger radiuses it's very noticeable
   border-radius: calc(var(--br) - var(--bw));
-
 
   font-size: inherit;
 
@@ -152,7 +154,6 @@ const onShaderCompile = (log: string) => {
   &:not(input):active {
     background-position-y: 100%;
   }
-
 
   outline: 1px transparent solid;
 
@@ -195,7 +196,6 @@ const onShaderCompile = (log: string) => {
     width: -webkit-fill-available;
     width: -moz-available;
     width: stretch;
-
   }
 }
 </style>
@@ -209,7 +209,6 @@ const onShaderCompile = (log: string) => {
 h1,
 h2,
 h3 {
-
   text-transform: uppercase;
   font-weight: bold;
 
@@ -223,6 +222,10 @@ h1 {
 h2 {
   font-size: 1.2em;
   margin-top: 2.5rem;
+}
+
+h3 {
+  font-size: 1em;
 }
 
 button {
@@ -265,7 +268,6 @@ input[type="checkbox"] {
   border: 1px solid rgba(var(--border-rgb), 0.5);
   border-radius: 0.25em;
   box-sizing: border-box;
-
 
   &::after {
     // https://primer.style/design/foundations/icons/check-16/
@@ -320,9 +322,7 @@ input[type="checkbox"] {
   --accent: rgb(var(--accent-rgb));
 
   //
-
 }
-
 
 ::selection {
   background-color: var(--accent);
@@ -348,7 +348,6 @@ input[type="checkbox"] {
   background-color: rgba(var(--accent-rgb), 0.5);
 
   border-radius: 3px;
-
 }
 
 // @note add a transition for tweakpane button

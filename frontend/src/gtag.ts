@@ -10,7 +10,7 @@ document.head.append(script);
 type TEvents = {
   export_click: never;
 
-  share_click: { type: 'online' } | undefined;
+  share_click: { type: "online" } | undefined;
 
   donate_click: never;
   crypto_click: { name: "ETH" | "BTC" | "LTC" | "XTZ" };
@@ -18,6 +18,8 @@ type TEvents = {
   discord_click: never;
 
   github_click: never;
+
+  changelog_click: never;
 };
 
 declare global {
@@ -37,7 +39,10 @@ declare global {
     // O = TEvents[N] extends never ? [] : [TEvents[N]]
     // @blog
     // never extends undefined
-    <N extends keyof TEvents, E = TEvents[N]>(name: N, ...opt: E extends undefined ? [] : [E]): void;
+    <N extends keyof TEvents, E = TEvents[N]>(
+      name: N,
+      ...opt: E extends undefined ? [] : E extends [] ? E : [E]
+    ): void;
 
     // <N extends keyof TEvents, O = TEvents[N] extends undefined ? never : TEvents[N]>(
     //   name: N,
@@ -59,4 +64,4 @@ gtag("js", new Date());
 gtag("config", id, { transport_type: "beacon" });
 gtag("consent", "ad_storage", "denied");
 
-export { };
+export {};

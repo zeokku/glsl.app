@@ -20,6 +20,8 @@ type TEvents = {
   github_click: never;
 
   changelog_click: never;
+
+  zeokku_click: never;
 };
 
 declare global {

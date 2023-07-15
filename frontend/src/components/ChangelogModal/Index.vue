@@ -8,12 +8,18 @@ article.changelog.CModal__content
     footer
         | Made with 💖 by
         |
-        a(href="https://zeokku.com" target="_blank") ZEOKKU
+        a(@click.prevent="onLinkClick" href="") ZEOKKU
 </template>
 
 <script setup lang="ts">
 import changelog from "@/markdown/changelog.md?raw";
 import { md } from "../../markdown";
+
+const onLinkClick = () => {
+  gtagEvent("zeokku_click");
+
+  window.open("https://zeokku.com", "_blank");
+};
 </script>
 
 <style lang="less" module>

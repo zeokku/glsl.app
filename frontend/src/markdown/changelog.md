@@ -1,12 +1,15 @@
 ## Version 1.2 `15 Jul 2022`
 
+### Features
+
 - Added online shader sharing with shorter links
+- Added a new setting to choose the sharing method (online/offline)
 
 ## Version 1.1 `30 Apr 2022`
 
 ### Features
 
-- Added lygia autocompletion for includes
+- Added lygia autocompletion for include directive
 
 ## Version 1.0 `20 Apr 2022`
 

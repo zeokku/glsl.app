@@ -258,6 +258,23 @@ const onChangelogClick = () => {
   modalVisible = true;
   currentModalComponent = ChangelogModal;
 };
+
+//#region show changelog when version updates
+const versionKey = "\0glsl-app-version";
+/**
+ * MMmmPP
+ *
+ * 010200 = 1.2.0
+ */
+const currentVersion = "010200";
+
+if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
+  localStorage.setItem(versionKey, currentVersion);
+
+  modalVisible = true;
+  currentModalComponent = ChangelogModal;
+}
+//#endregion
 </script>
 
 <style module lang="less">

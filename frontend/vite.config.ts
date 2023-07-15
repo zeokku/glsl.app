@@ -99,6 +99,10 @@ export default defineConfig(({ command }) => ({
     ],
   },
 
+  server: {
+    port: 55555,
+  },
+
   publicDir: command === "build" ? false : "public",
 
   build: {
@@ -117,7 +121,7 @@ export default defineConfig(({ command }) => ({
     // },
   },
 
-  envPrefix: ['VITE_', 'APP_'],
+  envPrefix: ["VITE_", "APP_"],
 
   // build: {
   //   rollupOptions: {

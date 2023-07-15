@@ -8,7 +8,7 @@ article.changelog.CModal__content
     footer
         | Made with 💖 by
         |
-        a(@click.prevent="onLinkClick" href="") ZEOKKU
+        a(@click="onLinkClick" href="https://zeokku.com") ZEOKKU
 </template>
 
 <script setup lang="ts">
@@ -17,8 +17,6 @@ import { md } from "../../markdown";
 
 const onLinkClick = () => {
   gtagEvent("zeokku_click");
-
-  window.open("https://zeokku.com", "_blank");
 };
 </script>
 

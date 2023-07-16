@@ -19,6 +19,8 @@ class ShaderService(private val shaderRepository: ShaderRepository) {
 
     fun findShader(id: String): Shader? = shaderRepository.findById(id).unwrap()
 
+    fun findShaderByBody(body: String): Shader? = shaderRepository.findByBody(body)
+
     fun findShaders(limit: Int?, offset: Int?, authoredBy: String?, childrenOf: String?): List<Shader> {
         val limitOrDefault = limit ?: 15
         val offsetOrDefault = offset ?: 0

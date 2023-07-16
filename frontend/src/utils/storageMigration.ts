@@ -6,20 +6,48 @@ import { createStore, entries, setMany } from "idb-keyval";
  * @param newKey new key to use
  */
 export const renameLocalStorageEntry = (oldKey: string, newKey: string) => {
-    if (localStorage[oldKey]) {
-        localStorage[newKey] = localStorage[oldKey];
-        localStorage.removeItem(oldKey)
-    }
-}
+  if (localStorage[oldKey]) {
+    localStorage[newKey] = localStorage[oldKey];
+    localStorage.removeItem(oldKey);
+  }
+};
 
-export const moveIndexedDb = async (oldDbName: string, oldStoreName: string, newDbName: string, newStoreName: string) => {
-    if (await indexedDB.databases().then(dbs => dbs.find(db => db.name === oldDbName))) {
-        const oldStore = createStore(oldDbName, oldStoreName);
-        const data = await entries(oldStore);
+const databaseExists = async (name: string) => {
+  let request = indexedDB.open(name);
 
-        const newStore = createStore(newDbName, newStoreName)
-        await setMany(data, newStore);
+  // @note upgradeneeded is triggered on new db creation or version update
+  return new Promise(resolve => {
+    request.onupgradeneeded = e => {
+      console.log("upgrade", e);
 
-        indexedDB.deleteDatabase(oldDbName);
-    }
-}
+      // @ts-ignore
+      e.target.transaction.abort();
+
+      resolve(false);
+    };
+
+    request.onsuccess = e => {
+      console.log("onsuccess", e);
+
+      resolve(true);
+    };
+  });
+};
+
+export const moveIndexedDb = async (
+  oldDbName: string,
+  oldStoreName: string,
+  newDbName: string,
+  newStoreName: string
+) => {
+  // if (await indexedDB.databases().then(dbs => dbs.find(db => db.name === oldDbName))) {
+  if (await databaseExists(oldDbName)) {
+    const oldStore = createStore(oldDbName, oldStoreName);
+    const data = await entries(oldStore);
+
+    const newStore = createStore(newDbName, newStoreName);
+    await setMany(data, newStore);
+
+    indexedDB.deleteDatabase(oldDbName);
+  }
+};

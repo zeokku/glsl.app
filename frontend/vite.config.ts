@@ -108,6 +108,7 @@ export default defineConfig(({ command }) => ({
   build: {
     // sourcemap: true, // @todo 'hidden'
     minify: "terser",
+    target: "esnext",
     terserOptions: {
       compress: {
         drop_console: true,

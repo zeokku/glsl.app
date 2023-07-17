@@ -15,4 +15,6 @@ interface ShaderRepository : JpaRepository<Shader, String> {
     """
     )
     fun findAllByParentIdAndAuthorId(pageable: Pageable, parentId: String?, authorId: String?): Page<Shader>
+
+    fun findByBody(body: String): Shader?
 }

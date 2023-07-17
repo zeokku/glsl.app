@@ -7,13 +7,16 @@ import app.glsl.backend.service.ShaderService
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsMutation
 import com.netflix.graphql.dgs.InputArgument
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.access.annotation.Secured
 
 @DgsComponent
 class Mutation(private val shaderService: ShaderService, private val authorService: AuthorService) {
     @DgsMutation
-    fun shareShader(@InputArgument shader: String, @InputArgument parentId: String?): ShaderDto {
-        return shaderService.shareShader(parentId, shader).toDto()
+    fun shareShader(@InputArgument shader: String, @InputArgument parentId: String?): ShaderDto = try {
+        shaderService.shareShader(parentId, shader).toDto()
+    } catch (e: DataIntegrityViolationException) {
+        shaderService.findShaderByBody(shader)?.toDto()!!
     }
 
     @DgsMutation

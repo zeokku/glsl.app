@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   monaco-editor@0.36.1:
-    hash: 542vpseffrsygfjeudjdjmm4rq
+    hash: agx6onjn3p5xujhrc7enrsucyi
     path: patches/monaco-editor@0.36.1.patch
 
 dependencies:
@@ -36,7 +36,7 @@ dependencies:
     version: 4.1.1
   monaco-editor:
     specifier: 0.36.1
-    version: 0.36.1(patch_hash=542vpseffrsygfjeudjdjmm4rq)
+    version: 0.36.1(patch_hash=agx6onjn3p5xujhrc7enrsucyi)
   petite-vue-i18n:
     specifier: 9.3.0-beta.17
     version: 9.3.0-beta.17(vue@3.3.4)
@@ -5210,7 +5210,7 @@ packages:
       brace-expansion: 2.0.1
     dev: true
 
-  /monaco-editor@0.36.1(patch_hash=542vpseffrsygfjeudjdjmm4rq):
+  /monaco-editor@0.36.1(patch_hash=agx6onjn3p5xujhrc7enrsucyi):
     resolution: {integrity: sha512-/CaclMHKQ3A6rnzBzOADfwdSJ25BFoFT0Emxsc4zYVyav5SkK9iA6lEtIeuN/oRYbwPgviJT+t3l+sjFa28jYg==}
     dev: false
     patched: true

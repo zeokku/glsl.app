@@ -1,5 +1,5 @@
 diff --git a/esm/vs/base/browser/markdownRenderer.js b/esm/vs/base/browser/markdownRenderer.js
-index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..8c1e0e85fee8490e4b5444521dc56ba691991d5b 100644
+index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..5336be8f61cdfbc5e9006668e9f992ccc872dc7b 100644
 --- a/esm/vs/base/browser/markdownRenderer.js
 +++ b/esm/vs/base/browser/markdownRenderer.js
 @@ -311,7 +311,8 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
@@ -13,7 +13,7 @@ index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..8c1e0e85fee8490e4b5444521dc56ba6
                  }
              }
 diff --git a/esm/vs/base/common/codicons.js b/esm/vs/base/common/codicons.js
-index 7db7374670fede4a7441e87df24a05290befa586..c20268f8107f897ab01c2acf227707bc77ab33e0 100644
+index 7db7374670fede4a7441e87df24a05290befa586..67b5e290ca78f1a7a60e4c5b0e7016db15a896f8 100644
 --- a/esm/vs/base/common/codicons.js
 +++ b/esm/vs/base/common/codicons.js
 @@ -524,6 +524,7 @@ export const Codicon = {
@@ -25,7 +25,7 @@ index 7db7374670fede4a7441e87df24a05290befa586..c20268f8107f897ab01c2acf227707bc
      indent: register('indent', 0xebf9),
      recordSmall: register('record-small', 0xebfa),
 diff --git a/esm/vs/editor/common/languages.js b/esm/vs/editor/common/languages.js
-index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..848fa61f32e8381a6dbcc55c4dac0c71b68c267c 100644
+index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..18db5ad5823344aa042cbfb0f96bd13f5570a8ee 100644
 --- a/esm/vs/editor/common/languages.js
 +++ b/esm/vs/editor/common/languages.js
 @@ -79,6 +79,22 @@ export var CompletionItemKinds;
@@ -52,20 +52,50 @@ index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..848fa61f32e8381a6dbcc55c4dac0c71
       * @internal
       */
 diff --git a/esm/vs/editor/editor.all.js b/esm/vs/editor/editor.all.js
-index 53d39b8c062de3143d96b77af1a09abbdd347ae5..3641f41c0e6298ff469c209323e1085fb5e5354a 100644
+index 53d39b8c062de3143d96b77af1a09abbdd347ae5..1031a6454455931c44451e80ca1593ce52160d5b 100644
 --- a/esm/vs/editor/editor.all.js
 +++ b/esm/vs/editor/editor.all.js
-@@ -22,7 +22,7 @@ import './contrib/dnd/browser/dnd.js';
- import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
+@@ -3,9 +3,9 @@
+  *  Licensed under the MIT License. See License.txt in the project root for license information.
+  *--------------------------------------------------------------------------------------------*/
+ import './browser/coreCommands.js';
+-import './browser/widget/codeEditorWidget.js';
+-import './browser/widget/diffEditorWidget.js';
+-import './browser/widget/diffNavigator.js';
++// import './browser/widget/codeEditorWidget.js';
++// import './browser/widget/diffEditorWidget.js';
++// import './browser/widget/diffNavigator.js';
+ import './contrib/anchorSelect/browser/anchorSelect.js';
+ import './contrib/bracketMatching/browser/bracketMatching.js';
+ import './contrib/caretOperations/browser/caretOperations.js';
+@@ -18,20 +18,20 @@ import './contrib/copyPaste/browser/copyPasteContribution.js';
+ import './contrib/comment/browser/comment.js';
+ import './contrib/contextmenu/browser/contextmenu.js';
+ import './contrib/cursorUndo/browser/cursorUndo.js';
+-import './contrib/dnd/browser/dnd.js';
+-import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
++// import './contrib/dnd/browser/dnd.js';
++// import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
  import './contrib/find/browser/findController.js';
  import './contrib/folding/browser/folding.js';
 -import './contrib/fontZoom/browser/fontZoom.js';
 +// import './contrib/fontZoom/browser/fontZoom.js';
  import './contrib/format/browser/formatActions.js';
  import './contrib/documentSymbols/browser/documentSymbols.js';
- import './contrib/inlineCompletions/browser/ghostText.contribution.js';
+-import './contrib/inlineCompletions/browser/ghostText.contribution.js';
++// import './contrib/inlineCompletions/browser/ghostText.contribution.js';
+ import './contrib/gotoSymbol/browser/goToCommands.js';
+ import './contrib/gotoSymbol/browser/link/goToDefinitionAtPosition.js';
+ import './contrib/gotoError/browser/gotoError.js';
+ import './contrib/hover/browser/hover.js';
+ import './contrib/indentation/browser/indentation.js';
+-import './contrib/inlayHints/browser/inlayHintsContribution.js';
++// import './contrib/inlayHints/browser/inlayHintsContribution.js';
+ import './contrib/inPlaceReplace/browser/inPlaceReplace.js';
+ import './contrib/lineSelection/browser/lineSelection.js';
+ import './contrib/linesOperations/browser/linesOperations.js';
 diff --git a/esm/vs/editor/editor.main.js b/esm/vs/editor/editor.main.js
-index 97bfc6b8de457c98a5670df6c77510bf172c60ac..5a345be93ad31bfe9753ddeda0f82bf97345b4f3 100644
+index 97bfc6b8de457c98a5670df6c77510bf172c60ac..5c260bb4e7a5bdaaaae7eecf48c7b0a6df4fbfda 100644
 --- a/esm/vs/editor/editor.main.js
 +++ b/esm/vs/editor/editor.main.js
 @@ -1,7 +1,8 @@

@@ -7,6 +7,7 @@ data class ApplicationProperties(
     val hostname: String,
     val jwtSecret: String,
     val successfulAuthRedirectUrl: String,
+    val successfulLogoutRedirectUrl: String,
     val loginPageUrl: String,
     val corsOrigins: List<String>
 )

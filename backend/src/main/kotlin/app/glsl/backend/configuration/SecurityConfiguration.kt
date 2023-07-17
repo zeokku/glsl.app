@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationF
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -51,6 +52,10 @@ class SecurityConfiguration(
             oauth2Login {
                 loginPage = applicationProperties.loginPageUrl
                 authenticationSuccessHandler = authenticationSuccessHandler()
+            }
+            logout {
+                logoutUrl = "/logout"
+                logoutSuccessHandler = logoutSuccessHandler()
             }
             addFilterBefore<OAuth2LoginAuthenticationFilter>(JwtCookieFilter(jwtService, authorService))
         }
@@ -95,5 +100,14 @@ class SecurityConfiguration(
 
             response.addCookie(cookie)
             response.sendRedirect(applicationProperties.successfulAuthRedirectUrl)
+        }
+
+        private fun logoutSuccessHandler() = LogoutSuccessHandler { _, response, _ ->
+            val cookie = Cookie("access_token", null).apply {
+                maxAge = 0
+            }
+
+            response.addCookie(cookie)
+            response.sendRedirect(applicationProperties.successfulLogoutRedirectUrl)
         }
 }

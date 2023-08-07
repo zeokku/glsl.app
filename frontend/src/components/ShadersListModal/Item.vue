@@ -95,7 +95,7 @@ watch(useScreen(), updateBbox)
 
     aspect-ratio: 6/5;
 
-    background-color: black;
+    // background-color: black;
 }
 
 @icon-sz: 1.25em;

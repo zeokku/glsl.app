@@ -77,6 +77,9 @@ const onShaderCompile = (log: string) => {
   // @note a hack to always trigger watcher, even when the string doesn't change
   // since we wrap string in an object, reference changes
   infoLog = new String(log);
+  // this is probably slower than assigning a new object
+  // infoLog = log;
+  // triggerRef($$(log));
 };
 </script>
 

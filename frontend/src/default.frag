@@ -1,6 +1,7 @@
 #version 300 es
 
 precision highp float;
+precision highp sampler2D;
 
 // normalized coordinates, (0,0) is the bottom left
 in vec2 uv;
@@ -15,6 +16,9 @@ uniform vec2 u_resolution;
 uniform float u_time;
 // mouse pixel coordinates are in canvas space, (0,0) is top left
 uniform vec4 u_mouse;
+// texture array
+uniform sampler2D u_textures[16];
+
 
 // @note you can include other chunks of code, double quotes are used for absolute HTTP links or relative paths
 #include "https://raw.githubusercontent.com/stegu/psrdnoise/main/src/psrdnoise2.glsl"

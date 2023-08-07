@@ -2,7 +2,7 @@
 teleport(to="body")
     //- does specifying type make it faster
     transition(name="fade-blur" :duration="500" type="transition")
-        .wrap(v-if="visible" @click="close" role="dialog" aria-modal="true")
+        .wrap(v-show="visible" @click="close" role="dialog" aria-modal="true")
             .window(ref="modal" @click.stop)
                 button.close(@click="close")
                     //- &#x2715;

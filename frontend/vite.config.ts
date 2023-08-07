@@ -4,7 +4,7 @@ import { VitePWA as pwa } from "vite-plugin-pwa";
 import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 
-import cssm from "vite-plugin-vue-css-modules";
+import cssm, { removeCssModulesChunk } from "vite-plugin-vue-css-modules";
 
 import { visualizer } from "rollup-plugin-visualizer";
 
@@ -19,6 +19,9 @@ export default defineConfig(({ command }) => ({
     vue({
       reactivityTransform: true,
     }),
+
+    removeCssModulesChunk(),
+
     VueI18nPlugin({
       // @note include is required if using virtual module "...-vue-i18n/messages"
       include: "./src/locales/*.yaml",

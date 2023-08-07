@@ -126,7 +126,7 @@ generateShader()
 let inputList = ['uv']
 // @todo report, sometimes non reactive vars break for some reason during hot reload (only vite restart helps)
 // and it happens after template editing (same goes for components)
-let uniformList = ['u_resolution', 'u_time', 'u_mouse']
+let uniformList = ['u_resolution', 'u_time', 'u_mouse', 'u_textures']
 
 
 const renameSymbol = (symbol: string, e: InputEvent) => {

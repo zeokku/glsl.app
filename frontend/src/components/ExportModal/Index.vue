@@ -47,205 +47,194 @@
 </template>
 
 <script lang="ts">
-
 // @note module scope, so settings are saved during session
 
-let expandIncludes = $shallowRef<boolean>(false)
-let noAngleIncludes = $shallowRef<boolean>(false)
+let expandIncludes = $shallowRef<boolean>(false);
+let noAngleIncludes = $shallowRef<boolean>(false);
 
 const renameMap = new Map();
-
 </script>
 
 <script setup lang="ts">
-import { dependencyRegex, processIncludes } from '@/processIncludes';
+import { dependencyRegex, processIncludes } from "@/processIncludes";
 
 // import { parse, generate } from '@shaderfrog/glsl-parser'
 // import { renameBindings } from '@shaderfrog/glsl-parser/utils'
 
-import { useToast } from '@/composition/useToast';
-import { Uri } from 'monaco-editor';
+import { useToast } from "@/composition/useToast";
+import { Uri } from "monaco-editor";
 
-import { useI18n } from 'petite-vue-i18n';
+import { useI18n } from "petite-vue-i18n";
 
-
-import { getCurrentScope, onMounted, watch } from 'vue';
-import { useMouse } from '@/composition/useMouse';
-import { updateElGlow } from '@/stylingUtils/updateGlow';
+import { getCurrentScope, onMounted, watch } from "vue";
+import { useMouse } from "@/composition/useMouse";
+import { updateElGlow } from "@/stylingUtils/updateGlow";
 
 const { t, locale } = useI18n();
-
 
 let exportContentRef = $shallowRef<HTMLDivElement>();
 
 let fileDownloadLink = $shallowRef<string>();
-let exportContent = $shallowRef<string>('')
+let exportContent = $shallowRef<string>("");
 
-let getModel: () => import('monaco-editor').editor.ITextModel;
-import('@/components/Editor.vue').then((module) => ({getModel} = module));
+let getModel: () => import("monaco-editor").editor.ITextModel;
 
-type GlslParserModule = typeof import('@shaderfrog/glsl-parser');
-let parse: GlslParserModule['parse'];
-let generate: GlslParserModule['generate'];
-let renameBindings: typeof import('@shaderfrog/glsl-parser/utils').renameBindings
+type GlslParserModule = typeof import("@shaderfrog/glsl-parser");
+let parse: GlslParserModule["parse"];
+let generate: GlslParserModule["generate"];
+let renameBindings: typeof import("@shaderfrog/glsl-parser/utils").renameBindings;
 
-import('@shaderfrog/glsl-parser').then(module => ({parse, generate} = module))
-import('@shaderfrog/glsl-parser/utils').then(module => ({renameBindings} = module))
+let promises = [
+  import("@/components/Editor.vue").then(module => ({ getModel } = module)),
+  import("@shaderfrog/glsl-parser").then(module => ({ parse, generate } = module)),
+  import("@shaderfrog/glsl-parser/utils").then(module => ({ renameBindings } = module)),
+];
 
 const generateShader = async () => {
-    if(!getModel || !parse) return;
+  if (!getModel || !parse) return;
 
-    let codeLines = getModel().getLinesContent();
+  let codeLines = getModel().getLinesContent();
 
-    if (!expandIncludes && noAngleIncludes) {
-        // @note instance it without global flag, because it won't work properly for test()
-        let rg = new RegExp(dependencyRegex, '');
-        codeLines.forEach((line, index, arr) => {
-            if (rg.test(line)) {
-                console.log(line)
-                arr[index] = line.replace(/<|>/g, '"');
-            }
-        })
-    }
+  if (!expandIncludes && noAngleIncludes) {
+    // @note instance it without global flag, because it won't work properly for test()
+    let rg = new RegExp(dependencyRegex, "");
+    codeLines.forEach((line, index, arr) => {
+      if (rg.test(line)) {
+        console.log(line);
+        arr[index] = line.replace(/<|>/g, '"');
+      }
+    });
+  }
 
-    let code = expandIncludes ? await processIncludes(codeLines, null) : codeLines.join('\n')
+  let code = expandIncludes ? await processIncludes(codeLines, null) : codeLines.join("\n");
 
-    if (renameMap.size) {
+  if (renameMap.size) {
+    let ast = parse(code, { includeLocation: true });
 
-        let ast = parse(code, { includeLocation: true })
+    console.log(ast);
 
-        console.log(ast)
+    renameBindings(ast.scopes[0], (name, node) => {
+      let newName = renameMap.get(name);
 
-        renameBindings(ast.scopes[0], (name, node) => {
-            let newName = renameMap.get(name)
+      if (newName) return newName;
 
-            if (newName) return newName;
+      return name;
+    });
 
-            return name;
-        })
+    code = generate(ast);
+  }
 
-        code = generate(ast);
-    }
+  exportContent = code;
+  fileDownloadLink = URL.createObjectURL(new Blob([code]));
+};
 
-    exportContent = code
-    fileDownloadLink = URL.createObjectURL(new Blob([code]));
-}
-
-generateShader()
+Promise.all(promises).then(generateShader);
 
 // @note offer only inputs rename, since user can rename outputs by themselves
-let inputList = ['uv']
+let inputList = ["uv"];
 // @todo report, sometimes non reactive vars break for some reason during hot reload (only vite restart helps)
 // and it happens after template editing (same goes for components)
-let uniformList = ['u_resolution', 'u_time', 'u_mouse', 'u_textures']
-
+let uniformList = ["u_resolution", "u_time", "u_mouse", "u_textures"];
 
 const renameSymbol = (symbol: string, e: InputEvent) => {
-    // @todo
-    let val = (e.target as HTMLInputElement).value.trim();
+  // @todo
+  let val = (e.target as HTMLInputElement).value.trim();
 
-    if (val) {
-        renameMap.set(symbol, val);
-    }
-    else {
-        renameMap.delete(symbol)
-    }
+  if (val) {
+    renameMap.set(symbol, val);
+  } else {
+    renameMap.delete(symbol);
+  }
 
-    generateShader();
-}
-
+  generateShader();
+};
 
 const onTextareaClick = (e: PointerEvent<HTMLTextAreaElement>) => {
-    e.target.select()
-    navigator.clipboard.writeText(e.target.value).then(() => useToast(t('shader-copied')))
-}
-
+  e.target.select();
+  navigator.clipboard.writeText(e.target.value).then(() => useToast(t("shader-copied")));
+};
 
 let glowItems: NodeListOf<HTMLDivElement>;
 
 onMounted(() => {
-    glowItems = exportContentRef!.querySelectorAll<HTMLDivElement>('.' + $cssModule['App__glow-element-wrap']);
-})
+  glowItems = exportContentRef!.querySelectorAll<HTMLDivElement>(
+    "." + $cssModule["App__glow-element-wrap"]
+  );
+});
 
-
-watch(useMouse(), (mouse) => {
-    if (!glowItems) return;
-    // @note !!! don't use scrollTop because it causes reflow, so it's very laggy...
-    glowItems.forEach(g => updateElGlow(g, mouse))
-})
+watch(useMouse(), mouse => {
+  if (!glowItems) return;
+  // @note !!! don't use scrollTop because it causes reflow, so it's very laggy...
+  glowItems.forEach(g => updateElGlow(g, mouse));
+});
 
 const onScroll = () => {
-    glowItems.forEach(g => updateElGlow(g, useMouse(), true))
-}
-
+  glowItems.forEach(g => updateElGlow(g, useMouse(), true));
+};
 </script>
 
 <style module lang="less">
 // @todo move to modal by default
 .export-content {
-    max-width: 50rem;
-    // @note add nice spacing on sides
-    // margin-inline: 3rem;
+  max-width: 50rem;
+  // @note add nice spacing on sides
+  // margin-inline: 3rem;
 
+  // display: flex;
+  // flex-flow: column;
+  // gap: 1.75rem;
 
-    // display: flex;
-    // flex-flow: column;
-    // gap: 1.75rem;
+  font-size: 1.25rem;
 
-    font-size: 1.25rem;
+  & > section {
+    margin-block: 3rem;
+  }
 
-    &>section {
-        margin-block: 3rem;
-    }
-
-    padding-block: 0;
-
+  padding-block: 0;
 }
 
 .settings {
-
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .rename-grid {
-    // display: grid;
+  // display: grid;
 
-    // width: min-content;
+  // width: min-content;
 
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 
-    gap: 1rem 2rem;
+  gap: 1rem 2rem;
 }
 
 .label {
-    margin-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .code {
-    resize: none;
+  resize: none;
 
-    box-sizing: border-box;
-    width: 100%;
+  box-sizing: border-box;
+  width: 100%;
 
-    min-height: 20rem;
+  min-height: 20rem;
 
-    font-family: monospace;
-    font-size: 1rem;
+  font-family: monospace;
+  font-size: 1rem;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    border-radius: calc(var(--br) - var(--bw));
-    background: var(--bg);
+  border-radius: calc(var(--br) - var(--bw));
+  background: var(--bg);
 
-    transition: outline 300ms ease-out;
-    outline: 1px transparent solid;
+  transition: outline 300ms ease-out;
+  outline: 1px transparent solid;
 
-    &:focus-visible {
-        outline: 1px var(--glow) solid;
-    }
+  &:focus-visible {
+    outline: 1px var(--glow) solid;
+  }
 }
 </style>

@@ -1,6 +1,13 @@
 <template lang="pug">
 TopControls
-Editor(@change="onShaderCodeChange" v-bind="{ infoLog }")
+Suspense(:timeout="300")
+  Editor(@change="onShaderCodeChange" v-bind="{ infoLog }")
+  template(#fallback)
+    .editor-loading 
+      | Editor is being loaded 
+      span .
+      span .
+      span .
 Canvas(@compile="onShaderCompile" v-bind="{ shaderCode }")
 </template>
 
@@ -14,21 +21,38 @@ export let shaderName = shallowRef<string | null>(null);
 
 <script setup lang="ts">
 import TopControls from "./components/TopControls.vue";
-import Editor, { getModel } from "./components/Editor.vue";
+// import Editor, { getModel } from "./components/Editor.vue";
 import Canvas from "./components/Canvas.vue";
 import throttle from "lodash.throttle";
 import debounce from "lodash.debounce";
 import { renameShader, saveShader, getLastOpenShader, setLastOpenShader } from "./storage";
-import { shallowRef, watch } from "vue";
+import { defineAsyncComponent, shallowRef, watch } from "vue";
+
+import type { editor } from "monaco-editor";
 
 let shaderCode = $shallowRef<string>("");
 let infoLog = $shallowRef<String>("");
 // @todo bruh did smth change in ts, why does it infer type as "0" and not as number
 // let compileTimestamp = $shallowRef<number>(0);
 
+// const to = (p: Promise<any>) =>
+//   new Promise(resolve => {
+//     setTimeout(() => {
+//       resolve(p);
+//     }, 300000);
+//   });
+
+const EditorModulePromise = import("@/components/Editor.vue");
+const Editor = defineAsyncComponent(() => EditorModulePromise);
+
+let getModel: () => import("monaco-editor").editor.ITextModel;
+EditorModulePromise.then(module => ({ getModel } = module));
+
 // @todo flush on clicking new or exiting the page (use confirm dialog)
 const save = debounce(
-  () => {
+  async () => {
+    if (!getModel) return;
+
     let code = getModel().getValue();
 
     return saveShader(shaderName.value!, {
@@ -84,6 +108,45 @@ const onShaderCompile = (log: string) => {
 </script>
 
 <style module lang="less">
+.editor-loading {
+  flex-grow: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+
+  > span {
+    display: inline-block;
+
+    animation: loading 1.5s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 200ms;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 400ms;
+    }
+  }
+
+  @amp: 0.1rem;
+
+  @keyframes loading {
+    0% {
+      transform: translateY(-@amp);
+    }
+
+    50% {
+      transform: translateY(@amp);
+    }
+
+    100% {
+      transform: translateY(-@amp);
+    }
+  }
+}
+
 .glow-element-wrap {
   --gr: 3rem;
   --gd: calc(2 * var(--gr));

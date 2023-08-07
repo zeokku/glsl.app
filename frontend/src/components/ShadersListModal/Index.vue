@@ -12,7 +12,6 @@ import type { InjectionKey } from 'vue'
 import throttle from 'lodash.throttle';
 import { deleteShader, getAllShaders, getShader, setLastOpenShader } from '@/storage';
 import { CLOSE_MODAL } from '../Modal.vue';
-import { getModel } from '../Editor.vue';
 import { createdTimestamp, shaderName } from '@/App.vue';
 import { processIncludes } from '@/processIncludes';
 import { useScreen } from '@/composition/useScreen';
@@ -34,7 +33,14 @@ import defaultVertexShaderCode from '@/default.vert?raw'
 
 const closeModal = inject(CLOSE_MODAL)!;
 
+
+let getModel: () => import('monaco-editor').editor.ITextModel;
+import('@/components/Editor.vue').then((module) => ({getModel} = module));
+
+
 const onItemClick = async (name: string) => {
+    if(!getModel) return;
+
     setLastOpenShader(name);
     shaderName.value = name;
 

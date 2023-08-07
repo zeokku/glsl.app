@@ -59,11 +59,10 @@ const renameMap = new Map();
 
 <script setup lang="ts">
 import { dependencyRegex, processIncludes } from '@/processIncludes';
-import { getModel } from '../Editor.vue';
 
-import { parse, generate } from '@shaderfrog/glsl-parser'
+// import { parse, generate } from '@shaderfrog/glsl-parser'
+// import { renameBindings } from '@shaderfrog/glsl-parser/utils'
 
-import { renameBindings } from '@shaderfrog/glsl-parser/utils'
 import { useToast } from '@/composition/useToast';
 import { Uri } from 'monaco-editor';
 
@@ -82,8 +81,20 @@ let exportContentRef = $shallowRef<HTMLDivElement>();
 let fileDownloadLink = $shallowRef<string>();
 let exportContent = $shallowRef<string>('')
 
+let getModel: () => import('monaco-editor').editor.ITextModel;
+import('@/components/Editor.vue').then((module) => ({getModel} = module));
+
+type GlslParserModule = typeof import('@shaderfrog/glsl-parser');
+let parse: GlslParserModule['parse'];
+let generate: GlslParserModule['generate'];
+let renameBindings: typeof import('@shaderfrog/glsl-parser/utils').renameBindings
+
+import('@shaderfrog/glsl-parser').then(module => ({parse, generate} = module))
+import('@shaderfrog/glsl-parser/utils').then(module => ({renameBindings} = module))
 
 const generateShader = async () => {
+    if(!getModel || !parse) return;
+
     let codeLines = getModel().getLinesContent();
 
     if (!expandIncludes && noAngleIncludes) {

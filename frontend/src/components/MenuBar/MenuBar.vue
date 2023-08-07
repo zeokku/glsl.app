@@ -90,8 +90,6 @@ import OptionsModal from "+/OptionsModal/Index.vue";
 import DonateModal from "+/DonateModal/Index.vue";
 import ChangelogModal from "+/ChangelogModal/Index.vue";
 
-import { getModel } from "../Editor.vue";
-
 import minShader from "@/min.frag?raw";
 
 import { encode85, decode85 } from "@/utils/base85";
@@ -103,6 +101,11 @@ import { graphql } from "@/gql";
 import { getSetting } from "@/settings";
 
 const { t, locale } = useI18n();
+
+
+let getModel: () => import('monaco-editor').editor.ITextModel;
+import('@/components/Editor.vue').then((module) => ({getModel} = module));
+
 
 const menu = $shallowRef<HTMLMenuElement>();
 
@@ -124,6 +127,8 @@ watch(useMouse(), mouse => {
 const onScroll = () => glowItems.forEach(el => updateElGlow(el, useMouse(), true));
 
 const onNewClick = async (e: MouseEvent) => {
+  if(!getModel) return;
+
   createdTimestamp.value = Date.now();
   // using $shallow macro causes a problem that import can't be used as var
   let nextName = await findNonConflictingName();
@@ -160,6 +165,8 @@ const { executeMutation } = useMutation(
 );
 
 const onShareLinkClick = async () => {
+  if(!getModel) return;
+
   let code = getModel().getValue();
 
   if (getSetting("offlineShare")) {
@@ -266,7 +273,7 @@ const versionKey = "\0glsl-app-version";
  *
  * 010200 = 1.2.0
  */
-const currentVersion = "010200";
+const currentVersion = "010300";
 
 if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   localStorage.setItem(versionKey, currentVersion);

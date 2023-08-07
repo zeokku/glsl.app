@@ -23,7 +23,7 @@ export const md = (raw: string) => {
           );
         })
         .replace(/`([^`]+)`/g, "<code>$1</code>")
-        .replace(/_([^_]+)_/g, "<i>$1</i>")
+        .replace(/\b_([^_]+)_\b/g, "<i>$1</i>")
         .replace(/\*\*([^\*]+)\*\*/g, "<b>$1</b>");
 
       return isHeader ? p : "<p>" + p + "</p>";

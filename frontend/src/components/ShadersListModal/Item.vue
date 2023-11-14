@@ -8,40 +8,38 @@
 </template>
 
 <script setup lang="ts">
-import { useScreen } from '@/composition/useScreen';
-import { inject, onMounted, watch } from 'vue';
+import { useScreen } from "@/composition/useScreen";
+import { inject, onMounted, watch } from "vue";
 
-import FileRemoved from '+/icons/file-removed.vue';
-import MaterialDelete from '+/icons/material-delete.vue';
-import Trash from '+/icons/trash.vue';
+import FileRemoved from "+/icons/file-removed.vue";
+import MaterialDelete from "+/icons/material-delete.vue";
+import Trash from "+/icons/trash.vue";
 
-import { useI18n } from 'petite-vue-i18n';
+import { useI18n } from "petite-vue-i18n";
 
-
-import type { TBbox } from './Index.vue'
+import type { TBbox } from "./Index.vue";
 
 const props = defineProps<{
-    name: string
-}>()
+    name: string;
+}>();
 
 const { t } = useI18n();
 
 const emit = defineEmits<{
-    (e: 'delete'): void;
-}>()
+    (e: "delete"): void;
+}>();
 
 const onDeleteClick = () => {
     if (confirm(`Are you sure you want to delete "${props.name}"?`)) {
-        emit('delete')
+        emit("delete");
     }
-}
-
+};
 
 // @todo @report doing $shallowRef()! (to illiminate undefined) leads to an error
 const view = $shallowRef<HTMLDivElement>();
 
 let bbox = {} as TBbox;
-defineExpose({ bbox })
+defineExpose({ bbox });
 
 const updateBbox = () => {
     // @note use assign so we keep the same obj ref in exposed object
@@ -49,19 +47,16 @@ const updateBbox = () => {
         x: view!.offsetLeft,
         y: view!.offsetTop,
         w: view!.offsetWidth,
-        h: view!.offsetHeight
+        h: view!.offsetHeight,
     });
-}
+};
 
-onMounted(updateBbox)
-watch(useScreen(), updateBbox)
-
-
+onMounted(updateBbox);
+watch(useScreen(), updateBbox);
 </script>
 
 <style module lang="less">
 .item-wrap {
-
     width: 100%;
     box-sizing: border-box;
 
@@ -84,10 +79,16 @@ watch(useScreen(), updateBbox)
 }
 
 .item {
+    display: flex;
+    flex-flow: column;
+
+    box-sizing: border-box;
     overflow: hidden;
 
     // @todo patch shaders to round top corners
     padding: 1.25rem;
+
+    height: 100%;
 }
 
 .view {
@@ -105,6 +106,8 @@ watch(useScreen(), updateBbox)
     grid-template-columns: @icon-sz 1fr @icon-sz;
     gap: 0.5em;
     align-items: center;
+
+    flex: 1;
 
     font-size: 1.25em;
     text-transform: uppercase;

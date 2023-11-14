@@ -41,7 +41,7 @@
         p 
             | {{ t('click') }}
             | 
-            a(download="fragment.glsl" :href="fileDownloadLink") {{ t('download') }}
+            a(:download="shaderName + '.glsl'" :href="fileDownloadLink") {{ t('download') }}
         .App__input-wrap.App__glow-element-wrap
             textarea.code(readonly :value="exportContent" @click="onTextareaClick")
 </template>
@@ -56,6 +56,8 @@ const renameMap = new Map();
 </script>
 
 <script setup lang="ts">
+import { shaderName } from "@/App.vue";
+
 import { dependencyRegex, processIncludes } from "@/processIncludes";
 
 // import { parse, generate } from '@shaderfrog/glsl-parser'

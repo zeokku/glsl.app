@@ -14,6 +14,7 @@ window.addEventListener("pointermove", ({ x, y }) => {
 
 // @todo make this standard
 export const useMouseNext = (cb: (m: typeof mouse) => void) => {
+  // @note watcher will be autodisposed if called inside of setup
   watch(mouse, cb);
 
   return mouse;

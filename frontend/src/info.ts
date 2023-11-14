@@ -10,7 +10,7 @@ fetch(url)
       window["console"].log(
         "%c" + "glsl.app build: " + buildTime,
         // @note fun fact i had to open dev tool for dev tool to debug this console message style
-        `background: black url(${result}) center/contain no-repeat; color: cyan; text-shadow: 0 0 1px black; font-weight: bold; padding-top: 8rem; padding-inline: 0.5rem; border-radius: 0.5rem;`
+        `background: black url(${result}) center/contain no-repeat; color: cyan; text-shadow: 0 0 1px black; font-weight: bold; padding-top: 12rem; padding-inline: 0.5rem; border-radius: 0.5rem;`
       );
     };
     fr.readAsDataURL(b);

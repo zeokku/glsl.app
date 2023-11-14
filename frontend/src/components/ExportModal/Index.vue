@@ -159,19 +159,23 @@ const onTextareaClick = (e: PointerEvent<HTMLTextAreaElement>) => {
 let glowItems: NodeListOf<HTMLDivElement>;
 
 onMounted(() => {
+  console.log("export modal mounted");
+
   glowItems = exportContentRef!.querySelectorAll<HTMLDivElement>(
     "." + $cssModule["App__glow-element-wrap"]
   );
 });
 
-watch(useMouse(), mouse => {
+const mouse = useMouse();
+
+watch(mouse, () => {
   if (!glowItems) return;
   // @note !!! don't use scrollTop because it causes reflow, so it's very laggy...
   glowItems.forEach(g => updateElGlow(g, mouse));
 });
 
 const onScroll = () => {
-  glowItems.forEach(g => updateElGlow(g, useMouse(), true));
+  glowItems.forEach(g => updateElGlow(g, mouse, true));
 };
 </script>
 

@@ -2,6 +2,6 @@
   "arrowParens": "avoid",
   "endOfLine": "auto",
   "printWidth": 100,
-  "tabWidth": 2,
+  "tabWidth": 4,
   "useTabs": false
 }

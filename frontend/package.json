@@ -36,7 +36,7 @@
     "dotenv": "^16.3.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "sitemap": "^7.1.1",
-    "typescript": "^5.1.6",
+    "typescript": "^5.2.2",
     "vite": "^4.4.4",
     "vite-plugin-pwa": "^0.14.7",
     "vite-plugin-ssr": "^0.4.133",

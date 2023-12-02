@@ -56,6 +56,7 @@ import { ExtractUnion } from '@/utils';
 import parsedLygia from '@/glsl-lang/parsedLygia.json'
 import { useQuery } from '@urql/vue';
 import { graphql } from '@/gql';
+import debounce from 'lodash.debounce';
 
 
 // @note 'monaco-editor/esm/vs/editor/contrib/message/browser/messageController.js'
@@ -2331,6 +2332,7 @@ onMounted(async () => {
                     let ast = includesAstCache.get(path);
 
                     if (!ast) {
+                        console.log('parse include', path)
                         ast = parse(code!);
                         includesAstCache.set(path, ast);
                     }
@@ -2919,9 +2921,9 @@ onMounted(async () => {
         }
 
         editorInstance.onDidChangeModelContent(
-            throttle(
+            debounce(
                 onChangeModelContent,
-                250,
+                1000,
                 {
                     leading: false,
                     trailing: true,

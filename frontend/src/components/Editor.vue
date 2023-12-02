@@ -25,7 +25,9 @@ import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import throttle from 'lodash.throttle'
 
 import type { FunctionNode, FunctionPrototypeNode, IdentifierNode, KeywordNode, ParameterDeclarationNode, ParameterDeclaratorNode, Program, StructNode, TypeSpecifierNode, LocationInfo, Scope, AstNode } from '@shaderfrog/glsl-parser/ast';
-import { parse, generate } from '@shaderfrog/glsl-parser'
+import { type parse, generate } from '@shaderfrog/glsl-parser'
+
+import workerParse from '@/workerParse?worker'
 
 ///
 
@@ -75,6 +77,19 @@ const props = defineProps<{ infoLog: string }>();
 const scope = getCurrentScope()!;
 
 let editorContainer = $shallowRef<HTMLDivElement>();
+
+const parser = new workerParse();
+
+const parseAsync = (code: string) => {
+    return new Promise<ReturnType<typeof parse>>((resolve, reject) => {
+        parser.onmessage = ({data}) => {
+            if(data) resolve(data);
+            else reject();
+        }
+    
+        parser.postMessage(code);
+    })
+}
 
 onMounted(async () => {
     self.MonacoEnvironment = {
@@ -2305,7 +2320,11 @@ onMounted(async () => {
         const onChangeModelContent = async () => {
             let linesContent = model.getLinesContent();
 
+            performance.mark('process-includes-start')
+
             let processedCode = await processIncludes(linesContent, currentIncludesData)
+
+            console.log(performance.measure('processed-code', 'process-includes-start'))
 
             emit('change', processedCode)
 
@@ -2325,6 +2344,8 @@ onMounted(async () => {
                 let fullModelRange = model.getFullModelRange();
                 let fullModelEndPosition = fullModelRange.getEndPosition();
 
+                performance.mark('parse-includes-start')
+
                 // @note labels O_O
                 parse_includes: for (let [line, height, path, code, error] of currentIncludesData) {
                     if (error) continue parse_includes;
@@ -2333,7 +2354,7 @@ onMounted(async () => {
 
                     if (!ast) {
                         console.log('parse include', path)
-                        ast = parse(code!);
+                        ast = await parseAsync(code!);
                         includesAstCache.set(path, ast);
                     }
 
@@ -2366,9 +2387,16 @@ onMounted(async () => {
                 }
 
 
-                editorAst = parse(model.getValue(), { includeLocation: true });
+                console.log(performance.measure('parsed-includes', 'parse-includes-start'))
+
+                performance.mark('parse-model-start')
+
+                // @note use worker
+                editorAst = await parseAsync(model.getValue())
+                // editorAst = parse(model.getValue(), { includeLocation: true });
                 // console.log(ast.scopes)
 
+                console.log(performance.measure('parsed-model', 'parse-model-start'))
 
                 // @note clear everything ONLY AFTER everythings was parsed successfully
                 // so we don't lose stuff while typing
@@ -2923,7 +2951,7 @@ onMounted(async () => {
         editorInstance.onDidChangeModelContent(
             debounce(
                 onChangeModelContent,
-                1000,
+                500,
                 {
                     leading: false,
                     trailing: true,

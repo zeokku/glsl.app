@@ -1,8 +1,10 @@
+/// <reference lib="webworker" />
+
 let gl: WebGL2RenderingContext;
 
 interface IInitMessage {
     type: "init";
-    canvas: OffscreenCanvas;
+    offscreen: OffscreenCanvas;
 }
 
 interface IResolutionMessage {
@@ -21,58 +23,78 @@ interface IFragmentMessage {
     source: string;
 }
 
-type TMessages = IInitMessage | IResolutionMessage | IMouseMessage | IFragmentMessage;
+interface ITextureMessage {
+    type: "texture";
+    image: ImageBitmap;
+    index: number;
+}
 
-self.onmessage = ({ data }: { data: TMessages }) => {
+type TMessages =
+    | IInitMessage
+    | IResolutionMessage
+    | IMouseMessage
+    | IFragmentMessage
+    | ITextureMessage;
+
+let glShared: typeof import("./shared");
+
+onmessage = async ({ data }: { data: TMessages }) => {
     switch (data.type) {
         case "init":
             {
-                // @todo test logic of unsupported webgl2 with nonexistent name
+                const { offscreen } = data;
+                // @note using inexistent context identifier will lead to an exception, which is weird since according to docs it should instead return null
+                // requesting webgl2 on older ios versions where webgl2 is not supported in workers will return `null` following the specification
                 try {
-                    gl = data.canvas.getContext("webgl2")!;
+                    gl = offscreen.getContext("webgl2")!;
                 } catch {}
 
                 if (gl) {
-                    import("./shared").then(({ init, canvasFps }) => {
-                        init(gl);
+                    // @note load and save shared logic module
+                    glShared = await import("./shared");
 
-                        requestAnimationFrame(function cb() {
-                            requestAnimationFrame(cb);
+                    let { init, canvasFps } = glShared;
 
-                            self.postMessage({ type: "fps", fps: canvasFps.value });
-                        });
+                    init(gl);
+
+                    requestAnimationFrame(function cb() {
+                        requestAnimationFrame(cb);
+
+                        postMessage({ type: "fps", fps: canvasFps.value });
                     });
 
-                    self.postMessage({ type: "init" });
+                    postMessage({ type: "init" });
                 } else {
-                    self.postMessage({ type: "init", error: "WebGL2 is not supported in worker" });
+                    // @note mostly used on ios if webgl is not supported in worker, so pass offscreen back to main thread to work on it
+                    postMessage({ type: "init", offscreen }, [offscreen]);
+
+                    close();
                 }
             }
             break;
 
         case "resolution":
             {
-                import("./shared").then(({ updateResolution }) => {
-                    updateResolution(data.width, data.height);
-                });
+                glShared.updateResolution(data.width, data.height);
             }
             break;
 
         case "mouse":
             {
-                import("./shared").then(({ updateMouse }) => {
-                    updateMouse(data.mouse);
-                });
+                glShared.updateMouse(data.mouse);
             }
             break;
 
         case "fragment":
             {
-                import("./shared").then(({ updateFragment }) => {
-                    let result = updateFragment(data.source);
+                let result = glShared.updateFragment(data.source);
 
-                    self.postMessage({ type: "fragment", result });
-                });
+                postMessage({ type: "fragment", result });
+            }
+            break;
+        case "texture":
+            {
+                glShared.updateTexture(data.image, data.index);
             }
             break;
     }

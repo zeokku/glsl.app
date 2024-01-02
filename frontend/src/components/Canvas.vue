@@ -1,6 +1,6 @@
 <template lang="pug">
 .canvas-wrap(v-movable)
-    canvas(ref="canvasRef" @mousemove="onMouseMove" @contextmenu.prevent :key="canvasKey")
+    canvas(ref="canvasRef" @mousemove="onMouseMove" @contextmenu.prevent)
 </template>
 
 <script lang="ts">
@@ -15,7 +15,13 @@ import throttle from "lodash.throttle";
 import { onMounted, onUpdated, watch } from "vue";
 
 import { TEXTURE_SOURCES_LENGTH, TTextureSource, textureSourceRefs } from "./TexturesModal.vue";
-import { initGl, updateFragment, updateMouse, updateResolution } from "@/gl/glContext";
+import {
+    initGl,
+    updateFragment,
+    updateMouse,
+    updateResolution,
+    updateTexture,
+} from "@/gl/glContext";
 
 const emit = defineEmits<{
     (e: "compile", infoLog: string): void;
@@ -25,15 +31,13 @@ const props = defineProps<{
     shaderCode: string;
 }>();
 
-let canvasKey = $shallowRef<string>();
-
 // @note onUpdated may fire before the init finished
-let initPromise: Promise<unknown>;
+let initGlPromise: Promise<unknown>;
 
 onMounted(async () => {
-    initPromise = initGl($$(canvasRef!), $$(canvasKey));
+    initGlPromise = initGl(canvasRef!);
 
-    await initPromise;
+    await initGlPromise;
 
     const resizeObserver = new ResizeObserver(
         throttle<ResizeObserverCallback>(
@@ -51,87 +55,36 @@ onMounted(async () => {
     resizeObserver.observe(canvasRef!);
 });
 
-let currentTexturesDataArray = Array.from({
-    length: TEXTURE_SOURCES_LENGTH,
-}).map<[el?: TTextureSource, texture?: WebGLTexture]>(() => []);
+let cachedTextureElements = Array.from<TTextureSource>({ length: 16 });
 
 watch(textureSourceRefs, async () => {
     console.log("watch texture source refs");
 
-    if (!gl) return;
+    await initGlPromise;
 
-    textureSourceRefs.forEach((el, i) => {
+    textureSourceRefs.forEach(async (el, i) => {
         // @note the @bug with updating only single element was propagated to entire array
         // was caused by improper Array.fill(["", null])
         // all array elements were assigned to the same tuple reference
-        let textureData = currentTexturesDataArray[i];
-        let [savedEl, texture] = textureData;
-        // console.log(i, url, textureData, currentTexturesDataArray);
+        //
+
+        let cachedEl = cachedTextureElements[i];
 
         // slot is defined and element has been initialized or changed
-        if (el && savedEl !== el) {
-            console.log("update texture", i, el);
+        // cached and el will be only different if:
+        //     1. empty slot is initialized for the first time
+        //     2. type of source is changed (img <-> video)
+        // subsequent img / video changes won't trigger this code, instead the textures will be updated in on image load / on next frame
+        if (el && cachedEl !== el) {
+            console.log("Update texture", i, el);
 
-            if (savedEl && "raf" in savedEl) {
-                console.log("cancel frame", savedEl.raf);
-                cancelAnimationFrame(savedEl.raf);
+            if (cachedEl && "raf" in cachedEl) {
+                console.log("Cancel frame", cachedEl.raf);
+
+                cancelAnimationFrame(cachedEl.raf);
             }
 
-            textureData[0] = el;
-
-            // @note create new texture units lazily instead of initializing entire array with them from start
-            if (!texture) {
-                texture = textureData[1] = gl.createTexture()!;
-
-                // select texture unit
-                gl.activeTexture(gl.TEXTURE0 + i);
-                // bind texture within selected unit
-                gl.bindTexture(gl.TEXTURE_2D, texture);
-                /*
-          from: https://stackoverflow.com/questions/75976623/     how-to-use-gl-texture-2d-array-for-binding-multiple-textures-as-array
-
-          "You also need to set GL_TEXTURE_MAG_FILTER because the initial value of      GL_TEXTURE_MIN_FILTER is GL_NEAREST_MIPMAP_LINEAR. If you don't change it and     don't create mipmaps, the texture will not be "complete" and will not be "shown".     "
-        */
-                // gl.generateMipmap(gl.TEXTURE_2D);
-                // OR
-                // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            }
-
-            const uploadTexture = () => {
-                // const { naturalWidth: width, naturalHeight: height } = image;
-
-                gl.activeTexture(gl.TEXTURE0 + i);
-                // gl.activeTexture(gl[`TEXTURE${i}`]);
-
-                gl.bindTexture(gl.TEXTURE_2D, texture!);
-
-                gl.texImage2D(
-                    //
-                    gl.TEXTURE_2D,
-                    0,
-                    gl.RGBA,
-                    gl.RGBA,
-                    gl.UNSIGNED_BYTE,
-                    el
-                );
-
-                // @note sampler array requires all textures be of the same size???
-                // gl.texImage3D(
-                //   gl.TEXTURE_2D_ARRAY,
-                //   0,
-                //   gl.RGBA,
-                //   image.naturalWidth,
-                //   image.naturalHeight,
-                //   1,
-                //   0,
-                //   gl.RGBA,
-                //   gl.UNSIGNED_BYTE,
-                //   image
-                // );
-            };
+            cachedTextureElements[i] = el;
 
             const isVideo = (el: HTMLElement): el is HTMLVideoElement & { raf: number } =>
                 el.tagName === "VIDEO";
@@ -141,10 +94,16 @@ watch(textureSourceRefs, async () => {
                     // @note remove canplay listener, because it will be fired again when video loops
                     el.oncanplay = null;
 
-                    requestAnimationFrame(function frame() {
+                    requestAnimationFrame(async function frame() {
                         el.raf = requestAnimationFrame(frame);
 
-                        uploadTexture();
+                        updateTexture(
+                            // @note for some reason pixelStorei has no effect on this unless we specify flipY in creation options
+                            await createImageBitmap(el, {
+                                imageOrientation: "flipY",
+                            }),
+                            i
+                        );
                     });
                 };
 
@@ -159,18 +118,30 @@ watch(textureSourceRefs, async () => {
                 el.onpause = () => el.play();
             } else {
                 // @note if it's already complete, onload won't fire for this image
-                if (el.complete) uploadTexture();
+                if (el.complete)
+                    updateTexture(
+                        await createImageBitmap(el, {
+                            imageOrientation: "flipY",
+                        }),
+                        i
+                    );
 
                 // @note when you change image source, <img> element remains the same
                 // only src attribute changes, so onload event will fire again
-                el.onload = uploadTexture;
+                el.onload = async () =>
+                    updateTexture(
+                        await createImageBitmap(el, {
+                            imageOrientation: "flipY",
+                        }),
+                        i
+                    );
             }
         }
     });
 });
 
 onUpdated(async () => {
-    await initPromise;
+    await initGlPromise;
 
     let log = await updateFragment(props.shaderCode);
 

@@ -781,6 +781,7 @@ onMounted(async () => {
 
                 let suggestions: languages.CompletionItem[] = [];
 
+                // @todo dynamically load and parse lygia defs
                 let obj = parsedLygia;
 
                 path.forEach(p => {
@@ -791,7 +792,7 @@ onMounted(async () => {
                     let items = Object.keys(obj);
 
                     items.forEach(i => {
-                        let isDir = obj[i];
+                        let isDir = Object.keys(obj[i]).length !== 0;
 
                         suggestions.push({
                             label: i,

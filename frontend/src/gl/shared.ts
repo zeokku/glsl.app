@@ -19,7 +19,7 @@ export const init = (ctx: WebGL2RenderingContext) => {
 
     // @note since we pull data from DOM img element Y axis is inverted
     // @note @todo for some reason this has no effect if using ImageBitmap as texture source
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     gl.clearColor(0, 0, 0, 0);
 
@@ -209,6 +209,15 @@ export const updateTexture = (image: ImageBitmap, index: number) => {
         gl.activeTexture(gl.TEXTURE0 + index);
         // bind texture within selected unit
         gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        ////
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
         /*
   from: https://stackoverflow.com/questions/75976623/     how-to-use-gl-texture-2d-array-for-binding-multiple-textures-as-array
 
@@ -216,10 +225,9 @@ export const updateTexture = (image: ImageBitmap, index: number) => {
 */
         // gl.generateMipmap(gl.TEXTURE_2D);
         // OR
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     }
 
     // const { naturalWidth: width, naturalHeight: height } = image;
@@ -238,6 +246,9 @@ export const updateTexture = (image: ImageBitmap, index: number) => {
         gl.UNSIGNED_BYTE,
         image
     );
+
+    // @note generate mipmaps after data is loaded
+    gl.generateMipmap(gl.TEXTURE_2D);
 
     // @note sampler array requires all textures be of the same size???
     // gl.texImage3D(

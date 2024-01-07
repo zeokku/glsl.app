@@ -75,13 +75,14 @@ onmessage = async ({ data }: { data: TMessages }) => {
 
         case "resolution":
             {
-                glShared.updateResolution(data.width, data.height);
+                glShared?.updateResolution(data.width, data.height);
             }
             break;
 
         case "mouse":
             {
-                glShared.updateMouse(data.mouse);
+                // @note this can be triggered before gl context is initialized
+                glShared?.updateMouse(data.mouse);
             }
             break;
 

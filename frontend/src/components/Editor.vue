@@ -78,11 +78,31 @@ const scope = getCurrentScope()!;
 
 let editorContainer = $shallowRef<HTMLDivElement>();
 
-const parser = new workerParse();
+let parser = new workerParse();
+// let isParsing = false;
 
 const parseAsync = (code: string) => {
+    // @note typically parsing shouldn't take longer than debounced input
+    // but in case it does there's an interesting concept of terminating the thread so 
+    // main thread won't wait for the completion of previous parsing request
+
+    // previous parsing request hasn't completed,
+    // so terminate the worker and reinstate it
+    // if(isParsing){
+    //     parser.terminate();
+        
+    //     console.log('parsing worker terminated')
+    //     performance.mark('parsing-worker-terminated')
+
+    //     parser = new workerParse();
+    // }
+    
+    // isParsing = true;
+
     return new Promise<ReturnType<typeof parse>>((resolve, reject) => {
         parser.onmessage = ({data}) => {
+            // isParsing = false;
+            
             if(data) resolve(data);
             else reject();
         }
@@ -2399,7 +2419,7 @@ onMounted(async () => {
 
                 console.log(performance.measure('parsed-model', 'parse-model-start'))
 
-                // @note clear everything ONLY AFTER everythings was parsed successfully
+                // @note clear everything ONLY AFTER everything was parsed successfully
                 // so we don't lose stuff while typing
                 dynamicFunctionDefinitionsData.clear();
                 dynamicDefinitionsData.length = 0;

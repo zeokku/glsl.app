@@ -140,6 +140,7 @@ watch(textureSourceRefs, async () => {
     });
 });
 
+// @note it's also called when props change
 onUpdated(async () => {
     await initGlPromise;
 

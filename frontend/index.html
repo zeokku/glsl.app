@@ -23,10 +23,6 @@
     <script>
       let requestedLang = new URL(location).searchParams.get("lang")?.split("-")?.[0];
 
-      let title = document.querySelector("title");
-      let description = document.querySelector("meta[name=description]");
-      let twitterDescription = document.querySelector("meta[name='twitter:description']");
-
       let locales = {
         ru: [
           "Онлайн WebGL (GLSL) Редактор Шейдеров и Песочница",
@@ -44,9 +40,16 @@
 
       if (requestedLang in locales) {
         document.documentElement.setAttribute("lang", requestedLang);
-        title.innerText = locales[requestedLang][0];
-        description.setAttribute("content", locales[requestedLang][1]);
-        twitterDescription.setAttribute("content", locales[requestedLang][1]);
+        document
+          .querySelector("[rel=canonical]")
+          .setAttribute("href", "https://glsl.app?lang=" + requestedLang);
+        document.querySelector("title").innerText = locales[requestedLang][0];
+        document
+          .querySelector("meta[name=description]")
+          .setAttribute("content", locales[requestedLang][1]);
+        document
+          .querySelector("meta[name='twitter:description']")
+          .setAttribute("content", locales[requestedLang][1]);
       }
     </script>
   </head>

@@ -34,8 +34,7 @@ import workerParse from '@/workerParse?worker'
 // import defaultShader from '../defaultShader';
 import defaultShader from '@/default.frag?raw';
 
-import { IIncludesData, checkForDependency } from '../processIncludes';
-import { resolvePath, processIncludes } from '../processIncludes';
+import { type IIncludesData, checkForDependency, resolvePath, processIncludes } from '@/processIncludes';
 
 import { staticSuggestions, CustomCompletionItemKind, AutocompletionOrder } from '@/glsl-lang/staticSuggestions';
 import parsedOpenGLDocs from '@/glsl-lang/parsedOpenGLDocs';
@@ -72,7 +71,7 @@ const emit = defineEmits<{
     (event: 'change', code: string): void
 }>();
 
-const props = defineProps<{ infoLog: string }>();
+const props = defineProps<{ infoLog: String }>();
 
 const scope = getCurrentScope()!;
 

@@ -88,6 +88,7 @@ let renameBindings: typeof import("@shaderfrog/glsl-parser/utils").renameBinding
 
 let promises = [
   import("@/components/Editor.vue").then(module => ({ getModel } = module)),
+  // @todo utilize async parser
   import("@shaderfrog/glsl-parser").then(module => ({ parse, generate } = module)),
   import("@shaderfrog/glsl-parser/utils").then(module => ({ renameBindings } = module)),
 ];

@@ -13,10 +13,33 @@
         div(ref="fpsPaneContainer")
         //- | {{ 'FPS: ' + canvasFps.toFixed(2) }}
         //- @todo canvas resolution
+
+
+    Button(@click="onRecompile")
+      template(#icon) 
+          apps-icon
+      | {{ t('compile') }}
+    
+    label.manual-recompilation
+      input(type="checkbox" v-model="isManualRecompilation")
+      | Manual Recompilation
     
     Modal(:visible="modalVisible" @close="modalVisible = false")
         textures-modal
 </template>
+
+<script lang="ts">
+export let isManualRecompilation = shallowRef<boolean>(false);
+
+import { compileShader } from "@/App.vue";
+import type { editor as MonacoEditor } from "monaco-editor";
+
+let getModel: () => MonacoEditor.ITextModel;
+import("@/components/Editor.vue").then(module => ({ getModel } = module));
+
+let processIncludes: typeof import("@/processIncludes").processIncludes;
+import("@/processIncludes").then(module => ({ processIncludes } = module));
+</script>
 
 <script setup lang="ts">
 /*
@@ -25,7 +48,7 @@ saved status
 compile status
 fps
 */
-import { onMounted, watch } from "vue";
+import { onMounted, shallowRef, watch } from "vue";
 
 import { shaderName } from "@/App.vue";
 import { canvasFps } from "@/components/Canvas.vue";
@@ -35,6 +58,7 @@ import { updateElGlow } from "@/stylingUtils/updateGlow";
 
 import Button from "+/MenuBar/Button.vue";
 import ImageIcon from "+/icons/image.vue";
+import AppsIcon from "+/icons/apps.vue";
 
 import Modal from "+/Modal.vue";
 import TexturesModal from "+/TexturesModal.vue";
@@ -51,10 +75,12 @@ const { t } = useI18n();
 watch(useMouse(), mouse => {
   if (!info) return;
 
-  let [input, textures] = info.children;
+  // @todo refactor
+  let [input, textures, , compile] = info.children;
 
   updateElGlow(input, mouse);
   updateElGlow(textures, mouse);
+  updateElGlow(compile, mouse);
 });
 
 onMounted(() => {
@@ -86,6 +112,13 @@ const onTexturesOpen = () => {
   modalVisible = true;
 };
 
+const onRecompile = async () => {
+  if (!getModel || !processIncludes) return;
+
+  // @todo refactor Editor
+  compileShader(await processIncludes(getModel().getLinesContent()));
+};
+
 window.addEventListener("dragenter", () => {
   modalVisible = true;
 });
@@ -104,7 +137,7 @@ window.addEventListener("dragenter", () => {
 }
 
 .fps-indicator {
-  font-style: italic;
+  // font-style: italic;
 
   display: flex;
   align-items: center;
@@ -113,5 +146,14 @@ window.addEventListener("dragenter", () => {
 
 .input-wrap {
   width: 18em;
+}
+
+.manual-recompilation {
+  display: flex;
+  align-items: center;
+
+  white-space: nowrap;
+
+  text-transform: uppercase;
 }
 </style>

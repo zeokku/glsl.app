@@ -292,8 +292,5 @@ if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   gap: 1em;
 
   list-style: none;
-
-  // @note make it scrollable on narrow layout
-  overflow-x: auto;
 }
 </style>

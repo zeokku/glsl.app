@@ -24,6 +24,8 @@ section.textures-modal.CModal__content(@scroll="onScroll")
 
 <script lang="ts">
 import { shallowReactive, watch } from "vue";
+import { glInitialization } from "./Canvas.vue";
+import { updateTexture } from "@/gl/glContext";
 
 // 7.3 Built-In Constants
 // min guaranteed 16 textures
@@ -128,6 +130,91 @@ const openFilePicker = (index: number) => {
 
   fileInput.click();
 };
+
+let cachedTextureElements = Array.from<TTextureSource>({ length: 16 });
+
+watch(textureSourceRefs, async () => {
+  console.log("watch texture source refs");
+
+  await glInitialization;
+
+  textureSourceRefs.forEach(async (el, i) => {
+    // @note the @bug with updating only single element was propagated to entire array
+    // was caused by improper Array.fill(["", null])
+    // all array elements were assigned to the same tuple reference
+    //
+
+    let cachedEl = cachedTextureElements[i];
+
+    // slot is defined and element has been initialized or changed
+    // cached and el will be only different if:
+    //     1. empty slot is initialized for the first time
+    //     2. type of source is changed (img <-> video)
+    // subsequent img / video changes won't trigger this code, instead the textures will be updated in on image load / on next frame
+    if (el && cachedEl !== el) {
+      console.log("Update texture", i, el);
+
+      if (cachedEl && "raf" in cachedEl) {
+        console.log("Cancel frame", cachedEl.raf);
+
+        cancelAnimationFrame(cachedEl.raf);
+      }
+
+      cachedTextureElements[i] = el;
+
+      const isVideo = (el: HTMLElement): el is HTMLVideoElement & { raf: number } =>
+        el.tagName === "VIDEO";
+
+      if (isVideo(el)) {
+        const uploadVideoUpdates = () => {
+          // @note remove canplay listener, because it will be fired again when video loops
+          el.oncanplay = null;
+
+          requestAnimationFrame(async function frame() {
+            el.raf = requestAnimationFrame(frame);
+
+            updateTexture(
+              // @note for some reason pixelStorei has no effect on this unless we specify flipY in creation options
+              await createImageBitmap(el, {
+                imageOrientation: "flipY",
+              }),
+              i
+            );
+          });
+        };
+
+        // @note only either of these should be processed
+        // since we update video each frame
+        // change of src will be handled automatically
+        if (el.readyState === /* HAVE_ENOUGH_DATA */ 4) uploadVideoUpdates();
+        else el.oncanplay = uploadVideoUpdates;
+
+        // @note when modal is closed video is automatically paused
+        // so force play state when it's paused, so it doesn't pause again
+        el.onpause = () => el.play();
+      } else {
+        // @note if it's already complete, onload won't fire for this image
+        if (el.complete)
+          updateTexture(
+            await createImageBitmap(el, {
+              imageOrientation: "flipY",
+            }),
+            i
+          );
+
+        // @note when you change image source, <img> element remains the same
+        // only src attribute changes, so onload event will fire again
+        el.onload = async () =>
+          updateTexture(
+            await createImageBitmap(el, {
+              imageOrientation: "flipY",
+            }),
+            i
+          );
+      }
+    }
+  });
+});
 
 //#region border glow
 

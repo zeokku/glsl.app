@@ -26,7 +26,7 @@
     button {
         display: flex;
 
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         justify-content: center;
 
         // @note smaller vertical gap, when text wraps

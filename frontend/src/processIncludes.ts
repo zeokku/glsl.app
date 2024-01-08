@@ -106,9 +106,16 @@ export const checkForDependency = (line: string) => {
   return extractDependencyPath(line.slice(dependencyRegex.lastIndex));
 };
 
+/**
+ *
+ * @param shaderLines
+ * @param currentIncludesData output variable to store includes data for the provided shader code
+ * @param meta
+ * @returns
+ */
 export const processIncludes = async (
   shaderLines: Array<string>,
-  currentIncludesData: Array<IIncludesData> | null,
+  currentIncludesData?: Array<IIncludesData> | null,
   meta?: IDependencyMeta
 ) => {
   if (currentIncludesData) currentIncludesData.length = 0;

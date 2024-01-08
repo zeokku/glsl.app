@@ -262,6 +262,12 @@ const onShaderCodeChange = (code: string) => {
 </style>
 
 <style lang="less">
+:root {
+  font-family:
+    Open sans,
+    sans-serif;
+}
+
 #app {
   display: flex;
   flex-flow: column;

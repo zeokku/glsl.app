@@ -19,7 +19,7 @@ menu.menu(ref="menu" @scroll="onScroll")
         Button(@click="onShareLinkClick") 
             template(#icon) 
                 Link
-            | {{ t('link') }}
+            | {{ t('share') }}
     li
         Button(@click="onOptionsClick")
             template(#icon) 
@@ -54,14 +54,12 @@ menu.menu(ref="menu" @scroll="onScroll")
         Button(@click="onChangelogClick")
             template(#icon)
                 Log
-            | Changelog
+            | {{ t('changelog') }}
     Modal(:visible="modalVisible" @close="modalVisible = false")
         component(:is="currentModalComponent")
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "petite-vue-i18n";
-
 import Button from "./Button.vue";
 
 import Plus from "+/icons/diff-added.vue";
@@ -78,6 +76,7 @@ import Log from "+/icons/log.vue";
 import Modal from "+/Modal.vue";
 
 import { getCurrentScope, onMounted, watch } from "vue";
+import { useI18n } from "petite-vue-i18n";
 import { useMouse } from "@/composition/useMouse";
 import { getRadiusOffset, updateElGlow } from "@/stylingUtils/updateGlow";
 import { createdTimestamp, shaderName } from "@/App.vue";

@@ -2,10 +2,10 @@
 section.textures-modal.CModal__content(@scroll="onScroll")
     h1.App__font-shade {{ t('textures') }} 
     section.CShadersListModal_Index__grid(ref="grid")
-        .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(t, i) in textureUrlArray")
+        .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(tex, i) in textureUrlArray")
             //- @note bruh @dragover is required?
             .CShadersListModal_Item__item.App__glow-element(@click="openFilePicker(i)" @dragover="onDragOver" @dragleave="onDragLeave" @drop.prevent.stop="onDrop($event, i)")
-                component.slot.CShadersListModal_Item__view(v-if="t" :ref="el => setTextureSourceRef(el, i)" :is="t.isVideo ? 'video' : 'img'" :src="t" v-bind.attr=`t.isVideo && {
+                component.slot.CShadersListModal_Item__view(v-if="tex" :ref="el => setTextureSourceRef(el, i)" :is="t.isVideo ? 'video' : 'img'" :src="tex" v-bind.attr=`tex.isVideo && {
                   loop: true,
                   muted: true,
                   autoplay: true,
@@ -14,9 +14,10 @@ section.textures-modal.CModal__content(@scroll="onScroll")
                 .slot.CShadersListModal_Item__view(v-else)
                     .placeholder 
                         span
-                            b Select media
+                            //- @note because v-for used t as variable it replaced the localization function
+                            b {{ t('select-media') }}
                             | 
-                            | or drag and drop
+                            | {{ t('or-dnd') }}
                 .CShadersListModal_Item__title 
                     span Texture {{ i }}
     
@@ -45,8 +46,6 @@ export const textureSourceRefs = shallowReactive<Array<TTextureSource | undefine
 import { useMouse } from "@/composition/useMouse";
 import { updateElGlow } from "@/stylingUtils/updateGlow";
 import { useI18n } from "petite-vue-i18n";
-
-const props = defineProps<{}>();
 
 const { t } = useI18n();
 

@@ -1,7 +1,7 @@
 <template lang="pug">
 .info(ref="info")
     .input-wrap.App__input-wrap.App__glow-element-wrap
-        input.name-input.App__glow-element(v-model="shaderName")
+        input.name-input.App__glow-element(v-model="shaderName" :title="t('shader-name')")
     
     Button(@click="onTexturesOpen")
         template(#icon) 
@@ -22,7 +22,7 @@
     
     label.manual-recompilation
       input(type="checkbox" v-model="isManualRecompilation")
-      | Manual Recompilation
+      | {{ t('manual-recomp') }}
     
     Modal(:visible="modalVisible" @close="modalVisible = false")
         textures-modal

@@ -1,16 +1,26 @@
+# casing doesn't matter
+
 #region menu bar
 # create new shader
 new: New
 # open a list of saved shaders
 load: Load
-share: Share
 export: Export
+share: Share
 options: Options
 fullscreen: Fullscreen
 # support the author
 donate: Donate
+changelog: Changelog
 
 link-copied: Link copied into the clipboard
+#endregion
+
+#region info bar
+textures: textures
+shader-name: Name of the current shader
+compile: Compile
+manual-recomp: manual recompilation
 #endregion
 
 #region load modal
@@ -18,16 +28,19 @@ delete-shader: Delete shader
 #endregion
 
 #region export modal
-# Expand #include directives
+# "Expand #include directives"
 expand: Expand
 directives: directives
 
 # Replace <...> #includes by "..."
 replace: Replace
-by: "#includes by"
+by: by
 
 rename-symbols: Rename symbols
+
+# these two probably shouldn't be translated
 inputs: Inputs
+# uniform shouldn't be translated explicitly either transliterated and added plural
 uniforms: Uniforms
 
 result: Result code
@@ -40,11 +53,17 @@ shader-copied: Shader code copied into the clipboard
 
 #region options modal
 offline-link: Use Offline method for generating shareable links
-npm: NPM Packages Provider
-cache: Cache packages on local storage (so they can be used offline)
+npm: NPM Modules Provider
+cache: Cache modules on local storage (so they can be used offline)
 clear-cache: Clear Offline Cache
 #endregion
 
 #region donate modal
 address-copied: Address copied into the clipboard
 #endregion
+
+#region textures modal
+# these two are one sentence the reason it's split because 'select-media' is highlighted
+select-media: Select media
+or-dnd: or drag and drop
+

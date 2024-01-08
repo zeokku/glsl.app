@@ -15,11 +15,32 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["@intlify/unplugin-vue-i18n/messages"],
+    "types": [
+      //
+      "@intlify/unplugin-vue-i18n/messages",
+      "unplugin-vue-macros/macros-global"
+    ],
     "paths": {
       "@/*": ["src/*"],
       "+/*": ["src/components/*"],
       "vite/*": ["node_modules/vite/*"]
+    },
+    "vueCompilerOptions": {
+      "plugins": [
+        "@vue-macros/volar/define-options",
+        "@vue-macros/volar/define-models",
+        "@vue-macros/volar/define-props",
+        "@vue-macros/volar/define-props-refs",
+        "@vue-macros/volar/short-vmodel",
+        "@vue-macros/volar/define-slots",
+        "@vue-macros/volar/jsx-directive",
+        "@vue-macros/volar/setup-jsdoc",
+
+        // Choose only one of the following
+        "@vue-macros/volar/export-expose"
+        // "@vue-macros/volar/export-props",
+        // "@vue-macros/volar/export-render",
+      ]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

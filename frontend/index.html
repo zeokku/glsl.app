@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -13,6 +13,42 @@
     <meta name="twitter:image" content="%img" />
     <meta name="twitter:title" content="%title" />
     <meta name="twitter:description" content="%desc" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      let requestedLang = new URL(location).searchParams.get("lang")?.split("-")?.[0];
+
+      let title = document.querySelector("title");
+      let description = document.querySelector("meta[name=description]");
+      let twitterDescription = document.querySelector("meta[name='twitter:description']");
+
+      let locales = {
+        ru: [
+          "Онлайн WebGL (GLSL) Редактор Шейдеров и Песочница",
+          "Современный онлайн-редактор и песочница шейдеров WebGL (GLSL). Создавайте шейдеры легко благодаря продвинутой поддержке IntelliSense, функциям автодополнения, возможности компоновки с библиотеками шейдеров и удобному интерфейсу для настройки значений и цветов",
+        ],
+        de: [
+          "Online WebGL (GLSL) Shader-Editor und Spielplatz",
+          "Moderner Online WebGL (GLSL) Shader-Editor und Spielplatz. Einfaches Schreiben von Shadern dank fortschrittlichem IntelliSense, Autovervollständigung, Kompatibilität mit Shader-Bibliotheken und einer benutzerfreundlichen Oberfläche zum Anpassen von Werten und Farben",
+        ],
+        ch: [
+          "在线 WebGL (GLSL) 着色器编辑器和沙箱",
+          "现代在线 WebGL (GLSL) 着色器编辑器和沙箱。 借助先进的 IntelliSense、自动完成、着色器库的可组合性以及用于调整值和颜色的用户友好界面，轻松编写着色器",
+        ],
+      };
+
+      if (requestedLang in locales) {
+        document.documentElement.setAttribute("lang", requestedLang);
+        title.innerText = locales[requestedLang][0];
+        description.setAttribute("content", locales[requestedLang][1]);
+        twitterDescription.setAttribute("content", locales[requestedLang][1]);
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

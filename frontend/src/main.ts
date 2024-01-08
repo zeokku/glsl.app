@@ -19,8 +19,13 @@ declare global {
 createApp(App) //
   .use(
     createI18n({
+      // @note remove regional modificator
+      locale: (new URL(location.toString()).searchParams.get("lang") ?? navigator.language) //
+        .split("-")[0],
       fallbackLocale: "en",
       messages,
+      // missingWarn: false,
+      // fallbackWarn: false,
     })
   )
   .use(urql, {

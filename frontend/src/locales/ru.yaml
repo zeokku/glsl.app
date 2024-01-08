@@ -1,12 +1,67 @@
 #region menu bar
-
 # create new shader
 new: Создать
-# open saved shader
-load: Загрузить
-share: Поделиться
+# open a list of saved shaders
+load: Открыть
 export: Экспорт
+share: Поделиться
 options: Настройки
+fullscreen: Полный экран
 # support the author
 donate: Поддержать
+changelog: Обновления
+
+link-copied: Ссылка скопирована в буффер обмена
 #endregion
+
+#region info bar
+textures: Текстуры
+shader-name: Название текущего шейдера
+compile: Скомпилировать
+manual-recomp: Ручная компиляция
+#endregion
+
+#region load modal
+delete-shader: Удалить шейдер
+#endregion
+
+#region export modal
+# "Expand #include directives"
+expand: Раскрыть
+directives: директивы
+
+# Replace <...> #includes by "..."
+replace: Заменить
+by: на
+
+rename-symbols: Переименовать символы
+
+# these two probably shouldn't be translated
+inputs: Inputs
+# uniform shouldn't be translated explicitly either transliterated and added plural
+uniforms: Uniforms
+
+result: Результат
+
+click: Нажмите, чтобы скопировать
+download: скачать как файл
+
+shader-copied: Шейдер скопирован в буффер обмена
+#endregion
+
+#region options modal
+offline-link: Использовать оффлайн метод для генерации ссылок на шейдеры
+npm: Провайдер NPM модулей
+cache: Кэшировать модули в локальном хранилище (чтобы их можно было использовать оффлайн)
+clear-cache: Очистить оффлайн кэш
+#endregion
+
+#region donate modal
+address-copied: Адрес скопирован в буффер обмена
+#endregion
+
+#region textures modal
+# these two are one sentence the reason it's split because 'select-media' is highlighted
+select-media: Выбрать медиа
+or-dnd: или перетащите файл сюда
+

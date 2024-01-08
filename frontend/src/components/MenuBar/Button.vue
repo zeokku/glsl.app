@@ -26,7 +26,9 @@
     display: flex;
 
     // flex-wrap: wrap;
-    justify-content: center;
+    // justify-content: center;
+
+    align-items: center;
 
     // @note smaller vertical gap, when text wraps
     gap: 0.3em 0.5em;
@@ -42,6 +44,7 @@
 
     text-transform: uppercase;
     font-weight: bold;
+    white-space: nowrap;
   }
 
   svg {

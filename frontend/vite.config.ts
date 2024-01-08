@@ -5,11 +5,17 @@ import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import VueMacros from "unplugin-vue-macros/vite";
 
+import { minify as minifyHtml } from "html-minifier-terser";
+
 import cssm, { removeCssModulesChunk } from "vite-plugin-vue-css-modules";
 
 import { visualizer } from "rollup-plugin-visualizer";
 
 import { resolve } from "path";
+
+const title = "Online WebGL (GLSL) Shaders Editor and Playground";
+const description =
+  "Modern Online WebGL (GLSL) Shaders Editor and Playground. Write shaders with ease thanks to advanced IntelliSense, autocompletion features, composability with shader libraries and a user-friendly interface for tweaking values and colors";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -37,10 +43,9 @@ export default defineConfig(({ command }) => ({
     pwa({
       registerType: "autoUpdate",
       manifest: {
-        name: "GLSL Shader Editor",
+        name: title,
         short_name: "GLSL Editor",
-        description:
-          "Modern GLSL shader editor with syntax highlighting, autocompletion and code includes",
+        description,
         icons: [
           {
             src: "/icon-512.png",
@@ -75,15 +80,31 @@ export default defineConfig(({ command }) => ({
     },
 
     {
-      name: "Index.html",
+      name: "html:index-meta",
       transformIndexHtml(html) {
         return html
-          .replaceAll("%title", "WebGL Shaders Editor and Playground")
-          .replaceAll(
-            "%desc",
-            `Modern WebGL (GLSL) Shaders Editor and Playground. Write complex shaders with ease thanks to advanced IntelliSense and autocompletion features and a user-friendly interface for tweaking values and colors. You're also allowed to include other shaders in your code for added composability`
-          )
+          .replaceAll("%title", title)
+          .replaceAll("%desc", description)
           .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png");
+      },
+    },
+
+    command === "build" && {
+      name: "html:minify",
+      transformIndexHtml: {
+        order: "post",
+        handler(html) {
+          return minifyHtml(html, {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            decodeEntities: true,
+            minifyCSS: true,
+            minifyJS: true,
+            removeAttributeQuotes: true,
+            removeComments: true,
+            removeRedundantAttributes: true,
+          });
+        },
       },
     },
 

@@ -32,7 +32,7 @@
           "Online WebGL (GLSL) Shader-Editor und Spielplatz",
           "Moderner Online WebGL (GLSL) Shader-Editor und Spielplatz. Einfaches Schreiben von Shadern dank fortschrittlichem IntelliSense, Autovervollständigung, Kompatibilität mit Shader-Bibliotheken und einer benutzerfreundlichen Oberfläche zum Anpassen von Werten und Farben",
         ],
-        ch: [
+        zh: [
           "在线 WebGL (GLSL) 着色器编辑器和沙箱",
           "现代在线 WebGL (GLSL) 着色器编辑器和沙箱。 借助先进的 IntelliSense、自动完成、着色器库的可组合性以及用于调整值和颜色的用户友好界面，轻松编写着色器",
         ],
@@ -47,6 +47,9 @@
         document
           .querySelector("meta[name=description]")
           .setAttribute("content", locales[requestedLang][1]);
+        document
+          .querySelector("meta[name='twitter:title']")
+          .setAttribute("content", locales[requestedLang][0]);
         document
           .querySelector("meta[name='twitter:description']")
           .setAttribute("content", locales[requestedLang][1]);

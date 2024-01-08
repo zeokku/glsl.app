@@ -16,6 +16,13 @@ declare global {
   var app: HTMLDivElement;
 }
 
+/**
+ * MMmmPP
+ *
+ * 010200 = 1.2.0
+ */
+export const currentVersion = "010400";
+
 createApp(App) //
   .use(
     createI18n({

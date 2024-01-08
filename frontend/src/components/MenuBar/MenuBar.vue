@@ -98,6 +98,7 @@ import { useToast } from "@/composition/useToast";
 import { useMutation } from "@urql/vue";
 import { graphql } from "@/gql";
 import { getSetting } from "@/settings";
+import { currentVersion } from "@/main";
 
 const { t, locale } = useI18n();
 
@@ -265,12 +266,6 @@ const onChangelogClick = () => {
 
 //#region show changelog when version updates
 const versionKey = "\0glsl-app-version";
-/**
- * MMmmPP
- *
- * 010200 = 1.2.0
- */
-const currentVersion = "010300";
 
 if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   localStorage.setItem(versionKey, currentVersion);

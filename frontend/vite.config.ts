@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import { VitePWA as pwa } from "vite-plugin-pwa";
 import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
+import VueMacros from "unplugin-vue-macros/vite";
 
 import cssm, { removeCssModulesChunk } from "vite-plugin-vue-css-modules";
 
@@ -16,8 +17,13 @@ export default defineConfig(({ command }) => ({
     cssm({
       scriptTransform: true,
     }),
-    vue({
-      reactivityTransform: true,
+
+    VueMacros({
+      plugins: {
+        vue: vue({
+          reactivityTransform: true,
+        }),
+      },
     }),
 
     removeCssModulesChunk(),

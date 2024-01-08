@@ -12,22 +12,22 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://glsl.app?lang=ru</loc>
+    <loc>https://glsl.app/?lang=ru</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <!-- <url>
-    <loc>https://glsl.app?lang=es</loc>
+    <loc>https://glsl.app/?lang=es</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url> -->
   <url>
-    <loc>https://glsl.app?lang=de</loc>
+    <loc>https://glsl.app/?lang=de</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://glsl.app?lang=zh</loc>
+    <loc>https://glsl.app/?lang=zh</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

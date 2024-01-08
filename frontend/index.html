@@ -42,7 +42,7 @@
         document.documentElement.setAttribute("lang", requestedLang);
         document
           .querySelector("[rel=canonical]")
-          .setAttribute("href", "https://glsl.app?lang=" + requestedLang);
+          .setAttribute("href", "https://glsl.app/?lang=" + requestedLang);
         document.querySelector("title").innerText = locales[requestedLang][0];
         document
           .querySelector("meta[name=description]")

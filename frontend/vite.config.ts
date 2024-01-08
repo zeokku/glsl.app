@@ -129,6 +129,11 @@ export default defineConfig(({ command }) => ({
     ],
   },
 
+  worker: {
+    // @note this is required by vite-pwa for workers
+    format: "es",
+  },
+
   server: {
     port: 55555,
   },

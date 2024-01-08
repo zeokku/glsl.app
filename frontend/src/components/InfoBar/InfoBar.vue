@@ -32,13 +32,11 @@
 export let isManualRecompilation = shallowRef<boolean>(false);
 
 import { compileShader } from "@/App.vue";
+import { processIncludes } from "@/processIncludes";
 import type { editor as MonacoEditor } from "monaco-editor";
 
 let getModel: () => MonacoEditor.ITextModel;
 import("@/components/Editor.vue").then(module => ({ getModel } = module));
-
-let processIncludes: typeof import("@/processIncludes").processIncludes;
-import("@/processIncludes").then(module => ({ processIncludes } = module));
 </script>
 
 <script setup lang="ts">

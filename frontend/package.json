@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "gql-gen": "graphql-codegen --config scripts\\gql-gen.ts",
-    "gql-gen:watch": "graphql-codegen --config scripts\\gql-gen.ts --watch"
+    "gql-gen:watch": "graphql-codegen --config scripts\\gql-gen.ts --watch",
+    "format": "prettier --config .prettierrc -w \"./src/**/*.{vue,ts}\""
   },
   "dependencies": {
     "@tweakpane/core": "^1.1.9",
@@ -34,6 +35,7 @@
     "@types/lodash.throttle": "^4.1.7",
     "@vitejs/plugin-vue": "^4.2.3",
     "dotenv": "^16.3.1",
+    "prettier": "^3.1.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "sitemap": "^7.1.1",
     "typescript": "^5.2.2",

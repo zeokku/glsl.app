@@ -25,38 +25,36 @@
 // [ ] cache remote packages offline (so you can use the app offline)
 // button (clear persistent cache)
 
-import Button from '@/components/MenuBar/Button.vue';
-import Trash from '@/components/icons/trash.vue'
+import Button from "@/components/MenuBar/Button.vue";
+import Trash from "@/components/icons/trash.vue";
 
-import { getSetting, setSetting } from '@/settings';
-import { watch, onMounted } from 'vue';
+import { getSetting, setSetting } from "@/settings";
+import { watch, onMounted } from "vue";
 
-import { useMouse } from '@/composition/useMouse'
-import { updateElGlow } from '@/stylingUtils/updateGlow';
+import { useMouse } from "@/composition/useMouse";
+import { updateElGlow } from "@/stylingUtils/updateGlow";
 
-
-import { useI18n } from 'petite-vue-i18n';
-import { clearPersistentCache } from '@/includesOfflineCache';
+import { useI18n } from "petite-vue-i18n";
+import { clearPersistentCache } from "@/includesOfflineCache";
 
 const { t, locale } = useI18n();
 
-let offlineShareLink = $shallowRef<boolean>(getSetting('offlineShare'))
-let npmCdn = $shallowRef<string>(getSetting('npmPackageProvider'))
-let cachePackagesOffline = $shallowRef<boolean>(getSetting('cachePackages'));
+let offlineShareLink = $shallowRef<boolean>(getSetting("offlineShare"));
+let npmCdn = $shallowRef<string>(getSetting("npmPackageProvider"));
+let cachePackagesOffline = $shallowRef<boolean>(getSetting("cachePackages"));
 
 watch([$$(offlineShareLink), $$(npmCdn), $$(cachePackagesOffline)], () => {
-    setSetting({
-        'offlineShare': offlineShareLink,
-        'npmPackageProvider': npmCdn,
-        'cachePackages': cachePackagesOffline
-    })
-})
+  setSetting({
+    offlineShare: offlineShareLink,
+    npmPackageProvider: npmCdn,
+    cachePackages: cachePackagesOffline,
+  });
+});
 
 const clearCache = () => {
-    clearPersistentCache()
-    alert('Cache has been cleared!');
-}
-
+  clearPersistentCache();
+  alert("Cache has been cleared!");
+};
 
 let sectionRef = $shallowRef<HTMLDivElement>();
 
@@ -64,42 +62,39 @@ let sectionRef = $shallowRef<HTMLDivElement>();
 let glowItems: NodeListOf<HTMLDivElement>;
 
 onMounted(() => {
-    glowItems = sectionRef!.querySelectorAll<HTMLDivElement>('.' + $cssModule['App__glow-element-wrap']);
-})
+  glowItems = sectionRef!.querySelectorAll<HTMLDivElement>(
+    "." + $cssModule["App__glow-element-wrap"]
+  );
+});
 
-
-watch(useMouse(), (mouse) => {
-    if (!glowItems) return;
-    glowItems.forEach(g => updateElGlow(g, mouse))
-})
-
+watch(useMouse(), mouse => {
+  if (!glowItems) return;
+  glowItems.forEach(g => updateElGlow(g, mouse));
+});
 </script>
-
 
 <style lang="less" module>
 .options {
-    // same as for export modal
-    font-size: 1.25rem;
+  // same as for export modal
+  font-size: 1.25rem;
 
-    button {
-        font-size: 1.1rem;
-    }
+  button {
+    font-size: 1.1rem;
+  }
 }
 
 .flex {
-
-    display: flex;
-    flex-flow: column;
-    align-items: flex-start;
-    gap: 2rem;
-
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  gap: 2rem;
 }
 
 .cdn-input {
-    align-self: stretch;
+  align-self: stretch;
 }
 
 .clear-cache-btn {
-    --accent-rgb: 255, 40, 40;
+  --accent-rgb: 255, 40, 40;
 }
 </style>

@@ -8,59 +8,55 @@
 
 <style module lang="less">
 .click-fx {
-    cursor: pointer;
+  cursor: pointer;
 
-    transition: transform 100ms ease-out;
+  transition: transform 100ms ease-out;
 
-    &:active {
-        transform: translateY(2px);
-    }
+  &:active {
+    transform: translateY(2px);
+  }
 }
 
 .btn {
-    --br: 0.5rem;
+  --br: 0.5rem;
 
-    color: white;
+  color: white;
 
+  button {
+    display: flex;
 
-    button {
-        display: flex;
+    // flex-wrap: wrap;
+    justify-content: center;
 
-        // flex-wrap: wrap;
-        justify-content: center;
+    // @note smaller vertical gap, when text wraps
+    gap: 0.3em 0.5em;
 
-        // @note smaller vertical gap, when text wraps
-        gap: 0.3em 0.5em;
+    cursor: inherit;
 
-        cursor: inherit;
+    padding: 0.5rem 0.75rem;
+  }
 
-        padding: 0.5rem 0.75rem;
-    }
+  span {
+    // @note lol?
+    // display: block;
 
-    span {
-        // @note lol?
-        // display: block;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
 
-        text-transform: uppercase;
-        font-weight: bold;
+  svg {
+    display: inline-block;
 
+    height: 1em;
+    // @note use auto so it has proper size according to text size
+    width: auto;
+    // width: 1em;
 
-    }
-
-    svg {
-        display: inline-block;
-
-        height: 1em;
-        // @note use auto so it has proper size according to text size
-        width: auto;
-        // width: 1em;
-
-
-        fill: currentColor;
-        vertical-align: top;
-        // button padding
-        // moved to gap
-        // margin-right: 0.75em;
-    }
+    fill: currentColor;
+    vertical-align: top;
+    // button padding
+    // moved to gap
+    // margin-right: 0.75em;
+  }
 }
 </style>

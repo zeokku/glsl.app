@@ -102,10 +102,8 @@ import { getSetting } from "@/settings";
 
 const { t, locale } = useI18n();
 
-
-let getModel: () => import('monaco-editor').editor.ITextModel;
-import('@/components/Editor.vue').then((module) => ({getModel} = module));
-
+let getModel: () => import("monaco-editor").editor.ITextModel;
+import("@/components/Editor.vue").then(module => ({ getModel } = module));
 
 const menu = $shallowRef<HTMLMenuElement>();
 
@@ -127,7 +125,7 @@ watch(useMouse(), mouse => {
 const onScroll = () => glowItems.forEach(el => updateElGlow(el, useMouse(), true));
 
 const onNewClick = async (e: MouseEvent) => {
-  if(!getModel) return;
+  if (!getModel) return;
 
   createdTimestamp.value = Date.now();
   // using $shallow macro causes a problem that import can't be used as var
@@ -165,7 +163,7 @@ const { executeMutation } = useMutation(
 );
 
 const onShareLinkClick = async () => {
-  if(!getModel) return;
+  if (!getModel) return;
 
   let code = getModel().getValue();
 

@@ -1,5 +1,9 @@
 {
   "arrowParens": "avoid",
+  "bracketSameLine": false,
+  "semi": true,
+  "trailingComma": "es5",
+  "vueIndentScriptAndStyle": false,
   "endOfLine": "auto",
   "printWidth": 100,
   "tabWidth": 2,

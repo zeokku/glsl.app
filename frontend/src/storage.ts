@@ -15,7 +15,7 @@ export interface IShader {
 }
 
 const shaderCtrKey = "\0glsl-app-shader-ctr";
-renameLocalStorageEntry("\0new-shader-ctr", shaderCtrKey)
+renameLocalStorageEntry("\0new-shader-ctr", shaderCtrKey);
 
 // @ts-expect-error
 export const getShaderCtr = () => parseInt(localStorage.getItem(shaderCtrKey) ?? 0);
@@ -42,11 +42,11 @@ export const findNonConflictingName = async () => {
   return name;
 };
 
-const dbName = 'glsl-app-shaders'
-const storeName = 'store'
+const dbName = "glsl-app-shaders";
+const storeName = "store";
 
-const shadersStore = createStore(dbName, storeName)
-await moveIndexedDb('keyval-store', 'keyval', dbName, storeName);
+const shadersStore = createStore(dbName, storeName);
+await moveIndexedDb("keyval-store", "keyval", dbName, storeName);
 
 export const saveShader = async (name: string, shader: IShader) => {
   return set(name, shader, shadersStore);
@@ -77,7 +77,7 @@ export const deleteShader = async (name: string) => {
 };
 
 const lastOpenShaderKey = "\0glsl-app-last-shader";
-renameLocalStorageEntry("\0last-open-shader", lastOpenShaderKey)
+renameLocalStorageEntry("\0last-open-shader", lastOpenShaderKey);
 
 export const setLastOpenShader = (name: string) => localStorage.setItem(lastOpenShaderKey, name);
 export const getLastOpenShader = () => localStorage.getItem(lastOpenShaderKey);

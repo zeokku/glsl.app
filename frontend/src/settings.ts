@@ -7,7 +7,7 @@ interface ISettings {
 }
 
 const settingsStorageKey = "\0glsl-app-settings";
-renameLocalStorageEntry('\0settings', settingsStorageKey)
+renameLocalStorageEntry("\0settings", settingsStorageKey);
 
 const settings: ISettings = Object.assign(
   {

@@ -12,11 +12,11 @@ import {
 } from "idb-keyval";
 import { moveIndexedDb } from "./utils/storageMigration";
 
-const dbName = 'glsl-app-offline-cache'
-const storeName = 'store'
+const dbName = "glsl-app-offline-cache";
+const storeName = "store";
 
 const cacheStore = createStore(dbName, storeName);
-await moveIndexedDb("cache", "store", dbName, storeName)
+await moveIndexedDb("cache", "store", dbName, storeName);
 
 // @todo
 // export const getCachedItems = (paths: string[]) => getMany(paths, cacheStore);
@@ -32,7 +32,7 @@ export const persistentCacheItem = (path: string, content: string) =>
  */
 export const getPersistentCacheSize = async () =>
   values<string>(cacheStore).then(l =>
-    l.reduce((prev: number, cur: typeof l[number]) => prev + cur.length, 0)
+    l.reduce((prev: number, cur: (typeof l)[number]) => prev + cur.length, 0)
   );
 
 export const clearPersistentCache = async () => clear(cacheStore);

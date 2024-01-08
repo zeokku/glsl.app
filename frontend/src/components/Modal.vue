@@ -205,9 +205,13 @@ useMouseNext(mouse => {
     @total-dur: 500ms;
     @opacity-dur: 400ms;
     @blur-dur: (@total-dur - @opacity-dur);
-    transition-property: //
+    transition-property:
+      //
       opacity,
-      -webkit-backdrop-filter, backdrop-filter, transform, border-color;
+      -webkit-backdrop-filter,
+      backdrop-filter,
+      transform,
+      border-color;
     transition-duration: @opacity-dur, @blur-dur, @blur-dur, @total-dur, @total-dur;
     transition-delay: 0, @opacity-dur, @opacity-dur, 0, 0;
 

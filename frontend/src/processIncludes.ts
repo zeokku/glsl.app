@@ -11,7 +11,7 @@ export type IIncludesData = [
   // @todo error
   // https://www.typescriptlang.org/play?#code/C4TwDgpgBMCuYBsIEYoF4oG0BQUoA8AuKAO1gFsAjCAJwBpcoRiyraG8AvFi6+xgPQCotGgHsajAHQyAFJgDuPNvSgBnAPzFYJACYQAZgEsSEXQF0oAHyxLSsBAjrrlfcwEps57NlCQY8EjIAKL4kADGwGboUIx4mESsfM7M9irO3EnsUEpZqpqEOvrGphbWcViJvNmpeRmEdTkNDk4ued7YQgI+ftBwiBAADDGYAIbEoyQgzpQTU84yUvLhrrSWNpi6hGrANCYA5h7mANw94H2BQ6ERUboj45PTULOPzivt1lgP88+Er1BbHZ7EiHY5AA
   // @ts-ignore
-  ...([code: string, error?: undefined] | [code: null, error: string])
+  ...([code: string, error?: undefined] | [code: null, error: string]),
 ];
 
 // @note use g flag for .lastIndex

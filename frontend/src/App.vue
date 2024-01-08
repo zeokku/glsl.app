@@ -170,11 +170,15 @@ const onShaderCodeChange = (code: string) => {
   background: linear-gradient(to bottom, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%),
     radial-gradient(circle, rgba(var(--glow-rgb), var(--gs)), transparent var(--gr));
 
-  background-size: 100% 100%, var(--gd) var(--gd);
+  background-size:
+    100% 100%,
+    var(--gd) var(--gd);
 
   @glow-position: calc(var(--mx) - var(--gr)) calc(var(--my) - var(--gr));
 
-  background-position: 0 0, @glow-position;
+  background-position:
+    0 0,
+    @glow-position;
 
   background-repeat: no-repeat;
 }
@@ -194,7 +198,9 @@ const onShaderCodeChange = (code: string) => {
   background-position-y: -100%;
   background-repeat: no-repeat;
 
-  transition: background-position-y 300ms ease-out, outline 300ms ease-out;
+  transition:
+    background-position-y 300ms ease-out,
+    outline 300ms ease-out;
 
   &:hover {
     background-position-y: 0%;
@@ -333,7 +339,9 @@ input[type="checkbox"] {
     width: 100%;
     height: 100%;
 
-    transition: opacity 400ms, transform 450ms;
+    transition:
+      opacity 400ms,
+      transform 450ms;
     transform-origin: center center;
 
     opacity: 0;

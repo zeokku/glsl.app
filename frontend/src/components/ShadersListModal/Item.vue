@@ -20,19 +20,19 @@ import { useI18n } from "petite-vue-i18n";
 import type { TBbox } from "./Index.vue";
 
 const props = defineProps<{
-    name: string;
+  name: string;
 }>();
 
 const { t } = useI18n();
 
 const emit = defineEmits<{
-    (e: "delete"): void;
+  (e: "delete"): void;
 }>();
 
 const onDeleteClick = () => {
-    if (confirm(`Are you sure you want to delete "${props.name}"?`)) {
-        emit("delete");
-    }
+  if (confirm(`Are you sure you want to delete "${props.name}"?`)) {
+    emit("delete");
+  }
 };
 
 // @todo @report doing $shallowRef()! (to illiminate undefined) leads to an error
@@ -42,13 +42,13 @@ let bbox = {} as TBbox;
 defineExpose({ bbox });
 
 const updateBbox = () => {
-    // @note use assign so we keep the same obj ref in exposed object
-    Object.assign(bbox, {
-        x: view!.offsetLeft,
-        y: view!.offsetTop,
-        w: view!.offsetWidth,
-        h: view!.offsetHeight,
-    });
+  // @note use assign so we keep the same obj ref in exposed object
+  Object.assign(bbox, {
+    x: view!.offsetLeft,
+    y: view!.offsetTop,
+    w: view!.offsetWidth,
+    h: view!.offsetHeight,
+  });
 };
 
 onMounted(updateBbox);
@@ -57,86 +57,88 @@ watch(useScreen(), updateBbox);
 
 <style module lang="less">
 .item-wrap {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
 
-    text-align: center;
-    // background-color: rgba(var(--accent-rgb), 0.2);
+  text-align: center;
+  // background-color: rgba(var(--accent-rgb), 0.2);
 
-    --gr: 10rem !important;
-    --br: 2rem;
+  --gr: 10rem !important;
+  --br: 2rem;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    // background:
-    //     linear-gradient(180deg, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%);
+  // background:
+  //     linear-gradient(180deg, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%);
 
-    // &:hover {
-    //     background:
-    //         linear-gradient(180deg, var(--border) 0%, rgba(var(--border-rgb), 0.2) 100%);
+  // &:hover {
+  //     background:
+  //         linear-gradient(180deg, var(--border) 0%, rgba(var(--border-rgb), 0.2) 100%);
 
-    // }
+  // }
 }
 
 .item {
-    display: flex;
-    flex-flow: column;
+  display: flex;
+  flex-flow: column;
 
-    box-sizing: border-box;
-    overflow: hidden;
+  box-sizing: border-box;
+  overflow: hidden;
 
-    // @todo patch shaders to round top corners
-    padding: 1.25rem;
+  // @todo patch shaders to round top corners
+  padding: 1.25rem;
 
-    height: 100%;
+  height: 100%;
 }
 
 .view {
-    width: 100%;
+  width: 100%;
 
-    aspect-ratio: 6/5;
+  aspect-ratio: 6/5;
 
-    // background-color: black;
+  // background-color: black;
 }
 
 @icon-sz: 1.25em;
 
 .title {
-    display: grid;
-    grid-template-columns: @icon-sz 1fr @icon-sz;
-    gap: 0.5em;
-    align-items: center;
+  display: grid;
+  grid-template-columns: @icon-sz 1fr @icon-sz;
+  gap: 0.5em;
+  align-items: center;
 
-    flex: 1;
+  flex: 1;
 
-    font-size: 1.25em;
-    text-transform: uppercase;
+  font-size: 1.25em;
+  text-transform: uppercase;
 
-    // padding-block: 1.25rem;
-    margin-top: 1.25rem;
+  // padding-block: 1.25rem;
+  margin-top: 1.25rem;
 
-    span {
-        grid-column: 2;
-    }
+  span {
+    grid-column: 2;
+  }
 }
 
 .delete {
-    grid-column: 3;
+  grid-column: 3;
 
-    fill: currentColor;
+  fill: currentColor;
 
-    color: gray;
+  color: gray;
 
-    transform-origin: center;
+  transform-origin: center;
 
-    transition: color 300ms ease-out, transform 300ms ease;
+  transition:
+    color 300ms ease-out,
+    transform 300ms ease;
 
-    &:hover {
-        transform: scale(1.05);
-        color: hsl(360 69% 50% / 1);
-    }
+  &:hover {
+    transform: scale(1.05);
+    color: hsl(360 69% 50% / 1);
+  }
 
-    height: @icon-sz;
-    width: @icon-sz;
+  height: @icon-sz;
+  width: @icon-sz;
 }
 </style>

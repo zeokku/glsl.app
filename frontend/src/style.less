@@ -18,10 +18,10 @@
 .font(@name, @weight, @style: false) {
   @font-face {
     font-family: @name;
-    font-weight: @font-weight[ @@weight];
+    font-weight: @font-weight[@@weight];
 
     & when (isstring(@style)) {
-      font-style: @font-style[ @@style];
+      font-style: @font-style[@@style];
       src: url("@/assets/fonts/@{name}/@{name}-@{weight}-@{style}.woff2");
     }
 

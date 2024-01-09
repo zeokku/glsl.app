@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="<?= $lang ?>">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/icon-128.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>%title</title>
-    <link rel="canonical" href="https://glsl.app/" />
+    <link rel="canonical" href="https://glsl.app/<?= $lang !== 'en' ? '?lang=' . $lang : '' ?>" />
     <meta name="description" content="%desc" />
     <meta property="og:image" content="%img" />
 
@@ -20,42 +20,8 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
       rel="stylesheet"
     />
-    <script>
-      let requestedLang = new URL(location).searchParams.get("lang")?.split("-")?.[0];
-
-      let locales = {
-        ru: [
-          "Онлайн WebGL (GLSL) Редактор Шейдеров и Песочница",
-          "Современный онлайн-редактор и песочница шейдеров WebGL (GLSL). Создавайте шейдеры легко благодаря продвинутой поддержке IntelliSense, функциям автодополнения, возможности компоновки с библиотеками шейдеров и удобному интерфейсу для настройки значений и цветов",
-        ],
-        de: [
-          "Online WebGL (GLSL) Shader-Editor und Spielplatz",
-          "Moderner Online WebGL (GLSL) Shader-Editor und Spielplatz. Einfaches Schreiben von Shadern dank fortschrittlichem IntelliSense, Autovervollständigung, Kompatibilität mit Shader-Bibliotheken und einer benutzerfreundlichen Oberfläche zum Anpassen von Werten und Farben",
-        ],
-        zh: [
-          "在线 WebGL (GLSL) 着色器编辑器和沙箱",
-          "现代在线 WebGL (GLSL) 着色器编辑器和沙箱。 借助先进的 IntelliSense、自动完成、着色器库的可组合性以及用于调整值和颜色的用户友好界面，轻松编写着色器",
-        ],
-      };
-
-      if (requestedLang in locales) {
-        document.documentElement.setAttribute("lang", requestedLang);
-        document
-          .querySelector("[rel=canonical]")
-          .setAttribute("href", "https://glsl.app/?lang=" + requestedLang);
-        document.querySelector("title").innerText = locales[requestedLang][0];
-        document
-          .querySelector("meta[name=description]")
-          .setAttribute("content", locales[requestedLang][1]);
-        document
-          .querySelector("meta[name='twitter:title']")
-          .setAttribute("content", locales[requestedLang][0]);
-        document
-          .querySelector("meta[name='twitter:description']")
-          .setAttribute("content", locales[requestedLang][1]);
-      }
-    </script>
   </head>
+
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>

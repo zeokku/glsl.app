@@ -79,13 +79,16 @@ export default defineConfig(({ command }) => ({
       },
     },
 
-    {
-      name: "html:index-meta",
-      transformIndexHtml(html) {
-        return html
-          .replaceAll("%title", title)
-          .replaceAll("%desc", description)
-          .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png");
+    command === "build" && {
+      name: "html:index-meta-php",
+      async transformIndexHtml(html) {
+        return (
+          '<? require "seo-header.php" ?>' +
+          html
+            .replaceAll("%title", "<?=$title?>")
+            .replaceAll("%desc", "<?=$desc?>")
+            .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png")
+        );
       },
     },
 

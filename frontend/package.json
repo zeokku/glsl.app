@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && html-php-rename",
+    "html-php-rename": "powershell -Command \"Move-Item dist/index.html dist/index.php\"",
     "preview": "vite preview",
     "gql-gen": "graphql-codegen --config scripts\\gql-gen.ts",
     "gql-gen:watch": "graphql-codegen --config scripts\\gql-gen.ts --watch",

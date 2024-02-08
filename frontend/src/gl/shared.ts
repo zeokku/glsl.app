@@ -215,9 +215,10 @@ export const updateTexture = (image: ImageBitmap, index: number) => {
 
     ////
 
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    // @note mag only accepts linear or nearest, and default is linear
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     /*
   from: https://stackoverflow.com/questions/75976623/     how-to-use-gl-texture-2d-array-for-binding-multiple-textures-as-array
 
@@ -247,8 +248,25 @@ export const updateTexture = (image: ImageBitmap, index: number) => {
     image
   );
 
+  // @note https://registry.khronos.org/webgl/specs/latest/2.0/#5.41
+  // it should have non 0x0 texture at the base level
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_BASE_LEVEL, 1);
+
+  // @note controls max level of detail during mipmap generation
+  // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, 4);
+
+  // @note apparently this only limits lods during rendering but not generation
+  // gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_LOD, 2);
+  // gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MAX_LOD, 7);
+
   // @note generate mipmaps after data is loaded
+  performance.mark("before-mipmap");
+
   gl.generateMipmap(gl.TEXTURE_2D);
+
+  performance.mark("after-mipmap");
+
+  console.log(performance.measure("mipmap", "before-mipmap", "after-mipmap"));
 
   // @note sampler array requires all textures be of the same size???
   // gl.texImage3D(

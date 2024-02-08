@@ -152,10 +152,10 @@ onMounted(async () => {
     /**
      * string without #
      */
-    const hash = decodeURI(location.hash).slice(1);
+    const hash = decodeURI(location.hash.slice(1));
 
     if (hash) {
-      location.hash = "";
+      // location.hash = "";
 
       try {
         // online

@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => ({
   plugins: [
     cssm({
       scriptTransform: true,
-    }),
+    }) as any,
 
     VueMacros({
       plugins: {
@@ -32,7 +32,7 @@ export default defineConfig(({ command }) => ({
       },
     }),
 
-    removeCssModulesChunk(),
+    // removeCssModulesChunk(),
 
     VueI18nPlugin({
       // @note include is required if using virtual module "...-vue-i18n/messages"
@@ -115,7 +115,7 @@ export default defineConfig(({ command }) => ({
       filename: "stats-compressed.html",
       gzipSize: true,
       brotliSize: true,
-      // sourcemap: true
+      sourcemap: true,
     }),
   ],
 
@@ -144,7 +144,8 @@ export default defineConfig(({ command }) => ({
   publicDir: command === "build" ? false : "public",
 
   build: {
-    // sourcemap: true, // @todo 'hidden'
+    cssMinify: "lightningcss",
+    sourcemap: "hidden",
     minify: "terser",
     target: "esnext",
     terserOptions: {

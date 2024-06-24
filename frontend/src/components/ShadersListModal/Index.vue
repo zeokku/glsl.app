@@ -323,9 +323,6 @@ watch(useMouse(), mouse => {
 
 <style module lang="less">
 .list-content {
-  // @todo i hate this
-  width: 60rem;
-
   position: relative;
 
   padding: 0;
@@ -352,6 +349,10 @@ watch(useMouse(), mouse => {
 
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: max-content;
+
+  @media (width < 800px) {
+    grid-template-columns: 100%;
+  }
 
   justify-items: center;
   gap: 3rem;

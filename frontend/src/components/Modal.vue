@@ -81,8 +81,8 @@ useMouseNext(mouse => {
 
   padding: 3rem;
 
-  @media screen and (max-width: 500px) {
-    padding-inline: 1.5rem;
+  @media (width < 500px) {
+    padding-inline: 1rem;
   }
 
   box-sizing: border-box;
@@ -104,12 +104,8 @@ useMouseNext(mouse => {
   overflow: hidden;
 
   // @note define base dimensions for flex
-  height: 100%;
-  /* width: 100%; */
-  width: max-content;
-
-  max-width: 70rem;
-  max-height: min(100%, 70rem);
+  size: 100%;
+  max-size: min(100%, 70rem);
 
   padding: 1.5rem;
 
@@ -184,6 +180,10 @@ useMouseNext(mouse => {
 
 .content {
   padding: 0 4rem 4rem;
+
+  @media (width<500px) {
+    padding: 0 1rem 4rem;
+  }
 
   overflow-y: auto;
 

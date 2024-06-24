@@ -117,7 +117,10 @@ const onRecompile = async () => {
   compileShader(await processIncludes(getModel().getLinesContent()));
 };
 
-window.addEventListener("dragenter", () => {
+window.addEventListener("dragenter", (e: DragEvent) => {
+  if (e.relatedTarget !== null) return;
+  if (e.dataTransfer?.types?.[0] !== "Files") return;
+
   modalVisible = true;
 });
 </script>

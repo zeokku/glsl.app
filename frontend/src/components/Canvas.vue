@@ -1,5 +1,5 @@
 <template lang="pug">
-.canvas-wrap(v-movable)
+.canvas-wrap(v-movable:[movable] :class="movable || 'static'")
     canvas(ref="canvasRef" @mousemove="onMouseMove" @contextmenu.prevent)
 </template>
 
@@ -14,9 +14,18 @@ export let glInitialization: Promise<any>;
 
 <script setup lang="ts">
 import throttle from "lodash.throttle";
-import { onMounted } from "vue";
+import { onMounted, watchEffect } from "vue";
 
 import { initGl, updateMouse, updateResolution } from "@/gl/glContext";
+import { useScreen } from "@/composition/useScreen";
+
+let movable = $shallowRef<boolean>();
+
+const screen = useScreen();
+
+watchEffect(() => {
+  movable = screen.w > 500;
+});
 
 onMounted(async () => {
   glInitialization = initGl(canvasRef!);
@@ -122,5 +131,15 @@ canvas {
 
   width: 100%;
   height: 100%;
+}
+
+.static {
+  size: 100% auto;
+  aspect-ratio: 16 / 9;
+
+  top: unset;
+  bottom: 0;
+
+  pointer-events: none;
 }
 </style>

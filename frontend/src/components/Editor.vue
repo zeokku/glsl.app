@@ -257,7 +257,7 @@ onMounted(async () => {
       // fontFamily: 'SpaceMono',
 
       minimap: {
-        // enabled: false,
+        enabled: innerWidth > 500,
         side: "left",
         maxColumn: 80,
       },

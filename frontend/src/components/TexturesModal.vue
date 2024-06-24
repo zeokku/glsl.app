@@ -240,7 +240,7 @@ watch(useMouse(), mouse => {
 
 <style lang="less" module>
 .textures-modal {
-  width: 60rem;
+  // width: 60rem;
   box-sizing: border-box;
 }
 
@@ -256,6 +256,9 @@ watch(useMouse(), mouse => {
   display: grid;
 
   height: 100%;
+
+  padding: 2rem;
+  box-sizing: border-box;
 
   place-items: center;
   align-items: center;

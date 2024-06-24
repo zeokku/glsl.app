@@ -21,7 +21,7 @@ import { useToast } from "@/composition/useToast";
 import { useI18n } from "petite-vue-i18n";
 
 const ADDRESSES = Object.freeze({
-  ETH: "0x000000000068B3394D1adB2AEf78971E33136E0E",
+  ETH: "0x0092c592f82fe5b5ea6bdd499453f93df694d677",
   BTC: "163mnUY3NAXPKTs3R8CnmyAtE74fbtEGDd",
   LTC: "LczKAjaDtnLZXtFKxRcAhWoUpmwXpx6yZR",
   XTZ: "tz1WJ7oUhdYug8F68R8bps9eQfKKhg1gkDVf",
@@ -88,7 +88,7 @@ const onAddressClick = (address: string, name: keyof typeof ADDRESSES) => {
       border-radius: 1rem;
 
       [data-name="ETH"]& {
-        background-image: url("@/assets/crypto/eth.png");
+        background-image: url("@/assets/crypto/eth.jpg");
       }
 
       [data-name="BTC"]& {

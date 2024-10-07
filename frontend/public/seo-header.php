@@ -1,5 +1,7 @@
 <?php
-$lang = explode('-', $_GET['lang'] ?? 'en')[0];
+
+// @todo require seo-header-localization which is auto generated
+
 $localization = [
     'en' => [
         "Online WebGL (GLSL) Shaders Editor and Sandbox",
@@ -22,6 +24,8 @@ $localization = [
         "现代在线 WebGL (GLSL) 着色器编辑器和沙箱。 借助先进的 IntelliSense、自动完成功能、着色器库的可组合性以及用于调整值和颜色的用户友好界面，可以轻松编写着色器"
     ]
 ];
+
+$lang = explode('-', $_GET['lang'] ?? 'en')[0];
 
 if (!array_key_exists($lang, $localization)) {
     $lang = 'en';

@@ -1,3 +1,5 @@
+/// <reference types="vite-plugin-pwa/client" />
+
 import "./style.less";
 
 import "@/gtag";
@@ -6,6 +8,8 @@ import { createApp } from "vue";
 
 import { createI18n } from "petite-vue-i18n";
 import messages from "@intlify/unplugin-vue-i18n/messages";
+
+import { registerSW } from "virtual:pwa-register";
 
 import urql, { cacheExchange, fetchExchange } from "@urql/vue";
 
@@ -41,6 +45,18 @@ createApp(App) //
   })
   .directive("movable", vMovable)
   .mount(app);
+
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // @todo modal component confirm
+    if (confirm("New version is available! Do you want to update now?")) {
+      updateSW();
+    }
+  },
+  onOfflineReady() {
+    console.log("app stored in cache and can be used offline");
+  },
+});
 
 declare global {
   interface HTMLCollectionBase {

@@ -41,7 +41,25 @@ export default defineConfig(({ command }) => ({
     }),
     // false &&
     pwa({
-      registerType: "autoUpdate",
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        // @note use slash, because default is /index.html which is incorrect since we use /index.php
+        // @note but this https://github.com/vite-pwa/nuxt/issues/53#issuecomment-1615266204
+        navigateFallback: undefined,
+        globPatterns: ["**/*.{js,wasm,css,jpg,png}"],
+
+        // @note cache localized index, since we have navigateFallback: undefined
+        runtimeCaching: [
+          {
+            // @todo report shorthand urlPattern() will not work
+            urlPattern: ({ url }) => {
+              return url.pathname === "/";
+            },
+            handler: "NetworkFirst",
+          },
+        ],
+      },
+
       manifest: {
         name: title,
         short_name: "GLSL Editor",
@@ -53,6 +71,7 @@ export default defineConfig(({ command }) => ({
             sizes: "512x512",
           },
         ],
+        theme_color: "#0a0118",
       },
     }),
 

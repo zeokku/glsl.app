@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run gql-gen && pnpm run vite build && pnpm run html-php-rename",
+    "build": "pnpm run gql-gen && pnpm exec vite build && pnpm run html-php-rename",
     "html-php-rename": "powershell -Command \"Move-Item dist/index.html dist/index.php\"",
     "preview": "vite preview",
     "gql-gen": "graphql-codegen --config scripts\\gql-gen.ts",
@@ -46,7 +46,7 @@
     "typescript": "^5.3.3",
     "unplugin-vue-macros": "^2.7.10",
     "vite": "^5.3.1",
-    "vite-plugin-pwa": "^0.17.4",
+    "vite-plugin-pwa": "^0.20.5",
     "vite-plugin-ssr": "^0.4.142",
     "vite-plugin-vue-css-modules": "^3.1.6",
     "vue-tsc": "^1.8.27"

@@ -59,3 +59,6 @@ pnpm run gql-gen:watch
 # run dev server (run the command in a separate terminal)
 pnpm run dev
 ```
+
+## ⭐ Stargazers over time
+[![Stargazers over time](https://starchart.cc/zeokku/glsl.app.svg?variant=adaptive)](https://starchart.cc/zeokku/glsl.app)

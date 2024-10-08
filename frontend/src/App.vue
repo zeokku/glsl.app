@@ -254,9 +254,13 @@ const onShaderCodeChange = (code: string) => {
     border: none;
 
     // https://caniuse.com/mdn-css_properties_width_stretch
-    width: -webkit-fill-available;
-    width: -moz-available;
-    width: stretch;
+    // @todo this gets removed by lightningcss
+    // width: -webkit-fill-available;
+
+    // width: stretch;
+
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 </style>

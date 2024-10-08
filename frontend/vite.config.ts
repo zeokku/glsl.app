@@ -162,10 +162,18 @@ export default defineConfig(({ command }) => ({
 
   publicDir: command === "build" ? false : "public",
 
+  css: {
+    lightningcss: {
+      // @note for some fucking reason `width: -webkit-fill-available` is removed after minimization !!!
+      // @note setting targets didn't change anything
+      // targets: browserslistToTargets(browserslist(">= 0.25%")),
+    },
+  },
+
   build: {
     cssMinify: "lightningcss",
     sourcemap: "hidden",
-    minify: "terser",
+    // minify: "terser",
     target: "esnext",
     terserOptions: {
       compress: {

@@ -26,9 +26,7 @@ export default defineConfig(({ command }) => ({
 
     VueMacros({
       plugins: {
-        vue: vue({
-          reactivityTransform: true,
-        }),
+        vue: vue(),
       },
     }),
 
@@ -41,6 +39,8 @@ export default defineConfig(({ command }) => ({
     }),
     // false &&
     pwa({
+      // @ts-expect-error
+      filename: `sw-${Math.floor(new Date() / 1000).toString(32)}.js`,
       workbox: {
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // @note use slash, because default is /index.html which is incorrect since we use /index.php
@@ -172,8 +172,8 @@ export default defineConfig(({ command }) => ({
 
   build: {
     cssMinify: "lightningcss",
-    sourcemap: "hidden",
-    // minify: "terser",
+    // sourcemap: "hidden", // @todo
+    minify: "terser",
     target: "esnext",
     terserOptions: {
       compress: {

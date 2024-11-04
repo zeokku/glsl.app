@@ -174,7 +174,7 @@ export default defineConfig(({ command }) => ({
     cssMinify: "lightningcss",
     // sourcemap: "hidden", // @todo
     minify: "terser",
-    target: "esnext",
+    target: "es2022",
     terserOptions: {
       compress: {
         drop_console: true,

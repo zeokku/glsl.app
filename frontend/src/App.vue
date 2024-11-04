@@ -254,13 +254,10 @@ const onShaderCodeChange = (code: string) => {
     border: none;
 
     // https://caniuse.com/mdn-css_properties_width_stretch
-    // @todo this gets removed by lightningcss
-    // width: -webkit-fill-available;
-
-    // width: stretch;
-
-    width: 100%;
-    box-sizing: border-box;
+    // @note this gets removed by lightningcss if vite target is esnext, which causes vite to pass empty object to lightningcss target option, which in turn removes all non standard values, which doesn't seem like correct behavior
+    width: -webkit-fill-available;
+    width: -moz-available;
+    width: stretch;
   }
 }
 </style>

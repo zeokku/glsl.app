@@ -53,6 +53,9 @@ pnpm link ../glsl-parser
 # install app's dependencies
 pnpm i
 
+# set APP_GQL_ENDPOINT env variable
+echo 'APP_GQL_ENDPOINT="https://glslapp.gamerzero.dev/graphql"' > .env
+
 # generate GraphQL files with auto update
 pnpm run gql-gen:watch
 

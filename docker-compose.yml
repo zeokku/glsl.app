@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
     backend:
-        build: ./backend
+        build: ./server
         ports:
             - "8080:8080"
         environment:

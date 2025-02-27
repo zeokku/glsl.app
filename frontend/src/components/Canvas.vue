@@ -1,6 +1,6 @@
 <template lang="pug">
 .canvas-wrap(v-movable:[movable] :class="movable || 'static'")
-    canvas(ref="canvasRef" @mousemove="onMouseMove" @contextmenu.prevent)
+    canvas(ref="canvasRef" @pointermove="onMouseMove" @contextmenu.prevent)
 </template>
 
 <script lang="ts">
@@ -49,9 +49,10 @@ onMounted(async () => {
 });
 
 let mouse = { x: 0, y: 0, lb: 0, rb: 0 };
-const onMouseMove = ({ offsetX, offsetY, buttons }: MouseEvent) => {
+const onMouseMove = ({ offsetX, offsetY, buttons, target }: MouseEvent) => {
   mouse.x = offsetX;
-  mouse.y = offsetY;
+  // @note make pointer coords top ascending aligned with glsl coords
+  mouse.y = target.scrollHeight - offsetY;
 
   mouse.lb = buttons & 0x1 && 1;
   mouse.rb = buttons & 0x2 && 1;

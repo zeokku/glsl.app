@@ -10,7 +10,7 @@
 
   .fps-indicator
     | FPS:
-    div(ref="fpsPaneContainer")
+    div(ref="fpsPaneContainer", style="width: 10rem")
     //- | {{ 'FPS: ' + canvasFps.toFixed(2) }}
     //- @todo canvas resolution
 
@@ -50,9 +50,6 @@ import { onMounted, shallowRef, watch } from "vue";
 import { shaderName } from "@/App.vue";
 import { canvasFps } from "@/components/Canvas.vue";
 
-import { useMouse } from "@/composition/useMouse";
-import { updateElGlow } from "@/stylingUtils/updateGlow";
-
 import Button from "+/MenuBar/Button.vue";
 import ImageIcon from "+/icons/image.vue";
 import AppsIcon from "+/icons/apps.vue";
@@ -68,17 +65,6 @@ const info = $shallowRef<HTMLDivElement>();
 const fpsPaneContainer = $shallowRef<HTMLDivElement>();
 
 const { t } = useI18n();
-
-watch(useMouse(), mouse => {
-  if (!info) return;
-
-  // @todo refactor
-  let [input, textures, , compile] = info.children;
-
-  updateElGlow(input, mouse);
-  updateElGlow(textures, mouse);
-  updateElGlow(compile, mouse);
-});
 
 onMounted(() => {
   import("tweakpane").then(({ Pane }) => {

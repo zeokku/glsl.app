@@ -6,6 +6,9 @@
       label
         input(type="checkbox", v-model="settingValues.offlineShare")
         | {{ t("offline-link") }}
+      label
+        input(type="checkbox", v-model="settingValues.glowUi")
+        | Glow UI
     h2.App__font-shade {{ t("editor") }}
     section.flex
       label
@@ -13,11 +16,11 @@
         | {{ t("show-minimap") }}
     h2.App__font-shade {{ t("formatting") }}
     section.flex(style="flex-flow: row")
-      label.cdn-input
+      label
         .CExportModal_Index__label {{ t("print-width") }}
         .App__input-wrap.App__glow-element-wrap
           input.App__glow-element(type="number", v-model="settingValues.printWidth")
-      label.cdn-input
+      label
         .CExportModal_Index__label {{ t("tab-size") }}
         .App__input-wrap.App__glow-element-wrap
           input.App__glow-element(type="number", v-model="settingValues.tabSize")
@@ -46,9 +49,6 @@ import Trash from "@/components/icons/trash.vue";
 
 import { getAllSettings, getSetting, setSettings } from "@/settings";
 import { watch, onMounted, shallowRef, reactive } from "vue";
-
-import { useMouse } from "@/composition/useMouse";
-import { updateElGlow } from "@/stylingUtils/updateGlow";
 
 import { useI18n } from "petite-vue-i18n";
 import { clearPersistentCache } from "@/includesOfflineCache";
@@ -92,22 +92,6 @@ const clearCache = () => {
   clearPersistentCache();
   alert("Cache has been cleared!");
 };
-
-let sectionRef = $shallowRef<HTMLDivElement>();
-
-// @todo isolate into module
-let glowItems: NodeListOf<HTMLDivElement>;
-
-onMounted(() => {
-  glowItems = sectionRef!.querySelectorAll<HTMLDivElement>(
-    "." + $cssModule["App__glow-element-wrap"]
-  );
-});
-
-watch(useMouse(), mouse => {
-  if (!glowItems) return;
-  glowItems.forEach(g => updateElGlow(g, mouse));
-});
 </script>
 
 <style lang="less" module>

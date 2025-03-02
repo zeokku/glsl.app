@@ -1,6 +1,6 @@
 <template lang="pug">
 .list-content.CModal__content
-  .content-scroll(ref="scroll", @scroll="onScroll")
+  .content-scroll(ref="scroll")
     .grid(ref="grid")
       //- iirc :ref cb order is not defined, so use index argument to sync comp refs with shaders data
       Item(
@@ -41,8 +41,6 @@ import {
   watch,
 } from "vue";
 import Item from "./Item.vue";
-import { useMouse } from "@/composition/useMouse";
-import { updateElGlow } from "@/stylingUtils/updateGlow";
 
 import defaultVertexShaderCode from "@/default.vert?raw";
 
@@ -305,26 +303,6 @@ onBeforeUnmount(() => {
 
   // @todo ??? how th to dispose gl lol
 });
-
-//#region border glow
-
-// force update on scroll
-const onScroll = () => {
-  // @note use grid.children, because they may change
-  // and storing children in a var doesn't introduce any perf boost, while greatly increasing the complexity of the code
-  [...grid!.children].forEach(e => updateElGlow(e, useMouse(), true));
-};
-
-watch(useMouse(), mouse => {
-  if (!grid) return;
-
-  // bruh are there a way to get consistent e.offset for only current target element????
-  // ok bruh scrap offset, better use bounding rect, since we cache the values anyway, so it's super clean and easy now
-
-  [...grid!.children].forEach(e => updateElGlow(e, mouse));
-});
-
-//#endregion
 </script>
 
 <style module lang="less">

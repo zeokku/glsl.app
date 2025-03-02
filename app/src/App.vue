@@ -26,6 +26,8 @@ import { isManualRecompilation } from "+/InfoBar/InfoBar.vue";
 import { updateFragment } from "./gl/glContext";
 
 import type { editor as MonacoEditor } from "monaco-editor";
+import { initGlowElements } from "./stylingUtils/glow";
+import { getSetting } from "./settings";
 
 const EditorModulePromise = import("@/components/Editor.vue");
 const Editor = defineAsyncComponent(() => EditorModulePromise);
@@ -107,6 +109,11 @@ const onShaderCodeChange = (code: string) => {
 
   compileShader(code);
 };
+
+// @note don't enable on touch screen devices
+if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
+  initGlowElements([$cssModule["App__glow-element-wrap"], $cssModule["CModal__window"]]);
+}
 </script>
 
 <style module lang="less">
@@ -182,13 +189,12 @@ const onShaderCodeChange = (code: string) => {
     @glow-position;
 
   background-repeat: no-repeat;
+
+  will-change: background-position;
 }
 
 .glow-element {
-  // @note @todo normally we should reduce the border-radius of inner element by border width, but it's small enough so we may ignore it
-  // @note use inherit so you define radius only on wrap element
-  // border-radius: inherit;
-  // @note ok bruh let's correct it as on bigger radiuses it's very noticeable
+  // @note correct radius, inner radius is smaller than outer one
   border-radius: calc(var(--br) - var(--bw));
 
   font-size: inherit;

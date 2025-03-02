@@ -9,19 +9,6 @@ div(ref="container")
 <script setup lang="ts">
 import Menu from "./MenuBar/MenuBar.vue";
 import Info from "./InfoBar/InfoBar.vue";
-import { useMouse } from "@/composition/useMouse";
-import { getRadiusOffset, updateElGlow } from "@/stylingUtils/updateGlow";
-import { watch } from "vue";
-
-const container = $shallowRef<HTMLDivElement>();
-
-// let ignoreUpdate = $shallowRef<boolean>(false);
-
-watch(useMouse(), mouse => {
-  if (!container) return;
-
-  [...container.children].forEach(el => updateElGlow(el, mouse));
-});
 </script>
 
 <style module lang="less">

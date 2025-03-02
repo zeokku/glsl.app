@@ -1,29 +1,23 @@
 import { renameLocalStorageEntry } from "./utils/storageMigration";
 
-interface ISettings {
-  editorMinimap: boolean;
-  printWidth: number;
-  tabSize: number;
-  offlineShare: boolean;
-  npmPackageProvider: string;
-  cachePackages: boolean;
-}
-
 const settingsStorageKey = "\0glsl-app-settings";
 renameLocalStorageEntry("\0settings", settingsStorageKey);
 
-const settings: ISettings = Object.assign(
+const settings = Object.assign(
   {
+    glowUi: true,
     editorMinimap: true,
     printWidth: 75,
     tabSize: 2,
     offlineShare: false,
     npmPackageProvider: "https://www.unpkg.com/",
     cachePackages: false,
-  } as ISettings,
+  },
   // because json can't parse undefined only null
-  JSON.parse(localStorage[settingsStorageKey] ?? null)
+  JSON.parse(localStorage[settingsStorageKey] ?? null) as {}
 );
+
+type ISettings = typeof settings;
 
 export const getAllSettings = () => settings;
 export const getSetting = <K extends keyof ISettings>(key: K) => settings[key];

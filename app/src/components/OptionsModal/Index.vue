@@ -6,6 +6,9 @@
       label
         input(type="checkbox", v-model="settingValues.offlineShare")
         | {{ t("offline-link") }}
+      label
+        input(type="checkbox", v-model="settingValues.glowUi")
+        | Glow UI
     h2.App__font-shade {{ t("editor") }}
     section.flex
       label

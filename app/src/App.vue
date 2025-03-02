@@ -27,6 +27,7 @@ import { updateFragment } from "./gl/glContext";
 
 import type { editor as MonacoEditor } from "monaco-editor";
 import { initGlowElements } from "./stylingUtils/glow";
+import { getSetting } from "./settings";
 
 const EditorModulePromise = import("@/components/Editor.vue");
 const Editor = defineAsyncComponent(() => EditorModulePromise);
@@ -110,7 +111,7 @@ const onShaderCodeChange = (code: string) => {
 };
 
 // @note don't enable on touch screen devices
-if (matchMedia("(hover:hover)").matches) {
+if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   initGlowElements([$cssModule["App__glow-element-wrap"], $cssModule["CModal__window"]]);
 }
 </script>

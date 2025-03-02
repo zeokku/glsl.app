@@ -1,6 +1,6 @@
 <template lang="pug">
-.canvas-wrap(v-movable:[movable] :class="movable || 'static'")
-    canvas(ref="canvasRef" @pointermove="onMouseMove" @contextmenu.prevent)
+.canvas-wrap(v-movable:[movable], :class="movable || 'static'")
+  canvas(ref="canvasRef", @pointermove="onMouseMove", @contextmenu.prevent)
 </template>
 
 <script lang="ts">

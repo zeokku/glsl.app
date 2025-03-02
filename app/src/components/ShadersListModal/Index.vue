@@ -1,10 +1,16 @@
 <template lang="pug">
 .list-content.CModal__content
-    .content-scroll(ref="scroll" @scroll="onScroll")
-        .grid(ref="grid")
-            //- iirc :ref cb order is not defined, so use index argument to sync comp refs with shaders data
-            Item(v-for="(name, index) in shaderNames" v-bind="{name}" :ref="(el) => setRef(el, index)" @click="() => onItemClick(name)" @delete="() => onDeleteShader(index)")
-    canvas.list-canvas(ref="canvas")
+  .content-scroll(ref="scroll", @scroll="onScroll")
+    .grid(ref="grid")
+      //- iirc :ref cb order is not defined, so use index argument to sync comp refs with shaders data
+      Item(
+        v-for="(name, index) in shaderNames",
+        v-bind="{ name }",
+        :ref="el => setRef(el, index)",
+        @click="() => onItemClick(name)",
+        @delete="() => onDeleteShader(index)"
+      )
+  canvas.list-canvas(ref="canvas")
 </template>
 
 <script lang="ts">

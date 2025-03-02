@@ -1,10 +1,15 @@
 <template lang="pug">
 .item-wrap.App__glow-element-wrap
-    .item.App__glow-element
-        .view(ref="view")
-        .title 
-            span {{ name }}
-            Trash.delete(@click.stop="onDeleteClick" :aria-label="t('delete-shader')" role="button" :tooltip="t('delete-shader')")
+  .item.App__glow-element
+    .view(ref="view")
+    .title
+      span {{ name }}
+      Trash.delete(
+        @click.stop="onDeleteClick",
+        :aria-label="t('delete-shader')",
+        role="button",
+        :tooltip="t('delete-shader')"
+      )
 </template>
 
 <script setup lang="ts">

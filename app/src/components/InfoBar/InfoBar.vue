@@ -1,31 +1,30 @@
 <template lang="pug">
 .info(ref="info")
-    .input-wrap.App__input-wrap.App__glow-element-wrap
-        input.name-input.App__glow-element(v-model="shaderName" :title="t('shader-name')")
-    
-    Button(@click="onTexturesOpen")
-        template(#icon) 
-            image-icon
-        | {{t('textures')}} 
-    
-    .fps-indicator()
-        | FPS: 
-        div(ref="fpsPaneContainer")
-        //- | {{ 'FPS: ' + canvasFps.toFixed(2) }}
-        //- @todo canvas resolution
+  .input-wrap.App__input-wrap.App__glow-element-wrap
+    input.name-input.App__glow-element(v-model="shaderName", :title="t('shader-name')")
 
+  Button(@click="onTexturesOpen")
+    template(#icon) 
+      image-icon
+    | {{ t("textures") }}
 
-    Button(@click="onRecompile")
-      template(#icon) 
-          apps-icon
-      | {{ t('compile') }}
-    
-    label.manual-recompilation
-      input(type="checkbox" v-model="isManualRecompilation")
-      | {{ t('manual-recomp') }}
-    
-    Modal(:visible="modalVisible" @close="modalVisible = false")
-        textures-modal
+  .fps-indicator
+    | FPS:
+    div(ref="fpsPaneContainer")
+    //- | {{ 'FPS: ' + canvasFps.toFixed(2) }}
+    //- @todo canvas resolution
+
+  Button(@click="onRecompile")
+    template(#icon) 
+      apps-icon
+    | {{ t("compile") }}
+
+  label.manual-recompilation
+    input(type="checkbox", v-model="isManualRecompilation")
+    | {{ t("manual-recomp") }}
+
+  Modal(:visible="modalVisible", @close="modalVisible = false")
+    textures-modal
 </template>
 
 <script lang="ts">

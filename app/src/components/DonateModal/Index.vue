@@ -1,16 +1,20 @@
 <template lang="pug">
 .donate.CModal__content
-    section
-        h1 Crypto 
-        //- @note oh wow so in for objects works like of for maps in vue templates
-        .crypto(v-for="(address, name) in ADDRESSES")
-            .name 
-                | {{ name }}
-                | :
-            span.address(:data-name="name" @click="() => onAddressClick(address, name)") {{ address }}
-    section
-        h1 Ko-fi 
-        iframe.ko-fi(id='kofiframe' src='https://ko-fi.com/zeokku/?hidefeed=true&widget=true&embed=true&preview=true' height='712' title='zeokku')
+  section
+    h1 Crypto
+    //- @note oh wow so in for objects works like of for maps in vue templates
+    .crypto(v-for="(address, name) in ADDRESSES")
+      .name
+        | {{ name }}
+        | :
+      span.address(:data-name="name", @click="() => onAddressClick(address, name)") {{ address }}
+  section
+    h1 Ko-fi
+    iframe#kofiframe.ko-fi(
+      src="https://ko-fi.com/zeokku/?hidefeed=true&widget=true&embed=true&preview=true",
+      height="712",
+      title="zeokku"
+    )
 </template>
 
 <script setup lang="ts">

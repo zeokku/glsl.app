@@ -1,10 +1,10 @@
 <template lang="pug">
-.toast-wrap 
-    .toast
-        //- CheckCircle
-        CheckCircleFill
-        //- .App__font-shade
-        span {{ message }}
+.toast-wrap
+  .toast
+    //- CheckCircle
+    CheckCircleFill
+    //- .App__font-shade
+    span {{ message }}
 </template>
 
 <script setup lang="ts">

@@ -1,9 +1,9 @@
 <template lang="pug">
 div(ref="container")
-    .bar-wrap.App__glow-element-wrap
-        Menu.bar
-    .bar-wrap.App__glow-element-wrap 
-        Info.bar
+  .bar-wrap.App__glow-element-wrap
+    Menu.bar
+  .bar-wrap.App__glow-element-wrap
+    Info.bar
 </template>
 
 <script setup lang="ts">

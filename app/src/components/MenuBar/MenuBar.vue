@@ -1,62 +1,62 @@
 <template lang="pug">
-menu.menu(ref="menu" @scroll="onScroll")
-    li
-        Button(@click="onNewClick")
-            template(#icon) 
-                Plus
-            | {{t('new')}} 
-    li
-        Button(@click="onLoadClick")
-            template(#icon) 
-                FileDirectory 
-            | {{ t('load') }}
-    li
-        Button(@click="onExportClick") 
-            template(#icon) 
-                Upload
-            | {{ t('export') }}
-    li
-        Button(@click="onShareLinkClick") 
-            template(#icon) 
-                Link
-            | {{ t('share') }}
-    li
-        Button(@click="onOptionsClick")
-            template(#icon) 
-                Gear
-            | {{ t('options') }}    
-    li
-        Button(@click="onFullscreenClick")
-            template(#icon) 
-                ScreenFull
-            | {{ t('fullscreen') }}
-    //- @todo special button
-    //- @todo show full screen animation with hearts on modal open
-    li
-        Button(style="--accent-rgb: 255, 153, 171;" @click="onDonateClick")
-            template(#icon) 
-                Heart
-            | {{ t('donate') }}
-    //- discord blurple // --bg: rgb(88, 101, 242);
-    li
-        Button(style="--accent-rgb: 88, 101, 242;" @click="onDiscordClick")
-            //- @todo use discord color, override css vars O_O !!!
-            template(#icon) 
-                Discord
-            | Discord
-    li
-        Button(@click="onGithubClick")
-            template(#icon) 
-                Github
-            | GitHub
+menu.menu(ref="menu", @scroll="onScroll")
+  li
+    Button(@click="onNewClick")
+      template(#icon) 
+        Plus
+      | {{ t("new") }}
+  li
+    Button(@click="onLoadClick")
+      template(#icon) 
+        FileDirectory 
+      | {{ t("load") }}
+  li
+    Button(@click="onExportClick") 
+      template(#icon) 
+        Upload
+      | {{ t("export") }}
+  li
+    Button(@click="onShareLinkClick") 
+      template(#icon) 
+        Link
+      | {{ t("share") }}
+  li
+    Button(@click="onOptionsClick")
+      template(#icon) 
+        Gear
+      | {{ t("options") }}
+  li
+    Button(@click="onFullscreenClick")
+      template(#icon) 
+        ScreenFull
+      | {{ t("fullscreen") }}
+  //- @todo special button
+  //- @todo show full screen animation with hearts on modal open
+  li
+    Button(style="--accent-rgb: 255, 153, 171", @click="onDonateClick")
+      template(#icon) 
+        Heart
+      | {{ t("donate") }}
+  //- discord blurple // --bg: rgb(88, 101, 242);
+  li
+    Button(style="--accent-rgb: 88, 101, 242", @click="onDiscordClick")
+      //- @todo use discord color, override css vars O_O !!!
+      template(#icon) 
+        Discord
+      | Discord
+  li
+    Button(@click="onGithubClick")
+      template(#icon) 
+        Github
+      | GitHub
 
-    li
-        Button(@click="onChangelogClick")
-            template(#icon)
-                Log
-            | {{ t('changelog') }}
-    Modal(:visible="modalVisible" @close="modalVisible = false")
-        component(:is="currentModalComponent")
+  li
+    Button(@click="onChangelogClick")
+      template(#icon)
+        Log
+      | {{ t("changelog") }}
+  Modal(:visible="modalVisible", @close="modalVisible = false")
+    component(:is="currentModalComponent")
 </template>
 
 <script setup lang="ts">

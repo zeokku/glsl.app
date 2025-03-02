@@ -34,6 +34,7 @@
     "@graphql-codegen/client-preset": "4.6.4",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
+    "@prettier/plugin-pug": "^3.2.1",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",

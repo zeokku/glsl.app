@@ -1,23 +1,22 @@
 <template lang="pug">
 .options.CModal__content
-    section(ref="sectionRef")
-        h1.App__font-shade {{ t('options') }} 
-        section.flex
-            label
-                input(type="checkbox" v-model="offlineShareLink")
-                | {{ t('offline-link') }}
-            label.cdn-input
-                .CExportModal_Index__label {{ t('npm') }}
-                .App__input-wrap.App__glow-element-wrap 
-                    input.App__glow-element(v-model="npmCdn")
-            label
-                input(type="checkbox" v-model="cachePackagesOffline")
-                | {{ t('cache') }}
-            Button.clear-cache-btn(@click="clearCache")
-                template(#icon) 
-                    Trash
-                | {{t('clear-cache')}}
-            
+  section(ref="sectionRef")
+    h1.App__font-shade {{ t("options") }}
+    section.flex
+      label
+        input(type="checkbox", v-model="offlineShareLink")
+        | {{ t("offline-link") }}
+      label.cdn-input
+        .CExportModal_Index__label {{ t("npm") }}
+        .App__input-wrap.App__glow-element-wrap
+          input.App__glow-element(v-model="npmCdn")
+      label
+        input(type="checkbox", v-model="cachePackagesOffline")
+        | {{ t("cache") }}
+      Button.clear-cache-btn(@click="clearCache")
+        template(#icon) 
+          Trash
+        | {{ t("clear-cache") }}
 </template>
 
 <script setup lang="ts">

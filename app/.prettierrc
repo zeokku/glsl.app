@@ -1,4 +1,5 @@
 {
+  "plugins": ["@prettier/plugin-pug"],
   "arrowParens": "avoid",
   "bracketSameLine": false,
   "semi": true,

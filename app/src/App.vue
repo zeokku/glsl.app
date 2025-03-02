@@ -1,12 +1,12 @@
 <template lang="pug">
 TopControls
 Suspense
-  Editor(@change="onShaderCodeChange" v-bind="{ infoLog }")
+  Editor(@change="onShaderCodeChange", v-bind="{ infoLog }")
   //- @note for testing loading anim
   //- Component(:is="_DUMMY_ASYNC_")
   template(#fallback)
-    .editor-loading 
-      | Editor is being loaded 
+    .editor-loading
+      | Editor is being loaded
       .loading-indicator ...
 Canvas
 </template>
@@ -167,7 +167,8 @@ const onShaderCodeChange = (code: string) => {
   }
 
   // move border grad
-  background: linear-gradient(to bottom, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%),
+  background:
+    linear-gradient(to bottom, var(--border) 0%, rgba(var(--border-rgb), 0.05) 100%),
     radial-gradient(circle, rgba(var(--glow-rgb), var(--gs)), transparent var(--gr));
 
   background-size:

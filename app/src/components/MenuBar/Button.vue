@@ -1,9 +1,9 @@
 <template lang="pug">
 .btn.click-fx.App__glow-element-wrap
-    button.App__glow-element
-        slot(name="icon")
-        span.App__font-shade
-            slot
+  button.App__glow-element
+    slot(name="icon")
+    span.App__font-shade
+      slot
 </template>
 
 <style module lang="less">

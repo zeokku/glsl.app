@@ -1,14 +1,14 @@
 <template lang="pug">
 article.changelog.CModal__content
-    header
-        h1 Changelog
+  header
+    h1 Changelog
 
-    main(v-html="md(changelog)")
+  main(v-html="md(changelog)")
 
-    footer
-        | Made with 💖 by
-        |
-        a(@click="onLinkClick" href="https://zeokku.com") ZEOKKU
+  footer
+    | Made with 💖 by
+    |
+    a(@click="onLinkClick", href="https://zeokku.com") ZEOKKU
 </template>
 
 <script setup lang="ts">

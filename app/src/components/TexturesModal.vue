@@ -1,26 +1,36 @@
 <template lang="pug">
 section.textures-modal.CModal__content(@scroll="onScroll")
-    h1.App__font-shade {{ t('textures') }} 
-    section.CShadersListModal_Index__grid(ref="grid")
-        .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(tex, i) in textureUrlArray")
-            //- @note bruh @dragover is required?
-            .CShadersListModal_Item__item.App__glow-element(@click="openFilePicker(i)" @dragover="onDragOver" @dragleave="onDragLeave" @drop.prevent.stop="onDrop($event, i)")
-                component.slot.CShadersListModal_Item__view(v-if="tex" :ref="el => setTextureSourceRef(el, i)" :is="t.isVideo ? 'video' : 'img'" :src="tex" v-bind.attr=`tex.isVideo && {
+  h1.App__font-shade {{ t("textures") }}
+  section.CShadersListModal_Index__grid(ref="grid")
+    .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(tex, i) in textureUrlArray")
+      //- @note bruh @dragover is required?
+      .CShadersListModal_Item__item.App__glow-element(
+        @click="openFilePicker(i)",
+        @dragover="onDragOver",
+        @dragleave="onDragLeave",
+        @drop.prevent.stop="onDrop($event, i)"
+      )
+        component.slot.CShadersListModal_Item__view(
+          v-if="tex",
+          :ref="el => setTextureSourceRef(el, i)",
+          :is="t.isVideo ? 'video' : 'img'",
+          :src="tex",
+          v-bind.attr=`tex.isVideo && {
                   loop: true,
                   muted: true,
                   autoplay: true,
                   playsinline: true,
-                }`)
-                .slot.CShadersListModal_Item__view(v-else)
-                    .placeholder 
-                        span
-                            //- @note because v-for used t as variable it replaced the localization function
-                            b {{ t('select-media') }}
-                            | 
-                            | {{ t('or-dnd') }}
-                .CShadersListModal_Item__title 
-                    span Texture {{ i }}
-    
+                }`
+        )
+        .slot.CShadersListModal_Item__view(v-else)
+          .placeholder
+            span
+              //- @note because v-for used t as variable it replaced the localization function
+              b {{ t("select-media") }}
+              |
+              | {{ t("or-dnd") }}
+        .CShadersListModal_Item__title
+          span Texture {{ i }}
 </template>
 
 <script lang="ts">

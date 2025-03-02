@@ -1,49 +1,49 @@
 <template lang="pug">
-.export-content.CModal__content(ref="exportContentRef" @scroll="onScroll")
+.export-content.CModal__content(ref="exportContentRef", @scroll="onScroll")
+  section
+    h1.App__font-shade Settings
+    .settings
+      label
+        input(type="checkbox", v-model="expandIncludes", @change="generateShader")
+        | {{ t("expand") }}
+        |
+        code #include
+        |
+        | {{ t("directives") }}
+      label
+        //- @todo
+        input(type="checkbox", v-model="noAngleIncludes", @change="generateShader")
+        | {{ t("replace") }}
+        |
+        code &lt;...&gt;
+        | #includes
+        | {{ t("by") }}
+        |
+        code "..."
+  section
+    h1.App__font-shade {{ t("rename-symbols") }}
     section
-        h1.App__font-shade Settings 
-        .settings
-            label
-                input(type="checkbox" v-model="expandIncludes" @change="generateShader")
-                | {{ t('expand') }}
-                | 
-                code #include
-                | 
-                | {{t('directives')}}
-            label
-                //- @todo
-                input(type="checkbox" v-model="noAngleIncludes" @change="generateShader")
-                | {{ t('replace') }} 
-                | 
-                code &lt;...&gt;
-                | #includes 
-                | {{ t('by') }}
-                | 
-                code "..."
+      h2.App__font-shade {{ t("inputs") }}
+      .rename-grid
+        label(v-for="i in inputList")
+          .label {{ i }}
+          .App__input-wrap.App__glow-element-wrap
+            input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
     section
-        h1.App__font-shade {{ t('rename-symbols') }}
-        section 
-            h2.App__font-shade {{ t('inputs') }}
-            .rename-grid
-                label(v-for="i in inputList")
-                    .label {{ i }}
-                    .App__input-wrap.App__glow-element-wrap 
-                        input.App__glow-element(@input="e => renameSymbol(i, e)" :value="renameMap.get(i)")
-        section
-            h2.App__font-shade {{ t('uniforms') }}
-            .rename-grid
-                label(v-for="i in uniformList")
-                    .label {{ i }}
-                    .App__input-wrap.App__glow-element-wrap 
-                        input.App__glow-element(@input="e => renameSymbol(i, e)" :value="renameMap.get(i)")
-    section
-        h1.App__font-shade {{ t('result') }}
-        p 
-            | {{ t('click') }}
-            | 
-            a(:download="shaderName + '.glsl'" :href="fileDownloadLink") {{ t('download') }}
-        .App__input-wrap.App__glow-element-wrap
-            textarea.code(readonly :value="exportContent" @click="onTextareaClick")
+      h2.App__font-shade {{ t("uniforms") }}
+      .rename-grid
+        label(v-for="i in uniformList")
+          .label {{ i }}
+          .App__input-wrap.App__glow-element-wrap
+            input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
+  section
+    h1.App__font-shade {{ t("result") }}
+    p
+      | {{ t("click") }}
+      |
+      a(:download="shaderName + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
+    .App__input-wrap.App__glow-element-wrap
+      textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
 </template>
 
 <script lang="ts">

@@ -3,29 +3,38 @@ import { Directive } from "vue";
 const movableSymbol = Symbol("vMovable");
 
 interface IMovableElement extends HTMLElement {
-  [movableSymbol]: boolean;
+  [movableSymbol]: {
+    enabled: boolean;
+    x: number;
+    y: number;
+  };
 }
 
-const position = (el: HTMLElement, x: number, y: number) => (el.style.translate = `${x}px ${y}px`);
+const updatePosition = (el: IMovableElement, x: number, y: number) =>
+  (el.style.translate = `${x}px ${y}px`);
 
-export const vMovable: Directive = {
-  mounted(el: IMovableElement, { arg }) {
+export const vMovable: Directive<IMovableElement> = {
+  mounted(el, { arg }) {
     let mouseDown = false;
 
-    // @todo arg is boolean, vue types are incorrect
-    el[movableSymbol] = arg as unknown as boolean;
-
-    // we can't use bottom/right css because it breaks resizing @todo
     let x = window.innerWidth - el.offsetWidth - 50;
     let y = (window.innerHeight - el.offsetHeight) / 2;
 
-    if (arg) position(el, x, y);
+    el[movableSymbol] = {
+      // @todo arg is boolean, vue types are incorrect
+      enabled: arg as unknown as boolean,
+      // @todo we can't use bottom/right css because it breaks resizing
+      x,
+      y,
+    };
 
     let prevX = x;
     let prevY = y;
 
+    if (arg) updatePosition(el, x, y);
+
     const onMouseMove = (e: MouseEvent) => {
-      if (mouseDown && el[movableSymbol]) {
+      if (mouseDown && el[movableSymbol].enabled) {
         // @note well movement behaves incorrectly when the page is scaled
         // x += e.movementX;
         // y += e.movementY;
@@ -37,16 +46,18 @@ export const vMovable: Directive = {
         x += dx;
         y += dy;
 
+        Object.assign(el[movableSymbol], { x, y });
+
         prevX = e.clientX;
         prevY = e.clientY;
 
-        position(el, x, y);
+        updatePosition(el, x, y);
       }
     };
 
     el.addEventListener("pointerdown", e => {
       // don't move on resizer
-      if (e.offsetX < el.offsetWidth - 10 && e.offsetY < el.offsetHeight - 10) {
+      if (e.offsetX < el.offsetWidth - 10 || e.offsetY < el.offsetHeight - 10) {
         mouseDown = true;
 
         prevX = e.clientX;
@@ -58,11 +69,14 @@ export const vMovable: Directive = {
   },
 
   updated(el: IMovableElement, { arg }) {
-    el[movableSymbol] = arg as unknown as boolean;
+    el[movableSymbol].enabled = arg as unknown as boolean;
 
     // @note not movable
     if (!arg) {
-      position(el, 0, 0);
+      updatePosition(el, 0, 0);
+    } else {
+      const { x, y } = el[movableSymbol];
+      updatePosition(el, x, y);
     }
   },
 };

@@ -4,13 +4,14 @@
 
 <script lang="ts">
 let model: editor.ITextModel;
-
-// export const setModelValue = (code: string) => model.setValue(code);
 export const getModel = () => model;
+
+let editorInstance: editor.IStandaloneCodeEditor;
+export const getEditor = () => editorInstance;
 </script>
 
 <script setup lang="ts">
-import { getCurrentScope, onMounted, onUpdated, watch } from "vue";
+import { getCurrentScope, onMounted, watch } from "vue";
 
 // @todo select only needed
 import "monaco-editor/esm/vs/editor/editor.all";
@@ -90,6 +91,7 @@ import { useQuery } from "@urql/vue";
 import { graphql } from "@/gql";
 import debounce from "lodash.debounce";
 import { formatCode } from "@/format";
+import { useScreen } from "@/composition/useScreen";
 
 // @note 'monaco-editor/esm/vs/editor/contrib/message/browser/messageController.js'
 type MessageController = {
@@ -107,6 +109,18 @@ const props = defineProps<{ infoLog: String }>();
 const scope = getCurrentScope()!;
 
 let editorContainer = $shallowRef<HTMLDivElement>();
+
+watch(useScreen(), ({ w }) => {
+  const editorInstance = getEditor();
+
+  if (!editorInstance) return;
+
+  editorInstance.updateOptions({
+    minimap: {
+      enabled: w > 500 && getSetting("editorMinimap"),
+    },
+  });
+});
 
 let parser = new workerParse();
 // let isParsing = false;
@@ -243,7 +257,7 @@ onMounted(async () => {
   }
   //#endregion
 
-  const editorInstance = editor.create(
+  editorInstance = editor.create(
     editorContainer!,
     {
       theme: "glsl-theme",
@@ -257,8 +271,10 @@ onMounted(async () => {
 
       // fontFamily: 'SpaceMono',
 
+      tabSize: getSetting("tabSize"),
+
       minimap: {
-        enabled: innerWidth > 500,
+        enabled: innerWidth > 500 && getSetting("editorMinimap"),
         side: "left",
         maxColumn: 80,
       },

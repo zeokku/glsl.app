@@ -8,6 +8,9 @@ load: Load
 export: Export
 share: Share
 options: Options
+storage: Storage
+editor: Editor
+formatting: Formatting
 fullscreen: Fullscreen
 # support the author
 donate: Donate
@@ -52,7 +55,10 @@ shader-copied: Shader code copied into the clipboard
 #endregion
 
 #region options modal
-offline-link: Use Offline method for generating shareable links
+show-minimap: Show code minimap
+print-width: Print width
+tab-size: Tab size
+offline-link: Use offline method for generating shareable links
 npm: NPM Modules Provider
 cache: Cache modules on local storage (so they can be used offline)
 clear-cache: Clear Offline Cache

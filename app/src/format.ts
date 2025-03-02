@@ -2,12 +2,7 @@
 import { format, formatWithCursor } from "prettier/standalone.js";
 import type { Options as PrettierOptions } from "prettier";
 import * as glslPlugin from "prettier-plugin-glsl";
-
-const formatOptions = {
-  printWidth: 75,
-  tabWidth: 4,
-  endOfLine: "lf",
-} satisfies PrettierOptions;
+import { getSetting } from "./settings";
 
 export const formatCode = async (code: string, offset: number) => {
   // @todo this breaks sometimes due to different cursor position, something's with offset
@@ -23,7 +18,8 @@ export const formatCode = async (code: string, offset: number) => {
   const formatted = await format(code, {
     parser: "glsl-parser",
     plugins: [glslPlugin],
-    ...formatOptions,
+    printWidth: getSetting("printWidth"),
+    tabWidth: getSetting("tabSize"),
   });
 
   return { formatted };

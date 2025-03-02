@@ -6,6 +6,9 @@ load: Открыть
 export: Экспорт
 share: Поделиться
 options: Настройки
+storage: Хранилище
+editor: Редактор
+formatting: Форматирование
 fullscreen: Полный экран
 # support the author
 donate: Поддержать
@@ -50,6 +53,9 @@ shader-copied: Шейдер скопирован в буффер обмена
 #endregion
 
 #region options modal
+show-minimap: Показывать мини-карту с кодом
+print-width: Ширина строк
+tab-size: Размер отступов
 offline-link: Использовать оффлайн метод для генерации ссылок на шейдеры
 npm: Провайдер NPM модулей
 cache: Кэшировать модули в локальном хранилище (чтобы их можно было использовать оффлайн)

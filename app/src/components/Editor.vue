@@ -89,6 +89,7 @@ import parsedLygia from "@/glsl-lang/parsedLygia.json";
 import { useQuery } from "@urql/vue";
 import { graphql } from "@/gql";
 import debounce from "lodash.debounce";
+import { formatCode } from "@/format";
 
 // @note 'monaco-editor/esm/vs/editor/contrib/message/browser/messageController.js'
 type MessageController = {
@@ -1105,6 +1106,30 @@ onMounted(async () => {
 
       releaseDocumentSemanticTokens(resultId) {},
     });
+
+    languages.registerDocumentFormattingEditProvider("glsl", {
+      async provideDocumentFormattingEdits(model, options, token) {
+        const code = model.getValue();
+        const position = editorInstance.getPosition()!;
+        const offset = model.getOffsetAt(position);
+
+        console.log("FORMAT CALL", options, token, "offset:", offset);
+
+        const { formatted } = await formatCode(code, offset);
+
+        // console.log(editor.getAction("editor.action.formatDocument"));
+
+        // const newPosition = model.getPositionAt(cursorOffset);
+        // editorInstance.setPosition(newPosition, "formatting-adjustment");
+
+        return [
+          {
+            text: formatted,
+            range: model.getFullModelRange(),
+          },
+        ];
+      },
+    });
   }
 
   //#endregion
@@ -1767,6 +1792,13 @@ onMounted(async () => {
   //#endregion
 
   //#region editor keyboard shortcuts
+
+  // @note add ctrl-shift-p shortcut for command palette instead of default F1
+  editor.addKeybindingRule({
+    keybinding: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyP,
+    command: "editor.action.quickCommand",
+  });
+
   editorInstance.addAction({
     id: "app.increase-font",
     label: "Increase Font Size",
@@ -1815,6 +1847,28 @@ onMounted(async () => {
       }
     },
   });
+
+  // @todo lazy load functionality, prioritize critical things first
+  // editorInstance.addAction({
+  //   id: "app.format-code",
+  //   label: "Format Code",
+  //   keybindings: [KeyMod.Shift | KeyMod.Alt | KeyCode.KeyF],
+  //   async run(editor) {
+  //     const model = editor.getModel()!;
+  //     const code = model.getValue();
+  //     const position = editor.getPosition()!;
+  //     const offset = model.getOffsetAt(position);
+
+  //     const { formatted, cursorOffset } = await formatCode(code, offset);
+
+  //     console.log(editor.getAction("editor.action.formatDocument"));
+
+  //     model.setValue(formatted);
+
+  //     const newPosition = model.getPositionAt(cursorOffset);
+  //     editor.setPosition(newPosition, "formatting-adjustment");
+  //   },
+  // });
 
   {
     // @todo move to :root
@@ -2572,32 +2626,32 @@ onMounted(async () => {
           let defs: Array<[string, FunctionDefinition["overloads"][number]]> = [];
 
           references_label: for (let r of references) {
-            /* @note 
+            /* @note
                         there are three cases:
-                        
+
                         1. "function" - function is both declared and defined
                         2. "function_prototype" - function declaration (no body)
                         3. "function_call" - when function is invoked
-                    
+
                         by order either "function" or "function_prototype" always comes first
                         before any calls
-                    
+
                         BUT if there's proto, then func may come AFTER calls
-                    
+
                         (technically having only proto without body is possible and won't error
                         but it can't be called resulting in error)
-    
+
                         we need to collect locations of these calls for semantic tokens,
                         but for that we have to have entry in map already
-                    
+
                         so it would be easy to just record whatever comes first func or func_proto
                         BUT the functions can also be overloaded with a different set of parameters/return types
                         which means we'll have to check both func and proto if they're actually different
                         since one overload may be declared and then defined and the other defined straight away
-                    
+
                         overloads only differ by argument types (without qualifiers), so there can't be overloads with same parameters but different return type
-    
-                        
+
+
                         */
             if (r.type === "function_prototype" || r.type === "function") {
               let prototype = r.type === "function_prototype" ? r : r.prototype;

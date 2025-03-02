@@ -42,7 +42,7 @@ export default defineConfig(({ command }) => ({
       // @ts-expect-error
       filename: `sw-${Math.floor(new Date() / 1000).toString(32)}.js`,
       workbox: {
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         // @note use slash, because default is /index.html which is incorrect since we use /index.php
         // @note but this https://github.com/vite-pwa/nuxt/issues/53#issuecomment-1615266204
         navigateFallback: undefined,
@@ -172,7 +172,7 @@ export default defineConfig(({ command }) => ({
 
   build: {
     cssMinify: "lightningcss",
-    // sourcemap: "hidden", // @todo
+    sourcemap: true, // @todo wait for css modules plugin update with correct source maps
     minify: "terser",
     target: "es2022",
     terserOptions: {

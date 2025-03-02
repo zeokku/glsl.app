@@ -1,0 +1,58 @@
+diff --git a/lib/prettier-plugin.cjs.js b/lib/prettier-plugin.cjs.js
+index 96089b8baa0d4fc6defe1ac912bd70e708fbb72f..b8ae31f696d7eb37e76e92b2836f2d68ab21452c 100644
+--- a/lib/prettier-plugin.cjs.js
++++ b/lib/prettier-plugin.cjs.js
+@@ -1,8 +1,7 @@
+ 'use strict';
+ 
+-var prettier = require('prettier');
+-var doc = require('prettier/doc');
+-var lodash = require('lodash');
++var prettier = require('prettier/standalone');
++var doc = prettier.doc; // require('prettier/doc');
+ var chevrotain = require('chevrotain');
+ 
+ function _interopNamespaceDefault(e) {
+@@ -910,7 +909,7 @@ var TOKEN;
+ })(TOKEN || (TOKEN = {}));
+ // IDENTIFIER needs to go last, but must be declared first
+ // so it can be referenced in longerAlt
+-const ALL_TOKENS = lodash.pull(Object.values(TOKEN), TOKEN.NON_PP_IDENTIFIER).flatMap((x) => (Array.isArray(x) ? x : [x]));
++const ALL_TOKENS = Object.values(TOKEN).filter(k => k !== TOKEN.NON_PP_IDENTIFIER).flatMap((x) => (Array.isArray(x) ? x : [x]));
+ ALL_TOKENS.push(TOKEN.NON_PP_IDENTIFIER);
+ const GLSL_LEXER = new chevrotain.Lexer(ALL_TOKENS, { ensureOptimizations: DEV });
+ function checkLexingErrors(input, lexingResult) {
+@@ -982,7 +981,7 @@ function isBitwiseOperator(tokenType) {
+ new (class extends AbstractVisitor {
+     constructor() {
+         super(...arguments);
+-        this.markError = lodash.noop;
++        this.markError = () => {};
+     }
+     eval(n, isDefined, markError) {
+         this.isDefined = isDefined;
+@@ -3189,7 +3188,7 @@ const printers = {
+                         parts.push(opening);
+                         if (n.no) {
+                             const commentOnOwnLine = n.yes.comments?.some((c) => c.trailing && c.tokenType === TOKEN.LINE_COMMENT) ||
+-                                lodash.findLast(n.yes.comments, (c) => !c.leading && !c.trailing)
++                                n.yes.comments.findLast((c) => !c.leading && !c.trailing)
+                                     ?.tokenType === TOKEN.LINE_COMMENT;
+                             const elseOnSameLine = n.yes.kind === "compoundStatement" && !commentOnOwnLine;
+                             parts.push(elseOnSameLine ? " " : hardline);
+diff --git a/package.json b/package.json
+index 5288492a36bddf02f0eebc28b424a77e285a5663..6cb4510d78ff195bdcbbf5dc215e758af0f32116 100644
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,10 @@
+   ],
+   "version": "0.2.0",
+   "description": "Prettier (https://prettier.io) plugin for GLSL (OpenGL Shading Language).",
+-  "exports": "./lib/prettier-plugin.cjs.js",
++  "exports": {
++    "default": "./lib/prettier-plugin.cjs.js",
++    "types": "./lib/prettier-plugin.d.ts"
++  },
+   "type": "commonjs",
+   "types": "lib/prettier-plugin.d.ts",
+   "scripts": {

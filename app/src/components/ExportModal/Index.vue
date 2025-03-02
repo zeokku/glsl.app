@@ -1,5 +1,5 @@
 <template lang="pug">
-.export-content.CModal__content(ref="exportContentRef", @scroll="onScroll")
+.export-content.CModal__content(ref="exportContentRef")
   section
     h1.App__font-shade Settings
     .settings
@@ -67,10 +67,6 @@ import { useToast } from "@/composition/useToast";
 import { Uri } from "monaco-editor";
 
 import { useI18n } from "petite-vue-i18n";
-
-import { getCurrentScope, onMounted, watch } from "vue";
-import { useMouse } from "@/composition/useMouse";
-import { updateElGlow } from "@/stylingUtils/updateGlow";
 
 const { t, locale } = useI18n();
 
@@ -155,28 +151,6 @@ const renameSymbol = (symbol: string, e: InputEvent) => {
 const onTextareaClick = (e: PointerEvent<HTMLTextAreaElement>) => {
   e.target.select();
   navigator.clipboard.writeText(e.target.value).then(() => useToast(t("shader-copied")));
-};
-
-let glowItems: NodeListOf<HTMLDivElement>;
-
-onMounted(() => {
-  console.log("export modal mounted");
-
-  glowItems = exportContentRef!.querySelectorAll<HTMLDivElement>(
-    "." + $cssModule["App__glow-element-wrap"]
-  );
-});
-
-const mouse = useMouse();
-
-watch(mouse, () => {
-  if (!glowItems) return;
-  // @note !!! don't use scrollTop because it causes reflow, so it's very laggy...
-  glowItems.forEach(g => updateElGlow(g, mouse));
-});
-
-const onScroll = () => {
-  glowItems.forEach(g => updateElGlow(g, mouse, true));
 };
 </script>
 

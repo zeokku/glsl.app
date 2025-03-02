@@ -1,5 +1,5 @@
 <template lang="pug">
-menu.menu(ref="menu", @scroll="onScroll")
+menu.menu(ref="menu")
   li
     Button(@click="onNewClick")
       template(#icon) 
@@ -75,10 +75,7 @@ import Log from "+/icons/log.vue";
 
 import Modal from "+/Modal.vue";
 
-import { getCurrentScope, onMounted, watch } from "vue";
 import { useI18n } from "petite-vue-i18n";
-import { useMouse } from "@/composition/useMouse";
-import { getRadiusOffset, updateElGlow } from "@/stylingUtils/updateGlow";
 import { createdTimestamp, shaderName } from "@/App.vue";
 import { findNonConflictingName, setLastOpenShader } from "@/storage";
 import { getCanvas } from "../Canvas.vue";
@@ -109,20 +106,6 @@ const menu = $shallowRef<HTMLMenuElement>();
 
 let modalVisible = $shallowRef<boolean>(false);
 let currentModalComponent = $shallowRef<typeof ShadersList>();
-
-let glowItems: HTMLElement[];
-
-onMounted(() => {
-  glowItems = [...menu!.children].map(li => li.firstElementChild as HTMLElement);
-});
-
-watch(useMouse(), mouse => {
-  if (!glowItems) return;
-
-  glowItems.forEach(el => updateElGlow(el, mouse));
-});
-
-const onScroll = () => glowItems.forEach(el => updateElGlow(el, useMouse(), true));
 
 const onNewClick = async (e: MouseEvent) => {
   if (!getModel) return;

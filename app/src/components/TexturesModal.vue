@@ -1,5 +1,5 @@
 <template lang="pug">
-section.textures-modal.CModal__content(@scroll="onScroll")
+section.textures-modal.CModal__content
   h1.App__font-shade {{ t("textures") }}
   section.CShadersListModal_Index__grid(ref="grid")
     .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(tex, i) in textureUrlArray")
@@ -53,8 +53,6 @@ export const textureSourceRefs = shallowReactive<Array<TTextureSource | undefine
 </script>
 
 <script setup lang="ts">
-import { useMouse } from "@/composition/useMouse";
-import { updateElGlow } from "@/stylingUtils/updateGlow";
 import { useI18n } from "petite-vue-i18n";
 
 const { t } = useI18n();
@@ -224,28 +222,6 @@ watch(textureSourceRefs, async () => {
     }
   });
 });
-
-//#region border glow
-
-const grid = $shallowRef<HTMLElement>();
-
-// force update on scroll
-const onScroll = () => {
-  // @note use grid.children, because they may change
-  // and storing children in a var doesn't introduce any perf boost, while greatly increasing the complexity of the code
-  [...grid!.children].forEach(e => updateElGlow(e, useMouse(), true));
-};
-
-watch(useMouse(), mouse => {
-  if (!grid) return;
-
-  // bruh are there a way to get consistent e.offset for only current target element????
-  // ok bruh scrap offset, better use bounding rect, since we cache the values anyway, so it's super clean and easy now
-
-  [...grid!.children].forEach(e => updateElGlow(e, mouse));
-});
-
-//#endregion
 </script>
 
 <style lang="less" module>

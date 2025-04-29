@@ -8,19 +8,21 @@ import { getDocsLinkFor } from "@/utils/getOpenGLDocsUrl";
 // https://stackoverflow.com/a/54443914/14776286
 export const enum CustomCompletionItemKind {
   Circuit = 100, // circuit-board [gl_vars]
-  Extensions = 101, // extensions [include <>]
-  FileCode = 102, // file-code [include ""]
-  Flame = 103, // flame
-  Filter = 104, // filter [macro defines]
-  Heart = 105, // heart
-  Pass = 106, // pass (checkmark)
-  Square = 107, // primitive-square [glsl builtin funcs]
-  Rocket = 108, // rocket
-  Ruby = 109, // ruby
-  Save = 110, // save
-  Sparkle = 111, // sparkle, @todo not included?
-  Star = 112, // star-empty [package includes, lygia]
-  Misc = 113, // symbol-misc
+  Extensions, // extensions [include <>]
+  FileCode, // file-code [include ""]
+  Flame, // flame
+  Filter, // filter [macro defines]
+  Heart, // heart
+  Pass, // pass (checkmark)
+  Square, // primitive-square [glsl builtin funcs]
+  Rocket, // rocket
+  Ruby, // ruby
+  Save, // save
+  Sparkle, // sparkle, @todo not included?
+  Star, // star-empty [package includes, lygia]
+  Misc, // symbol-misc
+  Tools, // [app scope includes, $shadertoy, $glsl1]
+  Layers,
 }
 
 export const enum AutocompletionOrder {
@@ -45,7 +47,7 @@ export const staticSuggestions = [
     // @ts-expect-error
     kind: CustomCompletionItemKind.Extensions,
     documentation: "Include code from NPM package",
-    insertText: "#include <${1:pacakge}>",
+    insertText: "#include <${1:package}>",
     // insertText: "#include <$0>",
     insertTextRules: languages.CompletionItemInsertTextRule.InsertAsSnippet,
     sortText: "a",
@@ -192,7 +194,7 @@ export const staticSuggestions = [
           info.desc.replace(new RegExp(String.raw`\b${name}\b`), "**`" + name + "`**"),
 
           `[Open in docs](${getDocsLinkFor(name)})`,
-        ].join("\n\n"),
+        ].join("\n\n"), // @todo turns out this is broken in 0.36.1 but seems to work correctly in newest version
       },
       // @note proper insertText is updated in autocompletion
       insertText: name,

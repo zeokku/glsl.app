@@ -5,3 +5,8 @@
 interface ImportMetaEnv {
   APP_GQL_ENDPOINT: string;
 }
+
+declare module "octicons:*" {
+  import { Component } from "vue";
+  export default Component;
+}

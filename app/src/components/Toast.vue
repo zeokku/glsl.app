@@ -1,15 +1,13 @@
 <template lang="pug">
 .toast-wrap
   .toast
-    //- CheckCircle
-    CheckCircleFill
+    CheckCircle
     //- .App__font-shade
     span {{ message }}
 </template>
 
 <script setup lang="ts">
-import CheckCircle from "./icons/check-circle.vue";
-import CheckCircleFill from "./icons/check-circle-fill.vue";
+import CheckCircle from "octicons:check-circle";
 
 defineProps<{
   message: string;
@@ -17,6 +15,8 @@ defineProps<{
 </script>
 
 <style module lang="less">
+@duration: 2s;
+
 .toast-wrap {
   position: fixed;
   bottom: 0;
@@ -34,7 +34,7 @@ defineProps<{
 
 @keyframes toast {
   0% {
-    transform: translateY(2em) scale(0.95);
+    transform: translateY(2.5rem) scale(0.95);
 
     @bf: blur(3px) opacity(0);
     -webkit-backdrop-filter: @bf;
@@ -43,7 +43,7 @@ defineProps<{
     opacity: 0;
   }
 
-  25%,
+  15%,
   75% {
     transform: translateY(0) scale(1);
 
@@ -91,7 +91,7 @@ defineProps<{
     width: 1.25em;
   }
 
-  animation: toast 1s ease-out;
+  animation: toast @duration ease-out;
 
   will-change: transform;
 }

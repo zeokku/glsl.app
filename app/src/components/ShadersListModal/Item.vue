@@ -4,21 +4,19 @@
     .view(ref="view")
     .title
       span {{ name }}
-      Trash.delete(
+      button(
         @click.stop="onDeleteClick",
         :aria-label="t('delete-shader')",
-        role="button",
-        :tooltip="t('delete-shader')"
+        :title="t('delete-shader')"
       )
+        delete-icon.delete
 </template>
 
 <script setup lang="ts">
 import { useScreen } from "@/composition/useScreen";
-import { inject, onMounted, watch } from "vue";
+import { inject, onBeforeUnmount, onMounted, watch } from "vue";
 
-import FileRemoved from "+/icons/file-removed.vue";
-import MaterialDelete from "+/icons/material-delete.vue";
-import Trash from "+/icons/trash.vue";
+import DeleteIcon from "octicons:trash";
 
 import { useI18n } from "petite-vue-i18n";
 
@@ -31,7 +29,7 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const emit = defineEmits<{
-  (e: "delete"): void;
+  delete: [];
 }>();
 
 const onDeleteClick = () => {
@@ -43,21 +41,30 @@ const onDeleteClick = () => {
 // @todo @report doing $shallowRef()! (to illiminate undefined) leads to an error
 const view = $shallowRef<HTMLDivElement>();
 
-let bbox = {} as TBbox;
-defineExpose({ bbox });
+const bbox = defineModel<TBbox>();
 
 const updateBbox = () => {
-  // @note use assign so we keep the same obj ref in exposed object
-  Object.assign(bbox, {
+  bbox.value = {
     x: view!.offsetLeft,
     y: view!.offsetTop,
     w: view!.offsetWidth,
     h: view!.offsetHeight,
-  });
+    update: updateBbox,
+  };
 };
 
-onMounted(updateBbox);
-watch(useScreen(), updateBbox);
+let resizeObserver: ResizeObserver;
+
+onMounted(() => {
+  updateBbox();
+
+  resizeObserver = new ResizeObserver(updateBbox);
+  resizeObserver.observe(view!);
+});
+
+onBeforeUnmount(() => {
+  resizeObserver.disconnect();
+});
 </script>
 
 <style module lang="less">
@@ -108,13 +115,13 @@ watch(useScreen(), updateBbox);
 
 .title {
   display: grid;
+  // @todo auto expand title
   grid-template-columns: @icon-sz 1fr @icon-sz;
   gap: 0.5em;
   align-items: center;
 
   flex: 1;
 
-  font-size: 1.25em;
   text-transform: uppercase;
 
   // padding-block: 1.25rem;

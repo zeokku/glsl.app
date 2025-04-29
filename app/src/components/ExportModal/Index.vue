@@ -1,49 +1,59 @@
 <template lang="pug">
 .export-content.CModal__content(ref="exportContentRef")
-  section
-    h1.App__font-shade Settings
-    .settings
-      label
-        input(type="checkbox", v-model="expandIncludes", @change="generateShader")
-        | {{ t("expand") }}
+  article.App__article
+    h1.App__font-shade.App__icon-title
+      upload-icon
+      | {{ t("export-shader") }}
+    section.App__section
+      h2.App__font-shade.App__icon-title
+        gear-icon
+        | {{ t("settings") }}
+      .App__row-even
+        label
+          input(type="checkbox", v-model="expandIncludes", @change="generateShader")
+          | {{ t("expand") }}
+          |
+          code #include
+          |
+          | {{ t("directives") }}
+        label
+          //- @todo
+          input(type="checkbox", v-model="noAngleIncludes", @change="generateShader")
+          | {{ t("replace") }}
+          |
+          code &lt;...&gt;
+          | #includes
+          | {{ t("by") }}
+          |
+          code "..."
+    section.App__section
+      h2.App__font-shade.App__icon-title
+        pencil-icon
+        | {{ t("rename-symbols") }}
+      section.App__region
+        h3.App__font-shade {{ t("inputs") }}
+        .App__row
+          label(v-for="i in inputList")
+            .label {{ i }}
+            .App__input-wrap.App__glow-element-wrap
+              input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
+      section.App__region
+        h3.App__font-shade {{ t("uniforms") }}
+        .App__row
+          label(v-for="i in uniformList")
+            .label {{ i }}
+            .App__input-wrap.App__glow-element-wrap
+              input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
+    section.App__region
+      h2.App__font-shade.App__icon-title
+        file-icon
+        | {{ t("result") }}
+      p
+        | {{ t("click") }}
         |
-        code #include
-        |
-        | {{ t("directives") }}
-      label
-        //- @todo
-        input(type="checkbox", v-model="noAngleIncludes", @change="generateShader")
-        | {{ t("replace") }}
-        |
-        code &lt;...&gt;
-        | #includes
-        | {{ t("by") }}
-        |
-        code "..."
-  section
-    h1.App__font-shade {{ t("rename-symbols") }}
-    section
-      h2.App__font-shade {{ t("inputs") }}
-      .rename-grid
-        label(v-for="i in inputList")
-          .label {{ i }}
-          .App__input-wrap.App__glow-element-wrap
-            input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
-    section
-      h2.App__font-shade {{ t("uniforms") }}
-      .rename-grid
-        label(v-for="i in uniformList")
-          .label {{ i }}
-          .App__input-wrap.App__glow-element-wrap
-            input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
-  section
-    h1.App__font-shade {{ t("result") }}
-    p
-      | {{ t("click") }}
-      |
-      a(:download="shaderName + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
-    .App__input-wrap.App__glow-element-wrap
-      textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
+        a(:download="currentShader.name + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
+      .App__input-wrap.App__glow-element-wrap
+        textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
 </template>
 
 <script lang="ts">
@@ -56,15 +66,14 @@ const renameMap = new Map();
 </script>
 
 <script setup lang="ts">
-import { shaderName } from "@/App.vue";
-
-import { dependencyRegex, processIncludes } from "@/processIncludes";
-
-// import { parse, generate } from '@shaderfrog/glsl-parser'
-// import { renameBindings } from '@shaderfrog/glsl-parser/utils'
+import { currentShader } from "@/App.vue";
+import UploadIcon from "octicons:upload";
+import GearIcon from "octicons:gear";
+import PencilIcon from "octicons:pencil";
+import FileIcon from "octicons:file";
 
 import { useToast } from "@/composition/useToast";
-import { Uri } from "monaco-editor";
+import type { Uri } from "monaco-editor";
 
 import { useI18n } from "petite-vue-i18n";
 
@@ -75,22 +84,13 @@ let exportContentRef = $shallowRef<HTMLDivElement>();
 let fileDownloadLink = $shallowRef<string>();
 let exportContent = $shallowRef<string>("");
 
-let getModel: () => import("monaco-editor").editor.ITextModel;
-
-type GlslParserModule = typeof import("@shaderfrog/glsl-parser");
-let parse: GlslParserModule["parse"];
-let generate: GlslParserModule["generate"];
-let renameBindings: typeof import("@shaderfrog/glsl-parser/utils").renameBindings;
-
-let promises = [
-  import("@/components/Editor.vue").then(module => ({ getModel } = module)),
-  // @todo utilize async parser
-  import("@shaderfrog/glsl-parser").then(module => ({ parse, generate } = module)),
-  import("@shaderfrog/glsl-parser/utils").then(module => ({ renameBindings } = module)),
-];
-
 const generateShader = async () => {
-  if (!getModel || !parse) return;
+  const [{ getModel, processIncludes, dependencyRegex }, { parse, generate }, { renameBindings }] =
+    await Promise.all([
+      import("@/editor"),
+      import("@shaderfrog/glsl-parser"),
+      import("@shaderfrog/glsl-parser/utils"),
+    ]);
 
   let codeLines = getModel().getLinesContent();
 
@@ -105,7 +105,7 @@ const generateShader = async () => {
     });
   }
 
-  let code = expandIncludes ? await processIncludes(codeLines, null) : codeLines.join("\n");
+  let code = expandIncludes ? await processIncludes(codeLines) : codeLines.join("\n");
 
   if (renameMap.size) {
     let ast = parse(code, { includeLocation: true });
@@ -127,7 +127,7 @@ const generateShader = async () => {
   fileDownloadLink = URL.createObjectURL(new Blob([code]));
 };
 
-Promise.all(promises).then(generateShader);
+generateShader();
 
 // @note offer only inputs rename, since user can rename outputs by themselves
 let inputList = ["uv"];
@@ -148,9 +148,14 @@ const renameSymbol = (symbol: string, e: InputEvent) => {
   generateShader();
 };
 
-const onTextareaClick = (e: PointerEvent<HTMLTextAreaElement>) => {
-  e.target.select();
-  navigator.clipboard.writeText(e.target.value).then(() => useToast(t("shader-copied")));
+const onTextareaClick = ({ target }: PointerEvent<HTMLTextAreaElement>) => {
+  const { value } = target;
+
+  // @note reset selection first, because if you select the already selected range it will be deselected
+  target.setSelectionRange(0, 0);
+  target.setSelectionRange(0, value.length);
+
+  navigator.clipboard.writeText(value).then(() => useToast(t("shader-copied")));
 };
 </script>
 
@@ -158,37 +163,12 @@ const onTextareaClick = (e: PointerEvent<HTMLTextAreaElement>) => {
 // @todo move to modal by default
 .export-content {
   max-width: 50rem;
-  // @note add nice spacing on sides
-  // margin-inline: 3rem;
-
-  // display: flex;
-  // flex-flow: column;
-  // gap: 1.75rem;
 
   font-size: 1.25rem;
 
   & > section {
     margin-block: 3rem;
   }
-
-  padding-block: 0;
-}
-
-.settings {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.rename-grid {
-  // display: grid;
-
-  // width: min-content;
-
-  display: flex;
-  flex-wrap: wrap;
-
-  gap: 1rem 2rem;
 }
 
 .label {

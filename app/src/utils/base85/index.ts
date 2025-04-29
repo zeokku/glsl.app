@@ -19,6 +19,7 @@ A–Z a–z 0–9 - _ . ! ~ * ' ( )
   // "^[]{`"
   // 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.!~*%27();/?:@&=+$,#%5E[]%7B%60
   `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.!~*'();/?:@&=+$,#^[]`
+    // @note ^[] are url encoded though, only base82 can be pure unencoded
     //
     .split("");
 // "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#".split("");
@@ -34,6 +35,18 @@ const T256 = 256 * 256 * 256;
 
 export const encode85 = (data: Uint8Array) => {
   if (data.length % 4 != 0) {
+    /*
+      let padSize = 4 - (data.length % 4);
+      let buf = new Uint8Array(data.length + padSize);
+
+      // @note first byte is pad size, other pad bytes are undefined (most probably zero)
+      buf[0] = padSize;
+      buf.set(data, padSize);
+
+      ---
+
+      const unpadded = data.slice(data[0])
+    */
     throw "[b85] Input length must be mod4";
   }
 

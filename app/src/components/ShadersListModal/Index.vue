@@ -1,30 +1,49 @@
 <template lang="pug">
 .list-content.CModal__content
   .content-scroll(ref="scroll")
-    .grid(ref="grid")
-      //- iirc :ref cb order is not defined, so use index argument to sync comp refs with shaders data
-      Item(
-        v-for="(name, index) in shaderNames",
-        v-bind="{ name }",
-        :ref="el => setRef(el, index)",
-        @click="() => onItemClick(name)",
-        @delete="() => onDeleteShader(index)"
-      )
+    article.App__article.content(ref="content")
+      h1.App__font-shade.App__icon-title
+        sparkles-icon
+        | {{ t("your-shaders-title") }}
+      section.grid(ref="grid")
+        //- iirc :ref cb order is not defined, so use index argument to sync comp refs with shaders data
+        Item(
+          v-for="[id, view] in Array.from(views)",
+          :key="id",
+          v-model="view.bbox",
+          :name="view.name",
+          @click="() => onItemClick(id)",
+          @delete="() => onDeleteShader(id)"
+        )
+        .loading-placeholder.CShadersListModal_Item__item-wrap(v-if="!allShadersLoaded")
+          .CShadersListModal_Item__item
+            .CShadersListModal_Item__view
+            .CShadersListModal_Item__title
+              span {{ t("loading") }}
+    .spacer(ref="spacer")
+
   canvas.list-canvas(ref="canvas")
 </template>
 
 <script lang="ts">
 import type { InjectionKey } from "vue";
 import throttle from "lodash.throttle";
-import { deleteShader, getAllShaders, getShader, setLastOpenShader } from "@/storage";
+import { deleteShader, getAllShaders, getShader, setLastOpenShaderId } from "@/storage2";
 import { CLOSE_MODAL } from "../Modal.vue";
-import { createdTimestamp, shaderName } from "@/App.vue";
 import { processIncludes } from "@/processIncludes";
 import { useScreen } from "@/composition/useScreen";
 import { getLines } from "@/utils/stringUtils";
+import { currentShader } from "@/App.vue";
+import { isManualRecompilation } from "../InfoBar/InfoBar.vue";
+import { useI18n } from "petite-vue-i18n";
 
 export type TBbox = {
-  [k in "x" | "y" | "w" | "h"]: number;
+  // [k in "x" | "y" | "w" | "h"]: number;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  update(): void;
 };
 </script>
 
@@ -37,138 +56,107 @@ import {
   onMounted,
   onUpdated,
   provide,
+  shallowReactive,
   triggerRef,
   watch,
 } from "vue";
 import Item from "./Item.vue";
 
+import SparklesIcon from "octicons:sparkles-fill";
+
+import maskShaderCode from "@/squircle.frag?raw";
 import defaultVertexShaderCode from "@/default.vert?raw";
 
-const closeModal = inject(CLOSE_MODAL)!;
-
-let getModel: () => import("monaco-editor").editor.ITextModel;
-import("@/components/Editor.vue").then(module => ({ getModel } = module));
-
-const onItemClick = async (name: string) => {
-  if (!getModel) return;
-
-  setLastOpenShader(name);
-  shaderName.value = name;
-
-  let { code, created } = (await getShader(name))!;
-
-  getModel().setValue(code);
-  createdTimestamp.value = created;
-
-  closeModal();
-};
-
-const scroll = $shallowRef<HTMLDivElement>();
-const canvas = $shallowRef<HTMLCanvasElement>();
-
 interface IView {
-  // @todo bruh why don't emit types are not generated...
-  // getBbox: (typeof Item)['getBbox']
-  index: number;
-  bbox: TBbox;
-  program: WebGLProgram;
-  uniforms: {
+  name: string;
+  code: Promise<string>;
+
+  bbox?: TBbox;
+  program?: WebGLProgram;
+  uniforms?: {
     resolution: WebGLUniformLocation;
     time: WebGLUniformLocation;
   };
 }
 
-let viewsArray: (IView | undefined)[] = [];
+const { t } = useI18n();
 
-// @todo isn't it available by default???
-// type PromiseResult<T> = T extends Promise<infer U> ? U : never;
+const views = shallowReactive(new Map<number, IView>());
 
-let shaderNames = $shallowRef<string[]>([]);
+const scroll = $shallowRef<HTMLDivElement>();
+const content = $shallowRef<HTMLDivElement>();
+const grid = $shallowRef<HTMLDivElement>();
+const spacer = $shallowRef<HTMLDivElement>();
+const canvas = $shallowRef<HTMLCanvasElement>();
 
-const itemRefs = [] as (typeof Item)[];
-const setRef = (item: typeof Item, index: number) => {
-  itemRefs[index] = item;
+// @todo emit('close')
+const closeModal = inject(CLOSE_MODAL)!;
+
+const onItemClick = async (id: number) => {
+  const shader = await getShader(id);
+
+  const { getModel, processIncludes, compileShader } = await import("@/editor");
+
+  currentShader.value = shader!;
+
+  const model = getModel();
+  model.setValue(shader!.code);
+
+  setLastOpenShaderId(shader!.id);
+
+  if (isManualRecompilation.value) {
+    const processedCode = await processIncludes(model.getLinesContent());
+
+    compileShader(processedCode);
+  }
+
+  closeModal();
 };
 
-onBeforeUpdate(() => {
-  itemRefs.length = 0;
-});
+const onDeleteShader = async (id: number) => {
+  await deleteShader(id);
 
-const onDeleteShader = async (index: number) => {
-  deleteShader(shaderNames[index]);
+  let removedView = views.get(id);
 
-  let [removedView] = viewsArray.splice(index, 1);
+  // @note update view bboxes going after view being deleted
+  const deletedIndex = [...views.keys()].indexOf(id);
+  let viewsToUpdate = [...views.values()].slice(deletedIndex + 1);
 
-  if (removedView) disposeProgram(removedView.program);
+  views.delete(id);
 
-  shaderNames.splice(index, 1);
-  triggerRef($$(shaderNames));
+  if (removedView?.program) disposeProgram(removedView.program);
 
+  // @note wait for dom update after view deletion
   await nextTick();
 
-  // update bboxes
-  viewsArray.forEach((v, i) => {
-    if (!v) return;
-
-    v.bbox = itemRefs[i].bbox;
-  });
+  viewsToUpdate.forEach(({ bbox }) => bbox?.update());
 };
 
-let frame: ReturnType<typeof requestAnimationFrame>;
+let renderFrame: ReturnType<typeof requestAnimationFrame>;
 // @todo how to get a return type of overloaded function with const arg?
 // ReturnType<HTMLCanvasElement['getContext']
 
+let allShadersLoaded = $shallowRef<boolean>(false);
+
+let canvasResizeObserver: ResizeObserver;
+
+let gridResizeObserver: ResizeObserver;
+let smoothScrollFrame: ReturnType<typeof requestAnimationFrame>;
+
 let gl: WebGL2RenderingContext;
+let vertexArray: WebGLVertexArrayObject;
 let positionBuffer: WebGLBuffer;
 let uvBuffer: WebGLBuffer;
-let vertexArray: WebGLVertexArrayObject;
-
-let startTime: number;
-
-const render = () => {
-  frame = requestAnimationFrame(render);
-
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  viewsArray.forEach((view, index) => {
-    if (!view) return;
-
-    let { bbox, program, uniforms } = view;
-
-    // check if visible
-    let { scrollTop: t, offsetHeight: vh } = scroll!;
-    let { x, y, w, h } = bbox;
-
-    // bottom of the view is above the content top
-    // OR
-    // top of the view is below the content bottom
-    if (y + h < t || y > t + vh) return;
-
-    gl.useProgram(program);
-
-    gl.uniform2f(uniforms.resolution, w, h);
-    gl.uniform1f(uniforms.time, (performance.now() - startTime) / 1000);
-
-    gl.viewport(
-      x,
-      // @note viewport's y is inverted relative to DOM y-axis
-      gl.canvas.height - y - h + t,
-      w,
-      h
-    );
-
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  });
-};
-
-let resizeObserver: ResizeObserver;
-
-const grid = $shallowRef<HTMLDivElement>();
 
 onMounted(async () => {
-  gl = canvas!.getContext("webgl2")!;
+  gl = canvas!.getContext("webgl2", {
+    // @note this is not required hmm
+    // alpha: true,
+    // @note required so canvas content is blended with html
+    premultipliedAlpha: false,
+  })!;
 
-  resizeObserver = new ResizeObserver(
+  canvasResizeObserver = new ResizeObserver(
     ([
       {
         contentRect: { width, height },
@@ -178,39 +166,103 @@ onMounted(async () => {
       canvas!.height = height;
     }
   );
-  resizeObserver.observe(canvas!);
+  canvasResizeObserver.observe(canvas!);
 
   let defaultVertexShader = gl.createShader(gl.VERTEX_SHADER)!;
   gl.shaderSource(defaultVertexShader, defaultVertexShaderCode);
   gl.compileShader(defaultVertexShader);
 
-  let shadersList = await getAllShaders().then(list =>
-    list.sort((a, b) => b[1].created - a[1].created)
-  );
-  // @note this! the refs will be updated next tick
-  shaderNames = shadersList.map(([name]) => name);
+  let maskShader = gl.createShader(gl.FRAGMENT_SHADER)!;
+  gl.shaderSource(maskShader, maskShaderCode);
+  gl.compileShader(maskShader);
 
-  // load includes
-  // @todo async load / render
-  await Promise.all(
-    shadersList.map(async s => {
-      // @note proper line split by \r?\n, since when doing just \n it caused regex $ not always match (because of the remaining \r)
-      s[1].code = await processIncludes(getLines(s[1].code), null);
-    })
-  );
+  let maskProgram = gl.createProgram()!;
+  gl.attachShader(maskProgram, defaultVertexShader);
+  gl.attachShader(maskProgram, maskShader);
+  gl.linkProgram(maskProgram);
+  const maskResolutionUniform = gl.getUniformLocation(maskProgram, "u_resolution")!;
 
-  // @note wait for item refs update
+  const shaders = await getAllShaders();
+  const sortedShaders = shaders.sort((a, b) => (b.modified ?? 0) - (a.modified ?? 0));
+
+  for (const { id, name, code } of sortedShaders) {
+    views.set(id, {
+      name,
+      code: processIncludes(getLines(code)),
+    });
+  }
+
+  // @note before next tick so placeholder is replaced by actual item
+  allShadersLoaded = true;
+
+  // @note wait for item refs update after populating views
   await nextTick();
 
-  viewsArray = shadersList.map(([name, { code }], index) => {
+  let scrollY = 0;
+  let scrollH = 0;
+  {
+    // @note update spacer by tracking resize of grid element (since content has height 0 it won't trigger on that element)
+    gridResizeObserver = new ResizeObserver(() => {
+      spacer!.style.height = content!.scrollHeight + "px";
+
+      // @note must be fetched after we assign spacer height bruh
+      scrollH = scroll!.offsetHeight;
+    });
+    gridResizeObserver.observe(grid!);
+
+    const easeOutCubic = (x: number) => {
+      return 1 - Math.pow(1 - x, 3);
+    };
+
+    let from = 0;
+    let to = 0;
+    let progress = 0;
+    const duration = 400;
+
+    let prev = performance.now();
+
+    // @note to sync canvas rendering with dom we need to take over scroll
+    smoothScrollFrame = requestAnimationFrame(function fn() {
+      smoothScrollFrame = requestAnimationFrame(fn);
+
+      let now = performance.now();
+      let dt = now - prev;
+      prev = now;
+
+      const delta = to - from;
+
+      progress += dt / duration;
+      progress = Math.min(1, progress);
+
+      scrollY = from + easeOutCubic(progress) * delta;
+
+      content!.style.translate = `0 -${scrollY}px`;
+    });
+
+    let scrollFrameQueued = false;
+
+    scroll!.addEventListener("scroll", e => {
+      if (scrollFrameQueued) return;
+
+      requestAnimationFrame(() => {
+        scrollFrameQueued = false;
+
+        progress = 0;
+        to = (e.target as HTMLElement).scrollTop;
+        from = scrollY;
+      });
+    });
+  }
+
+  views.forEach(async view => {
+    const code = await view.code;
     let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)!;
     gl.shaderSource(fragmentShader, code);
     gl.compileShader(fragmentShader);
 
     let program = gl.createProgram()!;
 
-    // @note @todo bruh it seems like i can't reuse shader object for multiple programs???
-    // wait no bruh i'm dumb, other shaders had #includes and failed to compile
+    // @note we can reuse vertex shader
     gl.attachShader(program, defaultVertexShader);
     gl.attachShader(program, fragmentShader);
 
@@ -218,26 +270,16 @@ onMounted(async () => {
 
     let linkSuccess = gl.getProgramParameter(program, gl.LINK_STATUS);
     if (!linkSuccess) {
-      console.log(name, gl.getProgramInfoLog(program));
+      console.error(view.name, gl.getProgramInfoLog(program));
       gl.deleteProgram(program);
 
       return;
     }
 
-    return {
-      // @ts-ignore
-      // ...(itemRefs[index] as { getBbox: () => void }),
-      // @note @todo since it's a proxy, spread doesn't work????
-      // wait no, for some reason ref fn is called AFTER on mounted... what the hell????
-      // @note bruh i forgot the items are created asynchronously thus refs are not available right away, so move this logic into nextTick()
-
-      index,
-      bbox: itemRefs[index].bbox,
-      program,
-      uniforms: {
-        resolution: gl.getUniformLocation(program, "u_resolution")!,
-        time: gl.getUniformLocation(program, "u_time")!,
-      },
+    view.program = program;
+    view.uniforms = {
+      resolution: gl.getUniformLocation(program, "u_resolution")!,
+      time: gl.getUniformLocation(program, "u_time")!,
     };
   });
 
@@ -275,11 +317,71 @@ onMounted(async () => {
   gl.bindVertexArray(vertexArray);
 
   gl.clearColor(0, 0, 0, 0);
+  gl.enable(gl.BLEND);
 
-  startTime = performance.now();
-  frame = requestAnimationFrame(render);
+  const startTime = performance.now();
+
+  const render = () => {
+    renderFrame = requestAnimationFrame(render);
+
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    views.forEach(view => {
+      const {
+        bbox: { x, y, w, h },
+        program,
+        uniforms,
+      } = view as Required<IView>;
+
+      if (!program) return;
+
+      let t = scrollY;
+      let vh = scrollH;
+
+      const topPadding = 3 * 16;
+      const leftPadding = 2 * 16;
+
+      // @note bottom of the view is above the content top
+      // @note OR
+      // @note top of the view is below the content bottom
+      if (y + topPadding + h < t || y + topPadding > t + vh) return;
+
+      gl.viewport(
+        x + topPadding,
+        // @note viewport's y is inverted relative to DOM y-axis
+        gl.canvas.height - y - h + t - leftPadding,
+        w,
+        h
+      );
+
+      gl.useProgram(maskProgram);
+      gl.uniform2f(maskResolutionUniform, w, h);
+
+      gl.blendFunc(gl.ONE, gl.ZERO);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+      // return;
+
+      ////
+
+      gl.useProgram(program);
+      gl.uniform2f(uniforms.resolution, w, h);
+      gl.uniform1f(uniforms.time, (performance.now() - startTime) / 1000);
+
+      gl.blendFuncSeparate(gl.ONE, gl.ZERO, gl.ZERO, gl.ONE);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    });
+  };
+
+  renderFrame = requestAnimationFrame(render);
 });
 
+/**
+ * @todo Won't it remove vertex too actually?
+ * @param program
+ */
 const disposeProgram = (program: WebGLProgram) => {
   gl.getAttachedShaders(program)!.forEach(shader => {
     gl.deleteShader(shader);
@@ -290,18 +392,18 @@ const disposeProgram = (program: WebGLProgram) => {
 
 // @note onbeforeunmount so we disconnect observer before removal of dom elements, so it doesn't fire with 0x0 size
 onBeforeUnmount(() => {
+  cancelAnimationFrame(renderFrame);
+  cancelAnimationFrame(smoothScrollFrame);
+
+  canvasResizeObserver.disconnect();
+  gridResizeObserver.disconnect();
+
   // delete shaders and programs
-  viewsArray.forEach(view => view && disposeProgram(view.program));
+  views.forEach(view => view.program && disposeProgram(view.program));
 
   gl.deleteVertexArray(vertexArray);
   gl.deleteBuffer(positionBuffer);
   gl.deleteBuffer(uvBuffer);
-
-  resizeObserver.disconnect();
-
-  cancelAnimationFrame(frame);
-
-  // @todo ??? how th to dispose gl lol
 });
 </script>
 
@@ -312,6 +414,8 @@ onBeforeUnmount(() => {
   padding: 0;
 
   overflow: hidden;
+
+  font-size: 1.25rem;
 }
 
 .content-scroll {
@@ -324,6 +428,12 @@ onBeforeUnmount(() => {
   // padding-right: 2rem;
   padding-inline: 3rem;
   padding-block: 2rem 5rem;
+}
+
+.content {
+  position: sticky;
+  top: 0;
+  height: 0;
 }
 
 .grid {
@@ -350,5 +460,27 @@ onBeforeUnmount(() => {
   height: 100%;
 
   pointer-events: none;
+}
+
+.loading-placeholder {
+  border-radius: var(--br);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--glow-rgb), 0),
+    var(--glow),
+    rgba(var(--glow-rgb), 0)
+  );
+  background-size: 200% 100%;
+
+  animation: loading 1500ms infinite linear;
+
+  @keyframes loading {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
 }
 </style>

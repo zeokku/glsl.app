@@ -1,7 +1,12 @@
 <template lang="pug">
 teleport(to="body")
   //- does specifying type make it faster
-  transition(name="fade-blur", :duration="500", type="transition")
+  transition(
+    name="fade-blur",
+    :duration="500",
+    type="transition",
+    @after-leave="visible || $emit('fadeout')"
+  )
     .wrap(v-show="visible", @click="close", role="dialog", aria-modal="true")
       //- @note incorrect bounding box calculation is tied to entering animation (translation + scaling) which calculates the box at the beginning of the animation, while we need the one after animation ends
       .window(ref="modal", @click.stop)
@@ -28,15 +33,16 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "close"): void;
+  close: [];
+  fadeout: [];
 }>();
 
 const close = () => emit("close");
 provide(CLOSE_MODAL, close);
 
 const onPressEsc = (e: KeyboardEvent) => {
-  if (e.key === "Escape" || e.key === "Esc") {
-    if (props.visible) close();
+  if (e.key === "Escape" && props.visible) {
+    close();
   }
 };
 
@@ -58,6 +64,7 @@ onUnmounted(() => {
   justify-items: center;
   align-items: center;
 
+  // @note bruh without this it won't shrink
   justify-content: center;
   // @note so this is the solution to take min height for content
   align-content: center;
@@ -70,7 +77,7 @@ onUnmounted(() => {
 
   padding: 3rem;
 
-  @media (width < 500px) {
+  @media (width < 650px) {
     padding-inline: 1rem;
   }
 
@@ -168,10 +175,13 @@ onUnmounted(() => {
 }
 
 .content {
-  padding: 0 4rem 4rem;
+  // @note adjustment for mask
+  margin-top: -1rem;
+
+  padding: 2rem 4rem 4rem;
 
   @media (width<500px) {
-    padding: 0 1rem 4rem;
+    padding: 1rem 1rem 4rem;
   }
 
   overflow-y: auto;

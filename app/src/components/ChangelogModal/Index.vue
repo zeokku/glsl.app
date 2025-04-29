@@ -35,6 +35,8 @@ const onLinkClick = () => {
     align-items: center;
     gap: 0.75em;
 
+    margin-block: 1.5rem;
+
     code {
       color: #9a9a00;
       font-size: 0.75em;
@@ -44,6 +46,10 @@ const onLinkClick = () => {
       border: solid #4e4e4e 1px;
       border-radius: 0.5em;
     }
+  }
+
+  h3 {
+    margin-block: 1rem;
   }
 
   main {

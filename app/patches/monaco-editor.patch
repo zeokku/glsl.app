@@ -13,22 +13,23 @@ index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..5336be8f61cdfbc5e9006668e9f992cc
                  }
              }
 diff --git a/esm/vs/base/common/codicons.js b/esm/vs/base/common/codicons.js
-index 7db7374670fede4a7441e87df24a05290befa586..67b5e290ca78f1a7a60e4c5b0e7016db15a896f8 100644
+index 7db7374670fede4a7441e87df24a05290befa586..8645ad58f9fdde699cf122d574fd445faff8f9e7 100644
 --- a/esm/vs/base/common/codicons.js
 +++ b/esm/vs/base/common/codicons.js
-@@ -524,6 +524,7 @@ export const Codicon = {
+@@ -524,6 +524,8 @@ export const Codicon = {
      layoutSidebarRightOff: register('layout-sidebar-right-off', 0xec00),
      layoutPanelOff: register('layout-panel-off', 0xec01),
      layoutSidebarLeftOff: register('layout-sidebar-left-off', 0xec02),
++    // https://github.com/microsoft/vscode-codicons/blob/main/src/template/mapping.json
 +    sparkle: register('sparkle', 0xec10),
      target: register('target', 0xebf8),
      indent: register('indent', 0xebf9),
      recordSmall: register('record-small', 0xebfa),
 diff --git a/esm/vs/editor/common/languages.js b/esm/vs/editor/common/languages.js
-index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..18db5ad5823344aa042cbfb0f96bd13f5570a8ee 100644
+index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..09af8d9de3ea079eede7f6685b238731f790f235 100644
 --- a/esm/vs/editor/common/languages.js
 +++ b/esm/vs/editor/common/languages.js
-@@ -79,6 +79,22 @@ export var CompletionItemKinds;
+@@ -79,6 +79,24 @@ export var CompletionItemKinds;
      byKind.set(24 /* CompletionItemKind.TypeParameter */, Codicon.symbolTypeParameter);
      byKind.set(25 /* CompletionItemKind.User */, Codicon.account);
      byKind.set(26 /* CompletionItemKind.Issue */, Codicon.issues);
@@ -47,12 +48,14 @@ index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..18db5ad5823344aa042cbfb0f96bd13f
 +    byKind.set(111, Codicon.sparkle);
 +    byKind.set(112, Codicon.starEmpty);
 +    byKind.set(113, Codicon.symbolMisc);
++    byKind.set(114, Codicon.tools);
++    byKind.set(115, Codicon.layers);
 +    
      /**
       * @internal
       */
 diff --git a/esm/vs/editor/editor.all.js b/esm/vs/editor/editor.all.js
-index 53d39b8c062de3143d96b77af1a09abbdd347ae5..1031a6454455931c44451e80ca1593ce52160d5b 100644
+index 53d39b8c062de3143d96b77af1a09abbdd347ae5..efd6128b25e57089220d7cabbc157d078247d430 100644
 --- a/esm/vs/editor/editor.all.js
 +++ b/esm/vs/editor/editor.all.js
 @@ -3,9 +3,9 @@

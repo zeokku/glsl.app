@@ -4,6 +4,8 @@ import { VitePWA as pwa } from "vite-plugin-pwa";
 import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import VueMacros from "unplugin-vue-macros/vite";
+import Inspect from "vite-plugin-inspect";
+import { octiconsPlugin } from "./plugins/octicons";
 
 import { minify as minifyHtml } from "html-minifier-terser";
 
@@ -79,6 +81,8 @@ export default defineConfig(({ command }) => ({
     //   prerender: true,
     // }),
 
+    octiconsPlugin(),
+
     {
       name: "Add build timestamp",
 
@@ -136,6 +140,8 @@ export default defineConfig(({ command }) => ({
       brotliSize: true,
       sourcemap: true,
     }),
+
+    Inspect(),
   ],
 
   resolve: {

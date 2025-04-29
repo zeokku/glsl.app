@@ -1,12 +1,12 @@
 <template lang="pug">
 TopControls
 Suspense
-  Editor(@change="onShaderCodeChange", v-bind="{ infoLog }")
+  Editor
   //- @note for testing loading anim
   //- Component(:is="_DUMMY_ASYNC_")
   template(#fallback)
     .editor-loading
-      | Editor is being loaded
+      | Editor is loading
       .loading-indicator ...
 Canvas
 </template>
@@ -16,99 +16,70 @@ Canvas
 //     return new Promise(() => {});
 // });
 
-export let createdTimestamp = shallowRef(Date.now());
-
-// last open shader or new
-// hmm will it always be last doe except very first app opening, which should just be the default one?
-export let shaderName = shallowRef<string | null>(null);
-
-import { isManualRecompilation } from "+/InfoBar/InfoBar.vue";
-import { updateFragment } from "./gl/glContext";
-
-import type { editor as MonacoEditor } from "monaco-editor";
-import { initGlowElements } from "./stylingUtils/glow";
-import { getSetting } from "./settings";
-
-const EditorModulePromise = import("@/components/Editor.vue");
-const Editor = defineAsyncComponent(() => EditorModulePromise);
-
-let getModel: () => MonacoEditor.ITextModel;
-EditorModulePromise.then(module => ({ getModel } = module));
-
-let infoLog = $shallowRef<String>();
-
-export const compileShader = async (code: string) => {
-  await glInitialization;
-
-  let log = await updateFragment(code);
-
-  // @note a hack to always trigger watcher, even when the string doesn't change, so we don't use triggerRef
-  // since we wrap string in an object, reference changes
-  infoLog = new String(log ?? "");
-};
+export const currentShader = ref<IShader>({} as IShader);
+export const infoLog = shallowRef<string>("");
 </script>
 
 <script setup lang="ts">
 import TopControls from "./components/TopControls.vue";
-// import Editor, { getModel } from "./components/Editor.vue";
-import Canvas, { glInitialization } from "./components/Canvas.vue";
-import debounce from "lodash.debounce";
-import { renameShader, saveShader, getLastOpenShader, setLastOpenShader } from "./storage";
-import { shallowRef, watch, defineAsyncComponent } from "vue";
+import Canvas from "./components/Canvas.vue";
+import { shallowRef, watch, defineAsyncComponent, ref } from "vue";
 
-// @todo bruh did smth change in ts, why does it infer type as "0" and not as number
-// let compileTimestamp = $shallowRef<number>(0);
+import { initGlowElements } from "./stylingUtils/glow";
+import { getSetting } from "./settings";
+import { type IShader, setLastOpenShaderId, updateShader } from "./storage2";
 
-// @todo flush on clicking new or exiting the page (use confirm dialog)
-const save = debounce(
-  async () => {
-    if (!getModel) return;
+const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
 
-    let code = getModel().getValue();
+let saveTimeout: ReturnType<typeof setTimeout>;
+const onUnloadPrevent = (e: Event) => e.preventDefault();
 
-    return saveShader(shaderName.value!, {
-      // @todo reactive var bug
-      created: createdTimestamp.value,
-      // modified: Date.now(),
-      code,
-    }).then(() => {
-      setLastOpenShader(shaderName.value!);
+/**
+ * Debounced by default and prevents unload event unless finished saving. Use `immediate = true` when needed to update shader right away (e.g. when opening another shader, creating new shader and etc)
+ * @param immediate
+ */
+const saveShader = async (immediate?: true) => {
+  clearTimeout(saveTimeout);
 
-      console.log(shaderName.value, "saved");
-    });
-  },
-  1000,
-  { trailing: true }
-);
+  window.addEventListener("unload", onUnloadPrevent);
 
-const rename = debounce(
-  (newName: string | null, oldName: string | null) => {
-    // @note when clicking new, prevent rename
-    if (newName === getLastOpenShader() || oldName === null) return;
+  // @note clone to avoid race condition isues
+  const shader = { ...currentShader.value! };
 
-    return renameShader(getLastOpenShader()!, newName!)
-      .then(() => {
-        setLastOpenShader(newName!);
+  const save = async () => {
+    const { id } = await updateShader(shader);
 
-        console.log("shader renamed", newName, "<-", getLastOpenShader());
-      })
-      .catch(() => {
-        alert("Shader with this name already exists! Changes will overwrite old data!");
-      });
-  },
-  1000,
-  { trailing: true }
-);
+    setLastOpenShaderId(id);
 
-watch(shaderName, rename);
+    window.removeEventListener("unload", onUnloadPrevent);
+  };
 
-const onShaderCodeChange = (code: string) => {
-  save();
+  if (immediate) {
+    return save();
+  } else {
+    const { promise, resolve } = Promise.withResolvers<void>();
 
-  if (isManualRecompilation.value) return;
+    saveTimeout = setTimeout(() => {
+      resolve(save());
+    }, 500);
 
-  compileShader(code);
+    return promise;
+  }
 };
+
+// @note watcher is deep by default for reactive objects (so it will work on ref.value lol) but not for refs directly - use deep. deep level is relative to ref's value (.value itself is not counted)
+// @note watch only for code and name because it was looped when watching for entire ref object (when assigning created/modified timestamp when saving shader)
+
+watch([() => currentShader.value.name, () => currentShader.value.code], () => saveShader());
+
+// watch(
+//   () => currentShader.value?.code,
+//   code => {
+//     if (isManualRecompilation.value || !code) return;
+
+//     compileShader(code);
+//   }
+// );
 
 // @note don't enable on touch screen devices
 if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
@@ -158,10 +129,12 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   // @initial: -@br;
 
   // @todo is there no easier way to inverse?
-  // @note 0px is the correct, just 0 won't work
+  // !@note 0px is the correct, just 0 won't work
   // @note using % won't be a future proof solution, because size of the glow may be greater than element dimension, thus we can't find such a % mapping that will hide the glow fully (without using stupid values like 9999 and etc.)
   --mx: calc(0px - var(--gr));
   --my: calc(0px - var(--gr));
+  --sx: var(--scroll-x, 0px);
+  --sy: var(--scroll-y, 0px);
 
   // @todo make it brighter on hover?
   // linear-gradient(to bottom, rgba(var(--glow-rgb), 1) 0%, var(--border) 50%, rgba(var(--border-rgb), 0.05) 100%)
@@ -182,7 +155,7 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
     100% 100%,
     var(--gd) var(--gd);
 
-  @glow-position: calc(var(--mx) - var(--gr)) calc(var(--my) - var(--gr));
+  @glow-position: calc(var(--mx) - var(--gr) + var(--sx)) calc(var(--my) - var(--gr) + var(--sy));
 
   background-position:
     0 0,
@@ -230,6 +203,50 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   }
 }
 
+// @note top level wrapper element, h1
+.article {
+  display: grid;
+  gap: 2em;
+}
+
+// @note children of article, h2
+.section {
+  display: grid;
+  gap: 1.5em;
+}
+
+// @note children of section, h3
+.region {
+  display: grid;
+  gap: 1em;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.row-even {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 1em;
+}
+
+.icon-title {
+  display: flex;
+  gap: 0.5ch;
+  align-items: center;
+
+  svg {
+    width: 1em;
+    height: 1em;
+
+    flex-shrink: 0;
+  }
+}
+
 .font-shade {
   background-image: radial-gradient(ellipse at top, var(--shade), transparent);
 
@@ -266,6 +283,17 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
     width: -moz-available;
     width: stretch;
   }
+
+  // @note Remove arrows. Interestingly hovering over input field with arrows enabled causes content expansion in modal?
+  input[type="number"] {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    -moz-appearance: textfield;
+  }
 }
 </style>
 
@@ -288,6 +316,8 @@ h3 {
   font-weight: bold;
 
   width: fit-content;
+
+  margin: 0;
 }
 
 h1 {
@@ -296,21 +326,38 @@ h1 {
 
 h2 {
   font-size: 1.2em;
-  margin-top: 2.5rem;
 }
 
 h3 {
   font-size: 1em;
 }
 
+p {
+  margin: 0;
+}
+
 button {
   appearance: none;
-  font-family: inherit;
-  font-weight: inherit;
+
+  padding: 0;
   border: none;
+
+  cursor: pointer;
+
+  font: inherit;
 
   // @note prevent builtin types overwrite this
   color: inherit;
+
+  background: none;
+
+  &:focus-visible {
+    // @include outline();
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 textarea {
@@ -406,6 +453,7 @@ input[type="checkbox"] {
 
   // @note fix selection for gradient texts
   -webkit-text-fill-color: white;
+  color: white;
 }
 
 ::-webkit-scrollbar {

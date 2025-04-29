@@ -4,7 +4,7 @@ import type { Options as PrettierOptions } from "prettier";
 import * as glslPlugin from "prettier-plugin-glsl";
 import { getSetting } from "./settings";
 
-export const formatCode = async (code: string, offset: number) => {
+export const formatCode = async (code: string) => {
   // @todo this breaks sometimes due to different cursor position, something's with offset
   // const formattingResult = await formatWithCursor(code, {
   //   cursorOffset: offset,

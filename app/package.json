@@ -1,7 +1,7 @@
 {
   "name": "webgl2-shader-editor",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,8 @@
     "format": "prettier --config .prettierrc -w \"./src/**/*.{vue,ts}\""
   },
   "dependencies": {
+    "@primer/octicons": "^19.15.1",
+    "@scure/base": "^1.2.4",
     "@shaderfrog/glsl-parser": "link:..\\..\\glsl-parser",
     "@tweakpane/core": "^1.1.9",
     "@urql/vue": "^1.4.2",
@@ -26,6 +28,7 @@
     "petite-vue-i18n": "11.1.1",
     "prettier": "^3.5.2",
     "prettier-plugin-glsl": "^0.2.0",
+    "qr-creator": "^1.0.0",
     "tweakpane": "^3.1.10",
     "vue": "^3.5.13"
   },
@@ -34,11 +37,11 @@
     "@graphql-codegen/client-preset": "4.6.4",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
-    "@prettier/plugin-pug": "^3.2.1",
+    "@prettier/plugin-pug": "^3.3.0",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.20",
     "dotenv": "^16.4.7",
     "html-minifier-terser": "^7.2.0",
@@ -48,18 +51,19 @@
     "rollup-plugin-visualizer": "^5.14.0",
     "sitemap": "^7.1.1",
     "typescript": "^5.7.3",
-    "unplugin-vue-macros": "^2.14.4",
-    "vite": "^6.2.0",
+    "unplugin-vue-macros": "^2.14.5",
+    "vite": "^6.3.3",
+    "vite-plugin-inspect": "^11.0.1",
     "vite-plugin-pwa": "^0.21.1",
     "vite-plugin-ssr": "^0.4.142",
-    "vite-plugin-vue-css-modules": "^3.2.0",
+    "vite-plugin-vue-css-modules": "^4.0.1",
     "vue-tsc": "^2.2.4",
     "workbox-window": "^7.3.0"
   },
   "pnpm": {
     "patchedDependencies": {
-      "monaco-editor@0.36.1": "patches/monaco-editor@0.36.1.patch",
-      "prettier-plugin-glsl": "patches/prettier-plugin-glsl.patch"
+      "prettier-plugin-glsl": "patches/prettier-plugin-glsl.patch",
+      "monaco-editor": "patches/monaco-editor.patch"
     },
     "overrides": {
       "@shaderfrog/glsl-parser": "link:..\\..\\glsl-parser"

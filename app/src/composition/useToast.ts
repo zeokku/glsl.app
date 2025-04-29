@@ -8,12 +8,26 @@ let list = [] as VNode<HTMLDivElement>[];
 let key = 0;
 
 export const useToast = (message: string) => {
-  // @note update style translateY on new toast
+  // @note update translateY and scale on previous toasts
   list.forEach(({ el }, i, { length }) => {
-    el!.style.transform = `translateY(-${Math.min(4, length - i)}rem) scale(${Math.max(
+    const yPos = 5 + Math.min(4, length - i);
+
+    const scale = Math.max(
       0.5,
-      1 - 0.03 * (length - i) ** 2
-    )})`;
+      1 -
+        0.03 *
+          Math.max(
+            0,
+            length -
+              // @note add +1 is to make previous toast to also have scale=1
+              (i + 1)
+          ) **
+            2
+    );
+
+    console.log(i, scale);
+
+    el!.style.transform = `translateY(-${yPos}rem) scale(${scale})`;
   });
 
   // @note i forgot that when rendering lists, vnodes should have keys, this is why it wasn't working before

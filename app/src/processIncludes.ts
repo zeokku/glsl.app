@@ -1,8 +1,16 @@
-import { getPersistentCacheItem, persistentCacheItem } from "./includesOfflineCache";
 import { getSetting } from "./settings";
 import { getLines, getNumberOfLines } from "./utils/stringUtils";
 
-export const resourceCache = new Map<string, string>();
+import shaderToy from "./shaderToy.glsl?raw";
+import glsl1 from "./glsl1.glsl?raw";
+import { getCachedModule, storeCachedModule } from "./storage2";
+
+const AppScopeIncludes = {
+  $shadertoy: shaderToy,
+  $glsl1: glsl1,
+} as Record<string, string>;
+
+export const sessionResourceCache = new Map<string, string>();
 
 export type IIncludesData = [
   lineNumber: number,
@@ -15,7 +23,7 @@ export type IIncludesData = [
 ];
 
 // @note use g flag for .lastIndex
-export const dependencyRegex = /^ *# *include +/g;
+export const dependencyRegex = /^[ \t]*#[ \t]*include[ \t]+/g;
 
 /**
  *
@@ -25,14 +33,15 @@ export const dependencyRegex = /^ *# *include +/g;
 // @note bruh since lygia's includes don't have ./ for relative imports, so modules should only be imported using <>, and process all quoted includes as relative or absolute
 const extractDependencyPath = (directiveValue: string) => {
   let dependencyExtractedValue = directiveValue.match(
-    /^(?:<([^>]+)>|(["'`]?)([^"'` ]+)\2)(?: *;? *)*$/
+    /^(?:<([^>]*)>|(["'`]?)([^"'` ]*)\2)(?: *;? *)*$/
   );
 
   if (!dependencyExtractedValue) return null;
 
   let path = dependencyExtractedValue[1];
 
-  if (path) {
+  // @note empty group would be undefined
+  if (path !== undefined) {
     return {
       path,
       type: "module",
@@ -43,8 +52,8 @@ const extractDependencyPath = (directiveValue: string) => {
 
   return {
     path,
-    type: /^https:/.test(path) ? "url" : "relative",
-  };
+    type: /^https?:/.test(path) ? "url" : "relative",
+  } as const;
 };
 
 interface IDependencyMeta {
@@ -52,16 +61,28 @@ interface IDependencyMeta {
   // editorLineNumber: number;
 }
 
+/**
+ * Skip empty, "package" (snippet placeholder). Resolve `lygia` includes to GitHub links, resolve other modules to NPM provider, resolve relative paths
+ * @param dependency
+ * @param meta
+ * @returns `null` if invalid path
+ */
 export const resolvePath = (
   { path, type }: Exclude<ReturnType<typeof extractDependencyPath>, null>,
   meta?: IDependencyMeta
 ) => {
+  if (!path || (path === "package" && type === "module")) return null;
+
   let resultingPath: string;
 
   switch (type) {
     case "module":
+      // @note built-in
+      if (path.startsWith("$")) {
+        return path;
+      }
       // @note handle lygia separately because their package hasn't updated for years, so use code from gh directly
-      if (path.startsWith("lygia/")) {
+      else if (path.startsWith("lygia/")) {
         resultingPath =
           "https://raw.githubusercontent.com/patriciogonzalezvivo/lygia/main/" +
           path.slice("lygia/".length);
@@ -95,21 +116,25 @@ export const resolvePath = (
 };
 
 /**
- * tests if the line is a dependency and returns its path if found
+ * Tests if the line is a dependency and returns its path if found
  * @param line
- * @returns `undefined` when there's no dependency or `Object | null`
+ * @returns `undefined` when there's no dependency, `Object` when dep is parsed successfully and `null` if error
  */
 export const checkForDependency = (line: string) => {
   dependencyRegex.lastIndex = 0;
   if (!dependencyRegex.exec(line)) return;
 
-  return extractDependencyPath(line.slice(dependencyRegex.lastIndex));
+  try {
+    return extractDependencyPath(line.slice(dependencyRegex.lastIndex));
+  } catch {
+    return null;
+  }
 };
 
 /**
  *
  * @param shaderLines
- * @param currentIncludesData output variable to store includes data for the provided shader code
+ * @param currentIncludesData Output variable to store includes data for the provided shader code. Top level only (no nested includes)
  * @param meta
  * @returns
  */
@@ -122,78 +147,117 @@ export const processIncludes = async (
 
   let resultLines = await Promise.all(
     shaderLines.map(async (line, lineIndex): Promise<string> => {
-      let dependencyMatch = line.match(dependencyRegex);
+      let pathInfo = checkForDependency(line);
 
-      let path = checkForDependency(line);
-
-      if (path === undefined) return line;
+      if (pathInfo === undefined) return line;
 
       // invalid value
-      if (path === null) {
-        if (currentIncludesData)
-          currentIncludesData.push([
-            lineIndex + 1,
-            1,
-            "",
-            null,
-            "#include directive failed to load! Invalid syntax!",
-          ]);
+      if (pathInfo === null) {
+        currentIncludesData?.push([
+          1 + lineIndex,
+          1,
+          "",
+          // @todo assign object string so it's always unique?
+          null,
+          "#include directive failed to load! Invalid syntax!",
+        ]);
+
+        return "";
+      }
+
+      // @note identical include already exists
+      if (currentIncludesData?.find(([line, count, path]) => path === pathInfo.path)) {
+        currentIncludesData?.push([
+          1 + lineIndex,
+          1,
+          "",
+          null,
+          "This exact #include directive already specified above!",
+        ]);
 
         return "";
       }
 
       // process deps
 
-      let pathUrl = resolvePath(path, meta);
+      let dependencyCode: string | undefined = AppScopeIncludes[pathInfo.path];
+
+      if (dependencyCode) {
+        currentIncludesData?.push([
+          lineIndex + 1,
+          getNumberOfLines(dependencyCode!),
+          pathInfo.path,
+          dependencyCode!,
+        ]);
+
+        return dependencyCode;
+      }
+
+      let pathUrl = resolvePath(pathInfo, meta);
+
+      if (pathUrl === null) {
+        currentIncludesData?.push([1 + lineIndex, 1, null, null, "Invalid #include value!"]);
+        return "";
+      }
 
       // @note remove npm cdn host, so the resources won't dupe if user changes the provider
-      let resourceId = pathUrl.replace(getSetting("npmPackageProvider"), "");
+      let resourceId = pathUrl.replace(getSetting("npmPackageProvider"), "@npm:");
 
-      let dependencyCode = resourceCache.get(resourceId);
+      dependencyCode = sessionResourceCache.get(resourceId) ?? (await getCachedModule(resourceId));
 
-      if (!dependencyCode) {
-        dependencyCode = await getPersistentCacheItem(resourceId);
-
-        if (!dependencyCode) {
+      try {
+        if (dependencyCode) {
+          dependencyCode = await processIncludes(getLines(dependencyCode), null, { path: pathUrl });
+        } else {
           dependencyCode = await fetch(pathUrl)
             .then(r => {
               if (r.ok) {
                 return r.text();
               } else {
-                throw `\`#include\` directive failed to load! Is the URL valid?\n${pathUrl}`;
+                throw new Error("#include directive failed to load!");
               }
             })
-            .then(shader => processIncludes(getLines(shader), null, { path: pathUrl }))
-            .catch(e => {
-              if (meta) {
-                // exit on first inner failed include
-                throw e;
-              } else {
-                if (currentIncludesData)
-                  currentIncludesData.push([1 + lineIndex, 1, pathUrl, null, e as string]);
+            .then(shader => {
+              sessionResourceCache.set(resourceId, shader);
 
-                return "";
+              if (getSetting("cachePackages")) {
+                storeCachedModule({
+                  url: resourceId,
+                  code: shader,
+                });
               }
+
+              return processIncludes(getLines(shader), null, { path: pathUrl });
             });
-
-          // skip further processing
-          if (dependencyCode === "") return "";
-
-          if (getSetting("cachePackages")) persistentCacheItem(resourceId, dependencyCode!);
         }
+      } catch (e) {
+        if (meta) {
+          // @note exit on first inner failed include
+          throw e;
+        } else {
+          currentIncludesData?.push([
+            1 + lineIndex,
+            1,
+            pathUrl,
+            null,
+            `${e.message}\n\nIs the URL valid?\n${pathUrl}`,
+          ]);
 
-        resourceCache.set(resourceId, dependencyCode!);
+          return "";
+        }
       }
 
-      if (currentIncludesData)
-        currentIncludesData.push([
-          lineIndex + 1,
-          getNumberOfLines(dependencyCode!),
-          pathUrl,
-          dependencyCode!,
-        ]);
+      // @note skip further processing
+      if (dependencyCode === "") return "";
 
-      return dependencyCode;
+      currentIncludesData?.push([
+        lineIndex + 1,
+        getNumberOfLines(dependencyCode!),
+        pathUrl,
+        dependencyCode!,
+      ]);
+
+      return dependencyCode!;
     })
   );
 

@@ -60,8 +60,8 @@ void main(){
         mix(
             // @note vec3 and vec4 with normalized values are recognized as colors, 
             // so you can use a color picker to tweak the values
-            vec3(0.949, 0.561, 0.576), // rgb(242, 143, 147)
-            vec3(0.494, 0.047, 0.839), // rgb(126,  12, 214)
+            vec3(0.949, 0.561, 0.792), // rgb(242,143,202)
+            vec3(0.463, 0.169, 0.690), // rgb(118,43,176)
             // @todo try to experiment with functions. How about bounceInOut?
             bounceIn(lines * 0.5 + 0.5)
         ), 

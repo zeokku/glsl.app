@@ -84,7 +84,6 @@ import { getAllSettings, getSetting, setSettings } from "@/settings";
 import { watch, onMounted, shallowRef, reactive } from "vue";
 
 import { useI18n } from "petite-vue-i18n";
-import { clearPersistentCache } from "@/includesOfflineCache";
 import { useScreen } from "@/composition/useScreen";
 
 import { isManualRecompilation } from "@/components/InfoBar/InfoBar.vue";

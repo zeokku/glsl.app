@@ -1,4 +1,4 @@
-import { renameLocalStorageEntry } from "./utils/storageMigration";
+import { renameLocalStorageEntry } from "@/utils/storeMigration2";
 
 const settingsStorageKey = "glsl-app-settings";
 renameLocalStorageEntry("\0settings", settingsStorageKey);

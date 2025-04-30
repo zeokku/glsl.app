@@ -48,7 +48,7 @@
       h2.App__font-shade.App__icon-title
         file-icon
         | {{ t("result") }}
-      p
+      div
         | {{ t("click") }}
         |
         a(:download="currentShader.name + '.glsl'", :href="fileDownloadLink") {{ t("download") }}

@@ -332,9 +332,10 @@ h3 {
   font-size: 1em;
 }
 
-p {
-  margin: 0;
-}
+// p {
+//   @note !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! monaco lost \n\n spaces because markdown parsed it into <p> and i set margin to 0!!!
+//   margin: 0;
+// }
 
 button {
   appearance: none;

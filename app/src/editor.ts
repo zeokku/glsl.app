@@ -61,14 +61,13 @@ import { getSetting } from "@/settings";
 
 import { getDocsLinkFor } from "@/utils/getOpenGLDocsUrl";
 import { renameBindings } from "@shaderfrog/glsl-parser/utils";
-import { Pane } from "tweakpane";
+import type { Pane } from "tweakpane";
 import { ExtractUnion } from "@/utils";
 
 import parsedLygia from "@/glsl-lang/parsedLygia.json";
 import { useQuery } from "@urql/vue";
 import { graphql } from "@/gql";
 import debounce from "lodash.debounce";
-import { formatCode } from "@/format";
 import { getLastOpenShaderId, getShader } from "@/storage2";
 import { watch, watchEffect } from "vue";
 import { updateFragment } from "./gl/glContext";
@@ -78,6 +77,8 @@ import { capitalize } from "./utils/stringUtils";
 
 export { processIncludes };
 export { dependencyRegex } from "@/processIncludes";
+
+import("@/format");
 
 let updateLineDecorations: ((infoLog?: string | null) => void) | undefined = undefined;
 
@@ -992,6 +993,8 @@ export const init = (container: HTMLElement) => {
 
     languages.registerDocumentFormattingEditProvider("glsl", {
       async provideDocumentFormattingEdits(model, options, token) {
+        const { formatCode } = await import("@/format");
+
         const code = model.getValue();
         // const position = editorInstance.getPosition()!;
         // const offset = model.getOffsetAt(position);

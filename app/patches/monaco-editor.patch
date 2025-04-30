@@ -1,8 +1,8 @@
 diff --git a/esm/vs/base/browser/markdownRenderer.js b/esm/vs/base/browser/markdownRenderer.js
-index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..5336be8f61cdfbc5e9006668e9f992ccc872dc7b 100644
+index ceb5bb6eb94d0312360f1c1fc3db8e14e0dc6037..ba17511f4c76697164f965fda595c02e8a408968 100644
 --- a/esm/vs/base/browser/markdownRenderer.js
 +++ b/esm/vs/base/browser/markdownRenderer.js
-@@ -311,7 +311,8 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
+@@ -347,7 +347,8 @@ function sanitizeRenderedMarkdown(options, renderedMarkdown) {
                      return;
                  }
                  else if (e.attrName === 'class') {
@@ -12,24 +12,11 @@ index fe223da73dc93333ab3a59fdf54b5dcc407cfb0a..5336be8f61cdfbc5e9006668e9f992cc
                      return;
                  }
              }
-diff --git a/esm/vs/base/common/codicons.js b/esm/vs/base/common/codicons.js
-index 7db7374670fede4a7441e87df24a05290befa586..8645ad58f9fdde699cf122d574fd445faff8f9e7 100644
---- a/esm/vs/base/common/codicons.js
-+++ b/esm/vs/base/common/codicons.js
-@@ -524,6 +524,8 @@ export const Codicon = {
-     layoutSidebarRightOff: register('layout-sidebar-right-off', 0xec00),
-     layoutPanelOff: register('layout-panel-off', 0xec01),
-     layoutSidebarLeftOff: register('layout-sidebar-left-off', 0xec02),
-+    // https://github.com/microsoft/vscode-codicons/blob/main/src/template/mapping.json
-+    sparkle: register('sparkle', 0xec10),
-     target: register('target', 0xebf8),
-     indent: register('indent', 0xebf9),
-     recordSmall: register('record-small', 0xebfa),
 diff --git a/esm/vs/editor/common/languages.js b/esm/vs/editor/common/languages.js
-index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..09af8d9de3ea079eede7f6685b238731f790f235 100644
+index 6e052f9eed367de7613e32c838aff11a317b9490..c2b0ac3623bc70c95f8663079bd5470a8bd575d8 100644
 --- a/esm/vs/editor/common/languages.js
 +++ b/esm/vs/editor/common/languages.js
-@@ -79,6 +79,24 @@ export var CompletionItemKinds;
+@@ -87,6 +87,23 @@ export var CompletionItemKinds;
      byKind.set(24 /* CompletionItemKind.TypeParameter */, Codicon.symbolTypeParameter);
      byKind.set(25 /* CompletionItemKind.User */, Codicon.account);
      byKind.set(26 /* CompletionItemKind.Issue */, Codicon.issues);
@@ -50,68 +37,96 @@ index 47b804e3fa6ce6b9d1e027303b1972bc0d79b828..09af8d9de3ea079eede7f6685b238731
 +    byKind.set(113, Codicon.symbolMisc);
 +    byKind.set(114, Codicon.tools);
 +    byKind.set(115, Codicon.layers);
-+    
      /**
       * @internal
       */
+diff --git a/esm/vs/editor/contrib/suggest/browser/suggestWidget.js b/esm/vs/editor/contrib/suggest/browser/suggestWidget.js
+index 84975081215ef11d48ca34fde9655946acd47917..c8ab25cbfd5b6932ea1d523a5b6a08c31a75e359 100644
+--- a/esm/vs/editor/contrib/suggest/browser/suggestWidget.js
++++ b/esm/vs/editor/contrib/suggest/browser/suggestWidget.js
+@@ -764,7 +764,7 @@ let SuggestWidget = class SuggestWidget {
+         };
+     }
+     _isDetailsVisible() {
+-        return this._storageService.getBoolean('expandSuggestionDocs', 0 /* StorageScope.PROFILE */, false);
++        return this._storageService.getBoolean('expandSuggestionDocs', 0 /* StorageScope.PROFILE */, true);
+     }
+     _setDetailsVisible(value) {
+         this._storageService.store('expandSuggestionDocs', value, 0 /* StorageScope.PROFILE */, 0 /* StorageTarget.USER */);
 diff --git a/esm/vs/editor/editor.all.js b/esm/vs/editor/editor.all.js
-index 53d39b8c062de3143d96b77af1a09abbdd347ae5..efd6128b25e57089220d7cabbc157d078247d430 100644
+index 342d1c4cbc3247d714a4b2cd1064b2a03cb073cf..bd18bd3ea643f2a2cf3fc06f6a60b1e4d6608dea 100644
 --- a/esm/vs/editor/editor.all.js
 +++ b/esm/vs/editor/editor.all.js
-@@ -3,9 +3,9 @@
+@@ -3,8 +3,8 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
   *--------------------------------------------------------------------------------------------*/
  import './browser/coreCommands.js';
--import './browser/widget/codeEditorWidget.js';
--import './browser/widget/diffEditorWidget.js';
--import './browser/widget/diffNavigator.js';
-+// import './browser/widget/codeEditorWidget.js';
-+// import './browser/widget/diffEditorWidget.js';
-+// import './browser/widget/diffNavigator.js';
+-import './browser/widget/codeEditor/codeEditorWidget.js';
+-import './browser/widget/diffEditor/diffEditor.contribution.js';
++// import './browser/widget/codeEditor/codeEditorWidget.js';
++// import './browser/widget/diffEditor/diffEditor.contribution.js';
  import './contrib/anchorSelect/browser/anchorSelect.js';
  import './contrib/bracketMatching/browser/bracketMatching.js';
  import './contrib/caretOperations/browser/caretOperations.js';
-@@ -18,20 +18,20 @@ import './contrib/copyPaste/browser/copyPasteContribution.js';
+@@ -17,22 +17,22 @@ import './contrib/colorPicker/browser/standaloneColorPickerActions.js';
  import './contrib/comment/browser/comment.js';
  import './contrib/contextmenu/browser/contextmenu.js';
  import './contrib/cursorUndo/browser/cursorUndo.js';
 -import './contrib/dnd/browser/dnd.js';
--import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
+-import './contrib/dropOrPasteInto/browser/copyPasteContribution.js';
+-import './contrib/dropOrPasteInto/browser/dropIntoEditorContribution.js';
 +// import './contrib/dnd/browser/dnd.js';
-+// import './contrib/dropIntoEditor/browser/dropIntoEditorContribution.js';
++// import './contrib/dropOrPasteInto/browser/copyPasteContribution.js';
++// import './contrib/dropOrPasteInto/browser/dropIntoEditorContribution.js';
  import './contrib/find/browser/findController.js';
  import './contrib/folding/browser/folding.js';
 -import './contrib/fontZoom/browser/fontZoom.js';
 +// import './contrib/fontZoom/browser/fontZoom.js';
  import './contrib/format/browser/formatActions.js';
  import './contrib/documentSymbols/browser/documentSymbols.js';
--import './contrib/inlineCompletions/browser/ghostText.contribution.js';
-+// import './contrib/inlineCompletions/browser/ghostText.contribution.js';
+-import './contrib/inlineCompletions/browser/inlineCompletions.contribution.js';
+-import './contrib/inlineProgress/browser/inlineProgress.js';
++// import './contrib/inlineCompletions/browser/inlineCompletions.contribution.js';
++// import './contrib/inlineProgress/browser/inlineProgress.js';
  import './contrib/gotoSymbol/browser/goToCommands.js';
  import './contrib/gotoSymbol/browser/link/goToDefinitionAtPosition.js';
  import './contrib/gotoError/browser/gotoError.js';
- import './contrib/hover/browser/hover.js';
+ import './contrib/hover/browser/hoverContribution.js';
  import './contrib/indentation/browser/indentation.js';
 -import './contrib/inlayHints/browser/inlayHintsContribution.js';
 +// import './contrib/inlayHints/browser/inlayHintsContribution.js';
  import './contrib/inPlaceReplace/browser/inPlaceReplace.js';
  import './contrib/lineSelection/browser/lineSelection.js';
  import './contrib/linesOperations/browser/linesOperations.js';
+@@ -40,8 +40,8 @@ import './contrib/linkedEditing/browser/linkedEditing.js';
+ import './contrib/links/browser/links.js';
+ import './contrib/longLinesHelper/browser/longLinesHelper.js';
+ import './contrib/multicursor/browser/multicursor.js';
+-import './contrib/inlineEdit/browser/inlineEdit.contribution.js';
+-import './contrib/inlineEdits/browser/inlineEdits.contribution.js';
++// import './contrib/inlineEdit/browser/inlineEdit.contribution.js';
++// import './contrib/inlineEdits/browser/inlineEdits.contribution.js';
+ import './contrib/parameterHints/browser/parameterHints.js';
+ import './contrib/placeholderText/browser/placeholderText.contribution.js';
+ import './contrib/rename/browser/rename.js';
+@@ -61,7 +61,7 @@ import './contrib/wordHighlighter/browser/wordHighlighter.js';
+ import './contrib/wordOperations/browser/wordOperations.js';
+ import './contrib/wordPartOperations/browser/wordPartOperations.js';
+ import './contrib/readOnlyMessage/browser/contribution.js';
+-import './contrib/diffEditorBreadcrumbs/browser/contribution.js';
++// import './contrib/diffEditorBreadcrumbs/browser/contribution.js';
+ // Load up these strings even in VSCode, even if they are not used
+ // in order to get them translated
+ import './common/standaloneStrings.js';
 diff --git a/esm/vs/editor/editor.main.js b/esm/vs/editor/editor.main.js
-index 97bfc6b8de457c98a5670df6c77510bf172c60ac..5c260bb4e7a5bdaaaae7eecf48c7b0a6df4fbfda 100644
+index 97bfc6b8de457c98a5670df6c77510bf172c60ac..032469accf149504a0ef07e18274ba69d3c6e516 100644
 --- a/esm/vs/editor/editor.main.js
 +++ b/esm/vs/editor/editor.main.js
-@@ -1,7 +1,8 @@
+@@ -1,7 +1 @@
 -import '../basic-languages/monaco.contribution';
 -import '../language/css/monaco.contribution';
 -import '../language/html/monaco.contribution';
 -import '../language/json/monaco.contribution';
 -import '../language/typescript/monaco.contribution';
-+// @note remove other languages support (when importing stuff from 'monaco-editor') since it's not tree-shaken
-+// import '../basic-languages/monaco.contribution';
-+// import '../language/css/monaco.contribution';
-+// import '../language/html/monaco.contribution';
-+// import '../language/json/monaco.contribution';
-+// import '../language/typescript/monaco.contribution';
- 
+-
  export * from './edcore.main';

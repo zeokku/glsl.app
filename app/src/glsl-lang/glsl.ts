@@ -1,5 +1,29 @@
 import { editor, languages } from "monaco-editor";
+// import {
+//   StandaloneServices,
+//   IStorageService,
+// } from "monaco-editor/esm/vs/editor/standalone/browser/standaloneServices";
 import { glslDictionary } from "./dictionary";
+
+// @note in new monaco versions overrides should be initialized with standalone services (otherwise any call to editor or languages would call initialization preventing overrides to take effect during editor instance creation)
+// @note but i patched suggestion controlled to have expanded docs by default so we don't override default storage logic
+// StandaloneServices.initialize({
+//   storageService: {
+//     get() {},
+//     remove() {},
+//     getBoolean(key: string) {
+//       // @todo suggestion docs width
+//       if (key === "expandSuggestionDocs") return true;
+//     },
+//     getNumber() {},
+//     store() {},
+//     onWillSaveState() {},
+//     onDidChangeStorage() {},
+//     onDidChangeValue() {
+//       return () => {};
+//     },
+//   },
+// });
 
 // @note updating tokens on fly doesn't work, because it's all compiled
 // so try to make a small subset for highlighting hovers and defs

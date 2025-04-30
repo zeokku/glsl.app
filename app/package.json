@@ -24,7 +24,7 @@
     "less": "^4.2.2",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "monaco-editor": "0.36.1",
+    "monaco-editor": "0.52.2",
     "petite-vue-i18n": "11.1.1",
     "prettier": "^3.5.2",
     "prettier-plugin-glsl": "^0.2.0",

@@ -114,58 +114,36 @@ export const getEditor = () => editorInstance;
 export const init = (container: HTMLElement) => {
   if (editorInstance) throw new Error("Editor instance already created!");
 
-  editorInstance = editor.create(
-    container,
-    {
-      theme: "glsl-theme",
+  editorInstance = editor.create(container, {
+    theme: "glsl-theme",
 
-      wordBasedSuggestions: false,
+    wordBasedSuggestions: false,
 
-      cursorBlinking: "smooth",
-      // cursorSmoothCaretAnimation: 'on',
+    cursorBlinking: "smooth",
+    // cursorSmoothCaretAnimation: 'on',
 
-      colorDecorators: true,
+    colorDecorators: true,
 
-      // fontFamily: 'SpaceMono',
+    // fontFamily: 'SpaceMono',
 
-      tabSize: getSetting("tabSize"),
+    tabSize: getSetting("tabSize"),
 
-      minimap: {
-        enabled: innerWidth > 500 && getSetting("editorMinimap"),
-        side: "left",
-        maxColumn: 80,
-      },
-
-      suggest: {
-        showInlineDetails: true,
-        // @note thanks https://stackoverflow.com/questions/62325624/how-to-allow-completion-suggestions-to-appear-while-inside-a-snippet-in-monaco-e
-        snippetsPreventQuickSuggestions: false,
-      },
-
-      "semanticHighlighting.enabled": true,
-
-      // useShadowDOM: true,
+    minimap: {
+      enabled: innerWidth > 500 && getSetting("editorMinimap"),
+      side: "left",
+      maxColumn: 80,
     },
-    // @note this is needed to enable suggestion docs
-    // https://github.com/microsoft/monaco-editor/issues/2241#issuecomment-764694521
-    {
-      storageService: {
-        get() {},
-        remove() {},
-        getBoolean(key: string) {
-          // @todo suggestion docs width
-          if (key === "expandSuggestionDocs") return true;
-        },
-        getNumber(key: string) {
-          // return 0;
-        },
-        store() {},
-        onWillSaveState() {},
-        onDidChangeStorage() {},
-        onDidChangeValue() {},
-      },
-    }
-  );
+
+    suggest: {
+      showInlineDetails: true,
+      // @note thanks https://stackoverflow.com/questions/62325624/how-to-allow-completion-suggestions-to-appear-while-inside-a-snippet-in-monaco-e
+      snippetsPreventQuickSuggestions: false,
+    },
+
+    "semanticHighlighting.enabled": true,
+
+    // useShadowDOM: true,
+  });
 
   editorInstance.setModel(model);
 

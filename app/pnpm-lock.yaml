@@ -9,7 +9,7 @@ overrides:
 
 patchedDependencies:
   monaco-editor:
-    hash: d0d9f553f7b2571f910d6023756c0e948310aafc0647c7bbce4061102cc32b3a
+    hash: 5614910075e04c2fa4655421837d145ea82b3dcff58055b6be1b2ffdd58ac5fb
     path: patches/monaco-editor.patch
   prettier-plugin-glsl:
     hash: da5529e964244f0295d1e2d9fa91f2977743d24b520ee86e715d18ea69e49212
@@ -53,8 +53,8 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1
       monaco-editor:
-        specifier: 0.36.1
-        version: 0.36.1(patch_hash=d0d9f553f7b2571f910d6023756c0e948310aafc0647c7bbce4061102cc32b3a)
+        specifier: 0.52.2
+        version: 0.52.2(patch_hash=5614910075e04c2fa4655421837d145ea82b3dcff58055b6be1b2ffdd58ac5fb)
       petite-vue-i18n:
         specifier: 11.1.1
         version: 11.1.1(vue@3.5.13(typescript@5.7.3))
@@ -2376,8 +2376,8 @@ packages:
   copy-anything@2.0.6:
     resolution: {integrity: sha512-1j20GZTsvKNkc4BY3NpMOM8tt///wY3FpIzozTOFO2ffuZcV61nojHXVKIy3WM+7ADCy5FVhdZYHYDdgTU0yJw==}
 
-  core-js-compat@3.41.0:
-    resolution: {integrity: sha512-RFsU9LySVue9RTwdDVX/T0e2Y6jRYWXERKElIjpuEOEnxaXffI0X7RUwVzfYLfzuLXSNJDYoRYUAmRUcyln20A==}
+  core-js-compat@3.42.0:
+    resolution: {integrity: sha512-bQasjMfyDGyaeWKBIu33lHh9qlSR0MFE/Nmc6nMjf/iU9b3rSMdAYz1Baxrv4lPdGUsTqZudHA4jIGSJy0SWZQ==}
 
   cosmiconfig@8.3.6:
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
@@ -3414,8 +3414,8 @@ packages:
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
 
-  monaco-editor@0.36.1:
-    resolution: {integrity: sha512-/CaclMHKQ3A6rnzBzOADfwdSJ25BFoFT0Emxsc4zYVyav5SkK9iA6lEtIeuN/oRYbwPgviJT+t3l+sjFa28jYg==}
+  monaco-editor@0.52.2:
+    resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
 
   mrmime@2.0.0:
     resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
@@ -5330,7 +5330,7 @@ snapshots:
       babel-plugin-polyfill-corejs2: 0.4.13(@babel/core@7.26.10)
       babel-plugin-polyfill-corejs3: 0.11.1(@babel/core@7.26.10)
       babel-plugin-polyfill-regenerator: 0.6.4(@babel/core@7.26.10)
-      core-js-compat: 3.41.0
+      core-js-compat: 3.42.0
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -6989,7 +6989,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.10
       '@babel/helper-define-polyfill-provider': 0.6.4(@babel/core@7.26.10)
-      core-js-compat: 3.41.0
+      core-js-compat: 3.42.0
     transitivePeerDependencies:
       - supports-color
 
@@ -7226,7 +7226,7 @@ snapshots:
     dependencies:
       is-what: 3.14.1
 
-  core-js-compat@3.41.0:
+  core-js-compat@3.42.0:
     dependencies:
       browserslist: 4.24.4
 
@@ -8324,7 +8324,7 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.1
 
-  monaco-editor@0.36.1(patch_hash=d0d9f553f7b2571f910d6023756c0e948310aafc0647c7bbce4061102cc32b3a): {}
+  monaco-editor@0.52.2(patch_hash=5614910075e04c2fa4655421837d145ea82b3dcff58055b6be1b2ffdd58ac5fb): {}
 
   mrmime@2.0.0: {}
 

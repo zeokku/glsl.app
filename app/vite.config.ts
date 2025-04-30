@@ -68,12 +68,12 @@ export default defineConfig(({ command }) => ({
         description,
         icons: [
           {
-            src: "/icon-512.png",
+            src: "/icon-1.5-512.png",
             type: "image/png",
             sizes: "512x512",
           },
         ],
-        theme_color: "#0a0118",
+        theme_color: "#281538",
       },
     }),
 

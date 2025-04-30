@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import { VitePWA as pwa } from "vite-plugin-pwa";
 import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
-import VueMacros from "unplugin-vue-macros/vite";
+import VueMacros from "vue-macros/vite";
 import Inspect from "vite-plugin-inspect";
 import { octiconsPlugin } from "./plugins/octicons";
 

@@ -27,7 +27,6 @@
 
 <script lang="ts">
 export const isManualRecompilation = shallowRef<boolean>(getSetting("manualRecompilation"));
-watch(isManualRecompilation, v => setSettings({ manualRecompilation: v }));
 </script>
 
 <script setup lang="ts">
@@ -93,6 +92,15 @@ const onRecompile = async () => {
 
   compileShader(await processIncludes(getModel().getLinesContent()));
 };
+
+watch(isManualRecompilation, manualEnabled => {
+  setSettings({ manualRecompilation: manualEnabled });
+
+  if (manualEnabled) return;
+
+  // @note recompile when manual is disabled
+  onRecompile();
+});
 
 window.addEventListener("dragenter", (e: DragEvent) => {
   if (e.relatedTarget !== null) return;

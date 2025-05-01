@@ -71,6 +71,7 @@ onUnmounted(() => {
 
   position: fixed;
   top: 0;
+  z-index: 10;
 
   width: 100%;
   height: 100%;
@@ -180,16 +181,15 @@ onUnmounted(() => {
 
   padding: 2rem 4rem 4rem;
 
-  @media (width<500px) {
-    padding: 1rem 1rem 4rem;
-  }
-
   overflow-y: auto;
 
-  @mask: linear-gradient(to bottom, transparent, black 4rem calc(100% - 4rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 4rem calc(100% - 4rem), transparent);
 
-  -webkit-mask-image: @mask;
-  mask-image: @mask;
+  @media (width < 650px) {
+    padding: 1rem 1rem 4rem;
+
+    mask-image: linear-gradient(to bottom, transparent, black 2rem calc(100% - 2rem), transparent);
+  }
 }
 </style>
 

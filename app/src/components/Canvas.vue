@@ -78,6 +78,7 @@ const onMouseMove = ({
 .canvas-wrap {
   position: fixed;
   top: 0;
+  z-index: 8;
 
   width: 600px;
   height: 500px;
@@ -155,6 +156,8 @@ canvas {
   top: unset;
   bottom: 0;
 
-  pointer-events: none;
+  &:has(canvas:not(:fullscreen)) {
+    pointer-events: none;
+  }
 }
 </style>

@@ -17,7 +17,10 @@ article.App__article.donate.CModal__content
     div(v-for="(address, chain) in ADDRESSES")
       div
         b {{ chain }}:
-      .address(@click="() => onAddressClick(address, chain)") {{ address }}
+      .address(@click="() => onAddressClick(address, chain)") 
+        //- | {{  address.replace(new RegExp(`/^(?<=.{${Math.floor(address.length / 2)  }})\b`), '\u00ad') }}
+        //- @note insert &shy; so it wraps better
+        | {{ address.slice(0, address.length / 2) + "\u00ad" + address.slice(address.length / 2) }}
         canvas.address-qr(:data-chain="chain")
 
   section.App__region
@@ -130,6 +133,10 @@ const onAddressClick = (address: string, chain: keyof typeof ADDRESSES) => {
 
   cursor: pointer;
 
+  font-family: monospace;
+
+  hyphenate-character: "";
+
   @bound: 0.5ch;
   padding-inline: @bound;
   margin-inline: -@bound;
@@ -174,7 +181,9 @@ const onAddressClick = (address: string, chain: keyof typeof ADDRESSES) => {
 .ko-fi {
   border-radius: 2rem;
   border: none;
-  width: 30rem;
+  width: 100%;
+  max-width: 50ch;
+  justify-self: center;
   padding: 0.5rem;
 
   background: white;

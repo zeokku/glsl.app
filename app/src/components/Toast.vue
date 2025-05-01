@@ -19,6 +19,7 @@ defineProps<{
 
 .toast-wrap {
   position: fixed;
+  z-index: 11;
   bottom: 0;
 
   width: 100%;

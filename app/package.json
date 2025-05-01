@@ -43,6 +43,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/language-plugin-pug": "^2.2.10",
     "autoprefixer": "^10.4.20",
     "dotenv": "^16.4.7",
     "html-minifier-terser": "^7.2.0",

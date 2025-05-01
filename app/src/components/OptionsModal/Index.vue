@@ -61,8 +61,7 @@
             | {{ " " }}
             | {{ cacheSize }}
           Button.clear-cache-btn(@click="onClearCache")
-            template(#icon) 
-              delete-icon
+            delete-icon
             | {{ t("clear-cache") }}
 </template>
 

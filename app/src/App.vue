@@ -489,4 +489,43 @@ svg {
   transition: background 300ms;
   text-transform: uppercase;
 }
+
+// #region fade
+
+.fade-bounce-enter-from,
+.fade-bounce-leave-to,
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  scale: 0.97;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: 300ms;
+  transition-property: opacity, scale;
+}
+
+.fade-bounce-enter-active,
+.fade-bounce-leave-active {
+  transition: 300ms cubic-bezier(0.39, 0.45, 0.27, 1.27);
+  transition-property: opacity, scale;
+}
+
+.blend-enter-from,
+.blend-leave-from {
+  opacity: 0;
+}
+
+.blend-enter-active,
+.blend-leave-active {
+  transition: 300ms ease-out;
+  transition-property: opacity;
+}
+
+// .blend-leave-active {
+//   position: absolute;
+// }
+
+// #endregion
 </style>

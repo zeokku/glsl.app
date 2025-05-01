@@ -1,8 +1,7 @@
 <template lang="pug">
-.btn.click-fx.App__glow-element-wrap
+.button.click-fx.App__glow-element-wrap
   button.App__glow-element
-    slot(name="icon")
-    span.App__font-shade
+    .content.App__font-shade
       slot
 </template>
 
@@ -17,49 +16,47 @@
   }
 }
 
-.btn {
+.button {
   --br: 0.5rem;
 
   color: white;
 
   button {
-    display: flex;
+    // @todo why doesn't it take 100% of parent on its own???
+    width: 100%;
+
+    text-transform: uppercase;
+    font-weight: bold;
+    white-space: nowrap;
 
     // flex-wrap: wrap;
     // justify-content: center;
-
-    align-items: center;
-
-    // @note smaller vertical gap, when text wraps
-    gap: 0.3em 0.5em;
-
     cursor: inherit;
 
     padding: 0.5rem 0.75rem;
   }
 
-  span {
-    // @note lol?
-    // display: block;
-
-    text-transform: uppercase;
-    font-weight: bold;
-    white-space: nowrap;
-  }
-
   svg {
     display: inline-block;
 
-    height: 1em;
-    // @note use auto so it has proper size according to text size
-    width: auto;
-    // width: 1em;
+    // @note three rules to align with text
+    vertical-align: top;
+    height: 1lh;
+    width: 1em;
 
     fill: currentColor;
-    vertical-align: top;
     // button padding
     // moved to gap
     // margin-right: 0.75em;
   }
+}
+
+.content {
+  display: flex;
+
+  align-items: center;
+
+  // @note smaller vertical gap, when text wraps
+  gap: 0.3em 0.5em;
 }
 </style>

@@ -1,25 +1,27 @@
 <template lang="pug">
 .info(ref="info")
   .input-wrap.App__input-wrap.App__glow-element-wrap
-    input.name-input.App__glow-element(v-model="currentShader.name", :title="t('shader-name')")
+    input.name-input.App__glow-element(
+      v-model="currentShader.name",
+      :title="t('shader-name-tooltip') + (currentShader.name ? `:\n\n` + currentShader.name.toUpperCase() : '')",
+      :placeholder="t('shader-name-placeholder')"
+    )
 
-  Button(@click="onTexturesOpen")
-    template(#icon) 
-      image-icon
-    | {{ t("textures") }}
+  Button(@click="onTexturesOpen", :title="t('textures')")
+    image-icon
+    .CMenuBar_MenuBar__hide-narrow {{ t("textures") }}
 
   .App__glow-element-wrap(style="border-radius: 0.5rem")
     .fps-indicator
       | FPS:
       //- | {{ " " }}
       //- span(style="font-family: monospace; font-size: 1rem") {{ Math.round(canvasFps) }}
-      div(ref="fpsPaneContainer", style="width: 10rem")
+      .fps-graph(ref="fpsPaneContainer")
       //- @todo canvas resolution
 
-  Button(v-if="isManualRecompilation", @click="onRecompile")
-    template(#icon) 
-      compile-icon
-    | {{ t("compile") }}
+  Button(v-if="isManualRecompilation", @click="onRecompile", :title="t('compile')")
+    compile-icon
+    .CMenuBar_MenuBar__hide-narrow {{ t("compile") }}
 
   Modal(:visible="textureModalVisible", @close="textureModalVisible = false")
     textures-modal
@@ -134,7 +136,23 @@ window.addEventListener("dragenter", (e: DragEvent) => {
   gap: 1rem;
 }
 
+.fps-graph {
+  width: 10rem;
+
+  @media (width < 600px) {
+    width: 5em;
+  }
+}
+
 .input-wrap {
   min-width: 18em;
+
+  @media (width<600px) {
+    min-width: 10em;
+  }
+}
+
+:global(.tp-lblv_v) {
+  width: 100% !important;
 }
 </style>

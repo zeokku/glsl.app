@@ -4,6 +4,18 @@
     h1.App__font-shade.App__icon-title
       upload-icon
       | {{ t("export-shader") }}
+
+    section.App__region
+      h2.App__font-shade.App__icon-title
+        file-icon
+        | {{ t("result") }}
+      div
+        | {{ t("click") }}
+        |
+        a(:download="currentShader.name + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
+      .App__input-wrap.App__glow-element-wrap
+        textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
+
     section.App__section
       h2.App__font-shade.App__icon-title
         gear-icon
@@ -44,16 +56,6 @@
             .label {{ i }}
             .App__input-wrap.App__glow-element-wrap
               input.App__glow-element(@input="e => renameSymbol(i, e)", :value="renameMap.get(i)")
-    section.App__region
-      h2.App__font-shade.App__icon-title
-        file-icon
-        | {{ t("result") }}
-      div
-        | {{ t("click") }}
-        |
-        a(:download="currentShader.name + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
-      .App__input-wrap.App__glow-element-wrap
-        textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
 </template>
 
 <script lang="ts">

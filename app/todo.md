@@ -11,8 +11,7 @@
 + file button (new, load, export, share)
 + info dropdown (changelog, github, discord)
 + update localizations
-
-* editor loading better icon
++ editor loading better icon
 
 
 $ vue smoothies 2.0

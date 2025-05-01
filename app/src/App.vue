@@ -1,13 +1,16 @@
 <template lang="pug">
 TopControls
-Suspense
-  Editor
-  //- @note for testing loading anim
-  //- Component(:is="_DUMMY_ASYNC_")
-  template(#fallback)
-    .editor-loading
-      | {{ t("editor-loading") }}
-      .loading-indicator ...
+transition(name="blend", mode="out-in", type="transition")
+  Suspense
+    Editor
+    //- @note for testing loading anim
+    //- Component(:is="_DUMMY_ASYNC_")
+    template(#fallback)
+      .editor-loading
+        .editor-loading-content
+          loading-icon
+          | {{ " " }}{{ t("editor-loading") }}
+          //- .loading-indicator ...
 Canvas
 </template>
 
@@ -23,6 +26,8 @@ export const infoLog = shallowRef<string>("");
 <script setup lang="ts">
 import TopControls from "./components/TopControls.vue";
 import Canvas from "./components/Canvas.vue";
+import LoadingIcon from "octicons:clock";
+
 import { shallowRef, watch, defineAsyncComponent, ref } from "vue";
 
 import { initGlowElements } from "./stylingUtils/glow";
@@ -98,6 +103,28 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+}
+
+.editor-loading-content {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+
+  background: linear-gradient(to right, transparent 25%, var(--glow), transparent 50%);
+  background-color: var(--border);
+  background-size: 400% 100%;
+
+  animation: editor-loading 1250ms linear infinite;
+
+  @keyframes editor-loading {
+    100% {
+      background-position-x: 100%;
+    }
+  }
+
+  svg {
+    height: 1lh;
+    vertical-align: top;
+  }
 }
 
 .loading-indicator {
@@ -516,7 +543,7 @@ svg {
 }
 
 .blend-enter-from,
-.blend-leave-from {
+.blend-leave-to {
   opacity: 0;
 }
 

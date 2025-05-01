@@ -1,36 +1,46 @@
+editor-loading: Editor is loading
+
 # casing doesn't matter
 
 #region menu bar
+file: File
 # create new shader
 new: New
 # open a list of saved shaders
 load: Load
 export: Export
 share: Share
-options: Options
+settings: Settings
 storage: Storage
 editor: Editor
 formatting: Formatting
 fullscreen: Fullscreen
 # support the author
 donate: Donate
+info: Info
 changelog: Changelog
+
+loading: Loading
 
 link-copied: Link copied into the clipboard
 #endregion
 
 #region info bar
-textures: textures
-shader-name: Name of the current shader
+textures: Textures
+shader-name-tooltip: Name of the current shader
+shader-name-placeholder: Shader name
 compile: Compile
-manual-recomp: manual recompilation
+manual-recomp: Manual shader recompilation
 #endregion
 
 #region load modal
+your-shaders-title: Your shader library
 delete-shader: Delete shader
 #endregion
 
 #region export modal
+export-shader: Export Shader
+
 # "Expand #include directives"
 expand: Expand
 directives: directives
@@ -48,23 +58,29 @@ uniforms: Uniforms
 
 result: Result code
 
-click: Click to copy or
+click: Click the code to copy or
 download: download as file
 
 shader-copied: Shader code copied into the clipboard
 #endregion
 
 #region options modal
+app: App
 show-minimap: Show code minimap
+reload-required: (Reload required)
 print-width: Print width
 tab-size: Tab size
 offline-link: Use offline method for generating shareable links
 npm: NPM Modules Provider
-cache: Cache modules on local storage (so they can be used offline)
+cache: Cache modules on local storage
+cache-tip: (Offline usage)
+cache-size: Cache size
 clear-cache: Clear Offline Cache
+cache-cleared-alert: Cache has been cleared!
 #endregion
 
 #region donate modal
+donate-title: Help fuel future updates and features — support us with a donation!
 address-copied: Address copied into the clipboard
 #endregion
 

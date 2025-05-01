@@ -1,6 +1,6 @@
 # DO NOT CREATE .env WITH CMD !!!!!!!!!!!!!!!!!!!!!!!
 
-it won't work crazily and impossible to figure what's wrong
+it won't work and impossible to figure what's wrong
 
 THIS WON'T WORK!!!
 `echo 'APP_GQL_ENDPOINT="https://glslapp.gamerzero.dev/graphql"' > .env`

@@ -1,34 +1,43 @@
+editor-loading: Редактор загружается
+
 #region menu bar
+file: Файл
 # create new shader
 new: Создать
 # open a list of saved shaders
 load: Открыть
 export: Экспорт
 share: Поделиться
-options: Настройки
+settings: Настройки
 storage: Хранилище
 editor: Редактор
 formatting: Форматирование
 fullscreen: Полный экран
 # support the author
 donate: Поддержать
+info: Инфо
 changelog: Обновления
+
+loading: Загрузка
 
 link-copied: Ссылка скопирована в буффер обмена
 #endregion
 
 #region info bar
 textures: Текстуры
-shader-name: Название текущего шейдера
+shader-name-tooltip: Название текущего шейдера
+shader-name-placeholder: Название шейдера
 compile: Скомпилировать
 manual-recomp: Ручная компиляция
 #endregion
 
 #region load modal
+your-shaders-title: Ваша библиотека шейдеров
 delete-shader: Удалить шейдер
 #endregion
 
 #region export modal
+export-shader: Экспорт шейдера
 # "Expand #include directives"
 expand: Раскрыть
 directives: директивы
@@ -46,23 +55,30 @@ uniforms: Uniforms
 
 result: Результат
 
-click: Нажмите, чтобы скопировать
+click: Нажмите на код, чтобы скопировать, или
 download: скачать как файл
 
-shader-copied: Шейдер скопирован в буффер обмена
+shader-copied: Шейдер скопирован в буфер обмена
 #endregion
 
 #region options modal
+app: Приложение
 show-minimap: Показывать мини-карту с кодом
+reload-required: (Требуется перезагрузка)
 print-width: Ширина строк
 tab-size: Размер отступов
 offline-link: Использовать оффлайн метод для генерации ссылок на шейдеры
 npm: Провайдер NPM модулей
-cache: Кэшировать модули в локальном хранилище (чтобы их можно было использовать оффлайн)
+cache: Кэшировать модули в локальном хранилище
+cache-tip: (Оффлайн использование)
+cache-size: Использование памяти
 clear-cache: Очистить оффлайн кэш
+cache-cleared-alert: Кэш очищен!
+
 #endregion
 
 #region donate modal
+donate-title: Помогите развитию новых обновлений и функций — поддержите нас донатом!
 address-copied: Адрес скопирован в буффер обмена
 #endregion
 

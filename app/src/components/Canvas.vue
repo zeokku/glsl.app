@@ -1,10 +1,14 @@
 <template lang="pug">
-.canvas-wrap(v-movable:[movable], :class="movable || 'static'")
+.canvas-wrap(
+  v-movable:[movable],
+  :style="{ visibility: editorLoaded ? undefined : 'hidden' }",
+  :class="movable || 'static'"
+)
   canvas(ref="canvasRef", @pointermove="onMouseMove", @contextmenu.prevent)
 </template>
 
 <script lang="ts">
-export let canvasFps = { value: 60 };
+export let canvasFps = shallowRef(60);
 
 let canvasRef = $shallowRef<HTMLCanvasElement>();
 export let getCanvas = () => canvasRef;
@@ -14,7 +18,7 @@ export let glInitialization: Promise<any>;
 
 <script setup lang="ts">
 import throttle from "lodash.throttle";
-import { onMounted, watchEffect } from "vue";
+import { onMounted, shallowRef, watchEffect } from "vue";
 
 import { initGl, updateMouse, updateResolution } from "@/gl/glContext";
 import { useScreen } from "@/composition/useScreen";
@@ -23,8 +27,12 @@ let movable = $shallowRef<boolean>();
 
 const screen = useScreen();
 
+// @note show canvas only after editor is loaded
+let editorLoaded = $shallowRef<boolean>(false);
+import("@/editor").then(() => (editorLoaded = true));
+
 watchEffect(() => {
-  movable = screen.w > 500;
+  movable = screen.w > 600;
 });
 
 onMounted(async () => {
@@ -49,7 +57,12 @@ onMounted(async () => {
 });
 
 let mouse = { x: 0, y: 0, lb: 0, rb: 0 };
-const onMouseMove = ({ offsetX, offsetY, buttons, target }: MouseEvent) => {
+const onMouseMove = ({
+  offsetX,
+  offsetY,
+  buttons,
+  target,
+}: MouseEvent & { target: HTMLCanvasElement }) => {
   mouse.x = offsetX;
   // @note make pointer coords top ascending aligned with glsl coords
   mouse.y = target.scrollHeight - offsetY;
@@ -65,6 +78,7 @@ const onMouseMove = ({ offsetX, offsetY, buttons, target }: MouseEvent) => {
 .canvas-wrap {
   position: fixed;
   top: 0;
+  z-index: 8;
 
   width: 600px;
   height: 500px;
@@ -79,6 +93,7 @@ const onMouseMove = ({ offsetX, offsetY, buttons, target }: MouseEvent) => {
   // background: black;
 
   border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: 1rem;
 
   cursor: move;
 
@@ -141,6 +156,8 @@ canvas {
   top: unset;
   bottom: 0;
 
-  pointer-events: none;
+  &:has(canvas:not(:fullscreen)) {
+    pointer-events: none;
+  }
 }
 </style>

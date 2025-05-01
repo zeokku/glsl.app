@@ -1,83 +1,100 @@
 <template lang="pug">
 menu.menu(ref="menu")
+  //- @note the concept is that focusin for next item will be fired after focusout, so the flag would be set back if focus didn't leave the list/button AND we shouldn't toggle the flag on click, the state is only handled with focus(in/out)
+  li(@focusin="isFileMenuShown = true", @focusout="isFileMenuShown = false")
+    //- @note pointerdown is fired before focusin, so we can use it to toggle state (comparing to click). it won't close when pop menu item has focus first doe
+    Button(@pointerdown="isFileMenuShown = !isFileMenuShown")
+      file-open-icon(v-if="isFileMenuShown")
+      file-icon(v-else)
+      | {{ t("file") }}
+      chevron-icon.chevron(:style="{ rotate: (isFileMenuShown ? -180 : 0) + 'deg' }")
+    transition(name="fade", style="transition-duration: 300ms")
+      menu.pop-menu(v-show="isFileMenuShown", @click="isFileMenuShown = false")
+        li
+          Button(@click="onNewClick")
+            Plus
+            | {{ t("new") }}
+        li
+          Button(@click="onLoadClick")
+            FileDirectory 
+            | {{ t("load") }}
+        li
+          Button(@click="onExportClick") 
+            Upload
+            | {{ t("export") }}
+        li
+          Button(@click="onShareLinkClick") 
+            Link
+            | {{ t("share") }}
+
   li
-    Button(@click="onNewClick")
-      template(#icon) 
-        Plus
-      | {{ t("new") }}
+    Button(@click="onSettingsClick", :title="t('settings')")
+      Gear
+      .hide-narrow {{ t("settings") }}
+
   li
-    Button(@click="onLoadClick")
-      template(#icon) 
-        FileDirectory 
-      | {{ t("load") }}
-  li
-    Button(@click="onExportClick") 
-      template(#icon) 
-        Upload
-      | {{ t("export") }}
-  li
-    Button(@click="onShareLinkClick") 
-      template(#icon) 
-        Link
-      | {{ t("share") }}
-  li
-    Button(@click="onOptionsClick")
-      template(#icon) 
-        Gear
-      | {{ t("options") }}
-  li
-    Button(@click="onFullscreenClick")
-      template(#icon) 
-        ScreenFull
-      | {{ t("fullscreen") }}
+    Button(@click="onFullscreenClick", :title="t('fullscreen')")
+      ScreenFull
+      .hide-narrow {{ t("fullscreen") }}
   //- @todo special button
   //- @todo show full screen animation with hearts on modal open
   li
-    Button(style="--accent-rgb: 255, 153, 171", @click="onDonateClick")
-      template(#icon) 
-        Heart
-      | {{ t("donate") }}
-  //- discord blurple // --bg: rgb(88, 101, 242);
-  li
-    Button(style="--accent-rgb: 88, 101, 242", @click="onDiscordClick")
-      //- @todo use discord color, override css vars O_O !!!
-      template(#icon) 
-        Discord
-      | Discord
-  li
-    Button(@click="onGithubClick")
-      template(#icon) 
-        Github
-      | GitHub
+    Button(style="--accent-rgb: 255, 153, 171", @click="onDonateClick", :title="t('donate')")
+      Heart
+      .hide-narrow {{ t("donate") }}
 
-  li
-    Button(@click="onChangelogClick")
-      template(#icon)
-        Log
-      | {{ t("changelog") }}
-  Modal(:visible="modalVisible", @close="modalVisible = false")
+  li(@focusin="isInfoMenuShown = true", @focusout="isInfoMenuShown = false")
+    Button(@pointerdown="isInfoMenuShown = !isInfoMenuShown", :title="t('info')")
+      info-icon
+      .hide-narrow {{ t("info") }}
+      chevron-icon.chevron(:style="{ rotate: (isInfoMenuShown ? -180 : 0) + 'deg' }")
+    transition(name="fade", style="transition-duration: 300ms")
+      menu.pop-menu(v-show="isInfoMenuShown", @click="isInfoMenuShown = false")
+        li
+          Button(@click="onChangelogClick")
+            Log
+            | {{ t("changelog") }}
+        li
+          //- @note discord blurple color
+          Button(style="--accent-rgb: 88, 101, 242", @click="onDiscordClick")
+            //- @todo use discord color, override css vars O_O !!!
+            Discord
+            | Discord
+        li
+          Button(@click="onGithubClick")
+            Github
+            | GitHub
+
+  Modal(
+    :visible="modalVisible",
+    @close="modalVisible = false",
+    @fadeout="currentModalComponent = null"
+  )
     component(:is="currentModalComponent")
 </template>
 
 <script setup lang="ts">
 import Button from "./Button.vue";
 
-import Plus from "+/icons/diff-added.vue";
-import FileDirectory from "+/icons/file-directory.vue";
-import Upload from "+/icons/upload.vue";
-import Link from "+/icons/link.vue";
-import ScreenFull from "+/icons/screen-full.vue";
-import Gear from "+/icons/gear.vue";
-import Heart from "+/icons/heart.vue";
+import FileIcon from "octicons:file";
+import FileOpenIcon from "octicons:file-symlink-file";
+import InfoIcon from "octicons:info";
+import ChevronIcon from "octicons:chevron-down";
+
+import Plus from "octicons:diff-added";
+import FileDirectory from "octicons:file-directory";
+import Upload from "octicons:upload";
+import Link from "octicons:link";
+import ScreenFull from "octicons:screen-full";
+import Gear from "octicons:gear";
+import Heart from "octicons:heart";
 import Discord from "+/icons/discord.vue";
 import Github from "+/icons/github.vue";
-import Log from "+/icons/log.vue";
+import Log from "octicons:log";
 
 import Modal from "+/Modal.vue";
 
 import { useI18n } from "petite-vue-i18n";
-import { createdTimestamp, shaderName } from "@/App.vue";
-import { findNonConflictingName, setLastOpenShader } from "@/storage";
 import { getCanvas } from "../Canvas.vue";
 
 import ShadersList from "+/ShadersListModal/Index.vue";
@@ -88,19 +105,20 @@ import ChangelogModal from "+/ChangelogModal/Index.vue";
 
 import minShader from "@/min.frag?raw";
 
-import { encode85, decode85 } from "@/utils/base85";
-
 import { useToast } from "@/composition/useToast";
 
 import { useMutation } from "@urql/vue";
 import { graphql } from "@/gql";
 import { getSetting } from "@/settings";
 import { currentVersion } from "@/main";
+import { currentShader } from "@/App.vue";
+import { updateShader } from "@/storage2";
+import { onUnmounted } from "vue";
 
 const { t, locale } = useI18n();
 
-let getModel: () => import("monaco-editor").editor.ITextModel;
-import("@/components/Editor.vue").then(module => ({ getModel } = module));
+let isFileMenuShown = $shallowRef<boolean>(false);
+let isInfoMenuShown = $shallowRef<boolean>(false);
 
 const menu = $shallowRef<HTMLMenuElement>();
 
@@ -108,25 +126,33 @@ let modalVisible = $shallowRef<boolean>(false);
 let currentModalComponent = $shallowRef<typeof ShadersList>();
 
 const onNewClick = async (e: MouseEvent) => {
-  if (!getModel) return;
+  const { getModel, processIncludes, compileShader } = await import("@/editor");
 
-  createdTimestamp.value = Date.now();
-  // using $shallow macro causes a problem that import can't be used as var
-  let nextName = await findNonConflictingName();
-
-  // @note first set storage
-  setLastOpenShader(nextName);
-
-  shaderName.value = nextName;
+  currentShader.value = await updateShader({
+    name: "New Shader",
+    code: minShader,
+  });
 
   // @note use min shader when clicking new
-  getModel().setValue(minShader);
+  const model = getModel();
+  model.setValue(currentShader.value.code);
+
+  compileShader(await processIncludes(model.getLinesContent()));
 };
 
 const onLoadClick = () => {
   modalVisible = true;
   currentModalComponent = ShadersList;
 };
+
+const OnCtrlS = (e: KeyboardEvent) => {
+  if (e.ctrlKey && e.code === "KeyS") {
+    e.preventDefault();
+
+    onExportClick();
+  }
+};
+window.addEventListener("keydown", OnCtrlS);
 
 const onExportClick = () => {
   gtagEvent("export_click");
@@ -146,14 +172,17 @@ const { executeMutation } = useMutation(
 );
 
 const onShareLinkClick = async () => {
-  if (!getModel) return;
+  const { getModel } = await import("@/editor");
 
   let code = getModel().getValue();
 
   if (getSetting("offlineShare")) {
     gtagEvent("share_click");
 
-    const { compress } = await import("fflate");
+    const [{ base64urlnopad }, { compress }] = await Promise.all([
+      import("@scure/base"),
+      import("fflate"),
+    ]);
 
     compress(
       new TextEncoder().encode(code),
@@ -167,27 +196,8 @@ const onShareLinkClick = async () => {
           return;
         }
 
-        // console.log('size reduction:', code.length, '->', data.length, ' :: ', data.length / code.length, "%")
-
-        // @note add padding to fill to mod4 bytes
-        let padSize = 4 - (data.length % 4);
-        let buf = new Uint8Array(data.length + padSize);
-
-        // @note first byte is pad size, other pad bytes are undefined (most probably zero)
-        buf[0] = padSize;
-        buf.set(data, padSize);
-
-        let b85 = encode85(buf);
-
-        // {
-        //     console.log(b85)
-        //     let d85 = decode85(b85)!;
-        //     let decomp = decompressSync(d85.slice(d85[0]));
-        //     console.log(new TextDecoder().decode(decomp))
-        // }
-
         navigator.clipboard
-          .writeText("https://glsl.app#" + b85)
+          .writeText("https://glsl.app#" + base64urlnopad.encode(data))
           .then(() => useToast(t("link-copied")));
       }
     );
@@ -212,7 +222,7 @@ const onShareLinkClick = async () => {
   }
 };
 
-const onOptionsClick = () => {
+const onSettingsClick = () => {
   modalVisible = true;
   currentModalComponent = OptionsModal;
 };
@@ -248,7 +258,7 @@ const onChangelogClick = () => {
 };
 
 //#region show changelog when version updates
-const versionKey = "\0glsl-app-version";
+const versionKey = "glsl-app-version";
 
 if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   localStorage.setItem(versionKey, currentVersion);
@@ -257,6 +267,10 @@ if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   currentModalComponent = ChangelogModal;
 }
 //#endregion
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", OnCtrlS);
+});
 </script>
 
 <style module lang="less">
@@ -266,6 +280,36 @@ if ((localStorage.getItem(versionKey) ?? "000000") < currentVersion) {
   flex: 0 0;
   gap: 1em;
 
-  list-style: none;
+  &,
+  menu {
+    list-style: none;
+  }
+}
+
+.pop-menu {
+  display: grid;
+  gap: 0.5em;
+
+  // @todo there's still an issue due to parent overflow scroll. the pop menu won't adjust its position based on scroll and on narrow screens even when scrolled the menu will be out of bounds
+  position: absolute;
+
+  // @note z-index: 5 minimap
+  z-index: 10;
+
+  margin-top: 0.5em;
+  padding: 0.5rem;
+  background: var(--bg);
+  border-radius: 0.5rem;
+  box-shadow: inset 0px 0px 1.5rem -0.5rem var(--glow);
+}
+
+.chevron {
+  transition: rotate 200ms ease-out;
+}
+
+.hide-narrow {
+  @media (width<600px) {
+    display: none;
+  }
 }
 </style>

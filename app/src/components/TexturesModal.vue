@@ -1,6 +1,8 @@
 <template lang="pug">
-section.textures-modal.CModal__content
-  h1.App__font-shade {{ t("textures") }}
+article.App__article.CModal__content(style="font-size: 1.25rem")
+  h1.App__font-shade.App__icon-title
+    image-icon
+    | {{ t("textures") }}
   section.CShadersListModal_Index__grid(ref="grid")
     .CShadersListModal_Item__item-wrap.App__glow-element-wrap(v-for="(tex, i) in textureUrlArray")
       //- @note bruh @dragover is required?
@@ -37,6 +39,8 @@ section.textures-modal.CModal__content
 import { shallowReactive, watch } from "vue";
 import { glInitialization } from "./Canvas.vue";
 import { updateTexture } from "@/gl/glContext";
+
+import ImageIcon from "octicons:image";
 
 // 7.3 Built-In Constants
 // min guaranteed 16 textures
@@ -225,11 +229,6 @@ watch(textureSourceRefs, async () => {
 </script>
 
 <style lang="less" module>
-.textures-modal {
-  // width: 60rem;
-  box-sizing: border-box;
-}
-
 .slot {
   border-radius: 1rem;
 
@@ -259,9 +258,9 @@ watch(textureSourceRefs, async () => {
   &:hover {
     outline-offset: -0.5rem;
   }
-}
 
-.dnd .placeholder {
-  outline-offset: -0.5rem;
+  .dnd & {
+    outline-offset: -0.5rem;
+  }
 }
 </style>

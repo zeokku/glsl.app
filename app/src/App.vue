@@ -1,13 +1,16 @@
 <template lang="pug">
 TopControls
-Suspense
-  Editor(@change="onShaderCodeChange", v-bind="{ infoLog }")
-  //- @note for testing loading anim
-  //- Component(:is="_DUMMY_ASYNC_")
-  template(#fallback)
-    .editor-loading
-      | Editor is being loaded
-      .loading-indicator ...
+transition(name="blend", mode="out-in", type="transition")
+  Suspense
+    Editor
+    //- @note for testing loading anim
+    //- Component(:is="_DUMMY_ASYNC_")
+    template(#fallback)
+      .editor-loading
+        .editor-loading-content
+          loading-icon
+          | {{ " " }}{{ t("editor-loading") }}
+          //- .loading-indicator ...
 Canvas
 </template>
 
@@ -16,99 +19,75 @@ Canvas
 //     return new Promise(() => {});
 // });
 
-export let createdTimestamp = shallowRef(Date.now());
-
-// last open shader or new
-// hmm will it always be last doe except very first app opening, which should just be the default one?
-export let shaderName = shallowRef<string | null>(null);
-
-import { isManualRecompilation } from "+/InfoBar/InfoBar.vue";
-import { updateFragment } from "./gl/glContext";
-
-import type { editor as MonacoEditor } from "monaco-editor";
-import { initGlowElements } from "./stylingUtils/glow";
-import { getSetting } from "./settings";
-
-const EditorModulePromise = import("@/components/Editor.vue");
-const Editor = defineAsyncComponent(() => EditorModulePromise);
-
-let getModel: () => MonacoEditor.ITextModel;
-EditorModulePromise.then(module => ({ getModel } = module));
-
-let infoLog = $shallowRef<String>();
-
-export const compileShader = async (code: string) => {
-  await glInitialization;
-
-  let log = await updateFragment(code);
-
-  // @note a hack to always trigger watcher, even when the string doesn't change, so we don't use triggerRef
-  // since we wrap string in an object, reference changes
-  infoLog = new String(log ?? "");
-};
+export const currentShader = ref<IShader>({} as IShader);
+export const infoLog = shallowRef<string>("");
 </script>
 
 <script setup lang="ts">
 import TopControls from "./components/TopControls.vue";
-// import Editor, { getModel } from "./components/Editor.vue";
-import Canvas, { glInitialization } from "./components/Canvas.vue";
-import debounce from "lodash.debounce";
-import { renameShader, saveShader, getLastOpenShader, setLastOpenShader } from "./storage";
-import { shallowRef, watch, defineAsyncComponent } from "vue";
+import Canvas from "./components/Canvas.vue";
+import LoadingIcon from "octicons:clock";
 
-// @todo bruh did smth change in ts, why does it infer type as "0" and not as number
-// let compileTimestamp = $shallowRef<number>(0);
+import { shallowRef, watch, defineAsyncComponent, ref } from "vue";
 
-// @todo flush on clicking new or exiting the page (use confirm dialog)
-const save = debounce(
-  async () => {
-    if (!getModel) return;
+import { initGlowElements } from "./stylingUtils/glow";
+import { getSetting } from "./settings";
+import { type IShader, setLastOpenShaderId, updateShader } from "./storage2";
+import { useI18n } from "petite-vue-i18n";
 
-    let code = getModel().getValue();
+const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
 
-    return saveShader(shaderName.value!, {
-      // @todo reactive var bug
-      created: createdTimestamp.value,
-      // modified: Date.now(),
-      code,
-    }).then(() => {
-      setLastOpenShader(shaderName.value!);
+const { t } = useI18n();
 
-      console.log(shaderName.value, "saved");
-    });
-  },
-  1000,
-  { trailing: true }
-);
+let saveTimeout: ReturnType<typeof setTimeout>;
+const onUnloadPrevent = (e: Event) => e.preventDefault();
 
-const rename = debounce(
-  (newName: string | null, oldName: string | null) => {
-    // @note when clicking new, prevent rename
-    if (newName === getLastOpenShader() || oldName === null) return;
+/**
+ * Debounced by default and prevents unload event unless finished saving. Use `immediate = true` when needed to update shader right away (e.g. when opening another shader, creating new shader and etc)
+ * @param immediate
+ */
+const saveShader = async (immediate?: true) => {
+  clearTimeout(saveTimeout);
 
-    return renameShader(getLastOpenShader()!, newName!)
-      .then(() => {
-        setLastOpenShader(newName!);
+  window.addEventListener("unload", onUnloadPrevent);
 
-        console.log("shader renamed", newName, "<-", getLastOpenShader());
-      })
-      .catch(() => {
-        alert("Shader with this name already exists! Changes will overwrite old data!");
-      });
-  },
-  1000,
-  { trailing: true }
-);
+  // @note clone to avoid race condition isues
+  const shader = { ...currentShader.value! };
 
-watch(shaderName, rename);
+  const save = async () => {
+    const { id } = await updateShader(shader);
 
-const onShaderCodeChange = (code: string) => {
-  save();
+    setLastOpenShaderId(id);
 
-  if (isManualRecompilation.value) return;
+    window.removeEventListener("unload", onUnloadPrevent);
+  };
 
-  compileShader(code);
+  if (immediate) {
+    return save();
+  } else {
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    saveTimeout = setTimeout(() => {
+      resolve(save());
+    }, 500);
+
+    return promise;
+  }
 };
+
+// @note watcher is deep by default for reactive objects (so it will work on ref.value lol) but not for refs directly - use deep. deep level is relative to ref's value (.value itself is not counted)
+// @note watch only for code and name because it was looped when watching for entire ref object (when assigning created/modified timestamp when saving shader)
+
+watch([() => currentShader.value.name, () => currentShader.value.code], () => saveShader());
+
+// watch(
+//   () => currentShader.value?.code,
+//   code => {
+//     if (isManualRecompilation.value || !code) return;
+
+//     compileShader(code);
+//   }
+// );
 
 // @note don't enable on touch screen devices
 if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
@@ -124,6 +103,28 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+}
+
+.editor-loading-content {
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+
+  background: linear-gradient(to right, transparent 25%, var(--glow), transparent 50%);
+  background-color: var(--border);
+  background-size: 400% 100%;
+
+  animation: editor-loading 1250ms linear infinite;
+
+  @keyframes editor-loading {
+    100% {
+      background-position-x: 100%;
+    }
+  }
+
+  svg {
+    height: 1lh;
+    vertical-align: top;
+  }
 }
 
 .loading-indicator {
@@ -158,10 +159,12 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   // @initial: -@br;
 
   // @todo is there no easier way to inverse?
-  // @note 0px is the correct, just 0 won't work
+  // !@note 0px is the correct, just 0 won't work
   // @note using % won't be a future proof solution, because size of the glow may be greater than element dimension, thus we can't find such a % mapping that will hide the glow fully (without using stupid values like 9999 and etc.)
   --mx: calc(0px - var(--gr));
   --my: calc(0px - var(--gr));
+  --sx: var(--scroll-x, 0px);
+  --sy: var(--scroll-y, 0px);
 
   // @todo make it brighter on hover?
   // linear-gradient(to bottom, rgba(var(--glow-rgb), 1) 0%, var(--border) 50%, rgba(var(--border-rgb), 0.05) 100%)
@@ -182,7 +185,7 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
     100% 100%,
     var(--gd) var(--gd);
 
-  @glow-position: calc(var(--mx) - var(--gr)) calc(var(--my) - var(--gr));
+  @glow-position: calc(var(--mx) - var(--gr) + var(--sx)) calc(var(--my) - var(--gr) + var(--sy));
 
   background-position:
     0 0,
@@ -230,6 +233,50 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   }
 }
 
+// @note top level wrapper element, h1
+.article {
+  display: grid;
+  gap: 2em;
+}
+
+// @note children of article, h2
+.section {
+  display: grid;
+  gap: 1.5em;
+}
+
+// @note children of section, h3
+.region {
+  display: grid;
+  gap: 1em;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.row-even {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 1em;
+}
+
+.icon-title {
+  display: flex;
+  gap: 0.5ch;
+  align-items: center;
+
+  svg {
+    width: 1em;
+    height: 1em;
+
+    flex-shrink: 0;
+  }
+}
+
 .font-shade {
   background-image: radial-gradient(ellipse at top, var(--shade), transparent);
 
@@ -266,6 +313,17 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
     width: -moz-available;
     width: stretch;
   }
+
+  // @note Remove arrows. Interestingly hovering over input field with arrows enabled causes content expansion in modal?
+  input[type="number"] {
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    -moz-appearance: textfield;
+  }
 }
 </style>
 
@@ -288,6 +346,8 @@ h3 {
   font-weight: bold;
 
   width: fit-content;
+
+  margin: 0;
 }
 
 h1 {
@@ -296,21 +356,39 @@ h1 {
 
 h2 {
   font-size: 1.2em;
-  margin-top: 2.5rem;
 }
 
 h3 {
   font-size: 1em;
 }
 
+// p {
+//   @note !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! monaco lost \n\n spaces because markdown parsed it into <p> and i set margin to 0!!!
+//   margin: 0;
+// }
+
 button {
   appearance: none;
-  font-family: inherit;
-  font-weight: inherit;
+
+  padding: 0;
   border: none;
+
+  cursor: pointer;
+
+  font: inherit;
 
   // @note prevent builtin types overwrite this
   color: inherit;
+
+  background: none;
+
+  &:focus-visible {
+    // @include outline();
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 textarea {
@@ -406,6 +484,7 @@ input[type="checkbox"] {
 
   // @note fix selection for gradient texts
   -webkit-text-fill-color: white;
+  color: white;
 }
 
 ::-webkit-scrollbar {
@@ -440,4 +519,43 @@ svg {
   transition: background 300ms;
   text-transform: uppercase;
 }
+
+// #region fade
+
+.fade-bounce-enter-from,
+.fade-bounce-leave-to,
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  scale: 0.97;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: 300ms;
+  transition-property: opacity, scale;
+}
+
+.fade-bounce-enter-active,
+.fade-bounce-leave-active {
+  transition: 300ms cubic-bezier(0.39, 0.45, 0.27, 1.27);
+  transition-property: opacity, scale;
+}
+
+.blend-enter-from,
+.blend-leave-to {
+  opacity: 0;
+}
+
+.blend-enter-active,
+.blend-leave-active {
+  transition: 300ms ease-out;
+  transition-property: opacity;
+}
+
+// .blend-leave-active {
+//   position: absolute;
+// }
+
+// #endregion
 </style>

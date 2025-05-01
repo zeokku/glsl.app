@@ -1,41 +1,34 @@
 <template lang="pug">
 .info(ref="info")
   .input-wrap.App__input-wrap.App__glow-element-wrap
-    input.name-input.App__glow-element(v-model="shaderName", :title="t('shader-name')")
+    input.name-input.App__glow-element(
+      v-model="currentShader.name",
+      :title="t('shader-name-tooltip') + (currentShader.name ? `:\n\n` + currentShader.name.toUpperCase() : '')",
+      :placeholder="t('shader-name-placeholder')"
+    )
 
-  Button(@click="onTexturesOpen")
-    template(#icon) 
-      image-icon
-    | {{ t("textures") }}
+  Button(@click="onTexturesOpen", :title="t('textures')")
+    image-icon
+    .CMenuBar_MenuBar__hide-narrow {{ t("textures") }}
 
-  .fps-indicator
-    | FPS:
-    div(ref="fpsPaneContainer", style="width: 10rem")
-    //- | {{ 'FPS: ' + canvasFps.toFixed(2) }}
-    //- @todo canvas resolution
+  .App__glow-element-wrap(style="border-radius: 0.5rem")
+    .fps-indicator
+      | FPS:
+      //- | {{ " " }}
+      //- span(style="font-family: monospace; font-size: 1rem") {{ Math.round(canvasFps) }}
+      .fps-graph(ref="fpsPaneContainer")
+      //- @todo canvas resolution
 
-  Button(@click="onRecompile")
-    template(#icon) 
-      apps-icon
-    | {{ t("compile") }}
+  Button(v-if="isManualRecompilation", @click="onRecompile", :title="t('compile')")
+    compile-icon
+    .CMenuBar_MenuBar__hide-narrow {{ t("compile") }}
 
-  label.manual-recompilation
-    input(type="checkbox", v-model="isManualRecompilation")
-    | {{ t("manual-recomp") }}
-
-  Modal(:visible="modalVisible", @close="modalVisible = false")
+  Modal(:visible="textureModalVisible", @close="textureModalVisible = false")
     textures-modal
 </template>
 
 <script lang="ts">
-export let isManualRecompilation = shallowRef<boolean>(false);
-
-import { compileShader } from "@/App.vue";
-import { processIncludes } from "@/processIncludes";
-import type { editor as MonacoEditor } from "monaco-editor";
-
-let getModel: () => MonacoEditor.ITextModel;
-import("@/components/Editor.vue").then(module => ({ getModel } = module));
+export const isManualRecompilation = shallowRef<boolean>(getSetting("manualRecompilation"));
 </script>
 
 <script setup lang="ts">
@@ -47,19 +40,20 @@ fps
 */
 import { onMounted, shallowRef, watch } from "vue";
 
-import { shaderName } from "@/App.vue";
+import { currentShader } from "@/App.vue";
 import { canvasFps } from "@/components/Canvas.vue";
 
 import Button from "+/MenuBar/Button.vue";
-import ImageIcon from "+/icons/image.vue";
-import AppsIcon from "+/icons/apps.vue";
+import ImageIcon from "octicons:image";
+import CompileIcon from "octicons:package-dependencies";
 
 import Modal from "+/Modal.vue";
 import TexturesModal from "+/TexturesModal.vue";
 
 import { useI18n } from "petite-vue-i18n";
+import { getSetting, setSettings } from "@/settings";
 
-let modalVisible = $shallowRef<boolean>(false);
+let textureModalVisible = $shallowRef<boolean>(false);
 
 const info = $shallowRef<HTMLDivElement>();
 const fpsPaneContainer = $shallowRef<HTMLDivElement>();
@@ -92,21 +86,29 @@ onMounted(() => {
 });
 
 const onTexturesOpen = () => {
-  modalVisible = true;
+  textureModalVisible = true;
 };
 
 const onRecompile = async () => {
-  if (!getModel || !processIncludes) return;
+  const { getModel, compileShader, processIncludes } = await import("@/editor");
 
-  // @todo refactor Editor
   compileShader(await processIncludes(getModel().getLinesContent()));
 };
+
+watch(isManualRecompilation, manualEnabled => {
+  setSettings({ manualRecompilation: manualEnabled });
+
+  if (manualEnabled) return;
+
+  // @note recompile when manual is disabled
+  onRecompile();
+});
 
 window.addEventListener("dragenter", (e: DragEvent) => {
   if (e.relatedTarget !== null) return;
   if (e.dataTransfer?.types?.[0] !== "Files") return;
 
-  modalVisible = true;
+  textureModalVisible = true;
 });
 </script>
 
@@ -124,22 +126,33 @@ window.addEventListener("dragenter", (e: DragEvent) => {
 
 .fps-indicator {
   // font-style: italic;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+
+  background-color: var(--bg);
 
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
-.input-wrap {
-  width: 18em;
+.fps-graph {
+  width: 10rem;
+
+  @media (width < 600px) {
+    width: 5em;
+  }
 }
 
-.manual-recompilation {
-  display: flex;
-  align-items: center;
+.input-wrap {
+  min-width: 18em;
 
-  white-space: nowrap;
+  @media (width<600px) {
+    min-width: 10em;
+  }
+}
 
-  text-transform: uppercase;
+:global(.tp-lblv_v) {
+  width: 100% !important;
 }
 </style>

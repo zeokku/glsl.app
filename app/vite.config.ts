@@ -3,7 +3,9 @@ import vue from "@vitejs/plugin-vue";
 import { VitePWA as pwa } from "vite-plugin-pwa";
 import { ssr } from "vite-plugin-ssr/plugin";
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
-import VueMacros from "unplugin-vue-macros/vite";
+import VueMacros from "vue-macros/vite";
+import Inspect from "vite-plugin-inspect";
+import { octiconsPlugin } from "./plugins/octicons";
 
 import { minify as minifyHtml } from "html-minifier-terser";
 
@@ -66,18 +68,20 @@ export default defineConfig(({ command }) => ({
         description,
         icons: [
           {
-            src: "/icon-512.png",
+            src: "/icon-1.5-512.png",
             type: "image/png",
             sizes: "512x512",
           },
         ],
-        theme_color: "#0a0118",
+        theme_color: "#281538",
       },
     }),
 
     // ssr({
     //   prerender: true,
     // }),
+
+    octiconsPlugin(),
 
     {
       name: "Add build timestamp",
@@ -136,6 +140,8 @@ export default defineConfig(({ command }) => ({
       brotliSize: true,
       sourcemap: true,
     }),
+
+    Inspect(),
   ],
 
   resolve: {

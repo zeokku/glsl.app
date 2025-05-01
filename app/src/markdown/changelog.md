@@ -1,3 +1,22 @@
+## Version 1.5 `01 May 2025`
+
+### Features
+
+- Code formatting provider. Use <kbd><kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd></kbd> shortcut, command pallette <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></kbd> or right click -> `"Format Document"`
+- Open shader export dialog shortcut <kbd><kbd>Ctrl</kbd>+<kbd>S</kbd></kbd>
+- App scope utility `#include` directives:
+  - `#include <$shadertoy>` - compatibility defines for easier import of shaders from Shader Toy
+  - `#include <$glsl1>` - compatibility for importing GLSL 1.0 shaders
+- Minimap can be hidden in settings
+- Glow UI can be disabled in settings
+- UI rework and overhaul
+- Better shaders storage and cache handling 
+- Stability and performance optimizations
+
+### Fixes
+
+Full list of fixes and changes is [available on GitHub](https://github.com/zeokku/glsl.app/pull/33)
+
 ## Version 1.4 `08 Jan 2024`
 
 ### Features
@@ -10,7 +29,7 @@
 
 Large shaders may take long to recompile and since the GPU resources are not properly shared between main and worker threads there will still be a UI freeze.
 
-To eliminate this issue you need to <mark>disable</mark> `"Hardware Acceleration"` in settings of your browser. Alternatively opt into manual recompilation.
+To eliminate this issue you need to **disable** `"Hardware Acceleration"` in settings of your browser. Alternatively opt into manual recompilation.
 
 ### Changes
 

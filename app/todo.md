@@ -10,8 +10,8 @@
 + resize new icon for PWA
 + file button (new, load, export, share)
 + info dropdown (changelog, github, discord)
++ update localizations
 
-* update localizations
 * editor loading better icon
 
 

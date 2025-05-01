@@ -57,7 +57,7 @@
             | {{ " " }}
             span.muted {{ t("cache-tip") }}
           div
-            b Cache size:
+            b {{ t("cache-size") }}:
             | {{ " " }}
             | {{ cacheSize }}
           Button.clear-cache-btn(@click="onClearCache")
@@ -134,7 +134,7 @@ watch(
 const onClearCache = async () => {
   await clearCache();
   updateCacheSize();
-  alert("Cache has been cleared!");
+  alert(t("cache-cleared-alert"));
 };
 </script>
 

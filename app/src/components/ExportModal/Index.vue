@@ -33,11 +33,9 @@
           input(type="checkbox", v-model="noAngleIncludes", @change="generateShader")
           | {{ t("replace") }}
           |
-          code &lt;...&gt;
-          | #includes
-          | {{ t("by") }}
-          |
-          code "..."
+          code(style="text-wrap: nowrap") #include &lt;...&gt;
+          | {{ " " }}{{ t("by") }}{{ " " }}
+          code(style="text-wrap: nowrap") #include "..."
     section.App__section
       h2.App__font-shade.App__icon-title
         pencil-icon

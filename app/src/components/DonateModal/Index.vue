@@ -7,7 +7,7 @@ article.App__article.donate.CModal__content
   h1.donation-tip
     heart-icon
     | {{ " " }}
-    | Help fuel future updates and features — support us with a donation!
+    | {{ t("donate-title") }}
 
   section.App__region
     h2.App__font-shade.App__icon-title

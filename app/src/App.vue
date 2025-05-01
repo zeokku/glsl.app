@@ -6,7 +6,7 @@ Suspense
   //- Component(:is="_DUMMY_ASYNC_")
   template(#fallback)
     .editor-loading
-      | Editor is loading
+      | {{ t("editor-loading") }}
       .loading-indicator ...
 Canvas
 </template>
@@ -28,8 +28,11 @@ import { shallowRef, watch, defineAsyncComponent, ref } from "vue";
 import { initGlowElements } from "./stylingUtils/glow";
 import { getSetting } from "./settings";
 import { type IShader, setLastOpenShaderId, updateShader } from "./storage2";
+import { useI18n } from "petite-vue-i18n";
 
 const Editor = defineAsyncComponent(() => import("@/components/Editor.vue"));
+
+const { t } = useI18n();
 
 let saveTimeout: ReturnType<typeof setTimeout>;
 const onUnloadPrevent = (e: Event) => e.preventDefault();

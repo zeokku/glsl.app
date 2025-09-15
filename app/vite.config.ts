@@ -116,7 +116,7 @@ export default defineConfig(({ command }) => ({
           html
             .replaceAll("%title", "<?=$title?>")
             .replaceAll("%desc", "<?=$desc?>")
-            .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png")
+            .replaceAll("%img", "https://glsl.app/glsl-app-meta-1.5.1.png")
         );
       },
     },

@@ -15,6 +15,7 @@ import urql, { cacheExchange, fetchExchange } from "@urql/vue";
 
 import App from "./App.vue";
 import { vMovable } from "./directives/movable";
+import { getSetting } from "./settings";
 
 declare global {
   var app: HTMLDivElement;
@@ -23,20 +24,20 @@ declare global {
 /**
  * MMmmPP
  *
- * 010500 = 1.5.0
+ * 010501 = 1.5.1
  */
-export const currentVersion = "010500";
+export const currentVersion = "010501";
 
 createApp(App) //
   .use(
     createI18n({
-      // @note remove regional modificator
-      locale: (new URL(location.toString()).searchParams.get("lang") ?? navigator.language) //
-        .split("-")[0],
+      // @note override saved settings with query value. also remove regional modificator because it won't properly fallback to base lang
+      locale:
+        new URLSearchParams(location.search).get("lang")?.split("-")?.[0] ?? getSetting("lang"),
       fallbackLocale: "en",
       messages,
-      // missingWarn: false,
-      // fallbackWarn: false,
+      missingWarn: import.meta.env.DEV,
+      fallbackWarn: import.meta.env.DEV,
     })
   )
   .use(urql, {

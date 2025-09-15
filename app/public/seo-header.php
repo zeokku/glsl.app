@@ -4,8 +4,8 @@
 
 $localization = [
     'en' => [
-        "Online WebGL (GLSL) Shaders Editor and Sandbox",
-        "Modern Online WebGL (GLSL) Shaders Editor and Sandbox. Write shaders with ease thanks to advanced IntelliSense, autocompletion features, composability with shader libraries and a user-friendly interface for tweaking values and colors"
+        "Online WebGL (GLSL) Shader Editor and Sandbox",
+        "Modern Online WebGL (GLSL) Shader Editor and Sandbox. Write shaders with ease thanks to advanced IntelliSense, autocompletion features, composability with shader libraries and a user-friendly interface for tweaking values and colors"
     ],
     'ru' => [
         "Онлайн WebGL (GLSL) Редактор Шейдеров и Песочница",

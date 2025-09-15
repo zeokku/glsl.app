@@ -10,6 +10,10 @@ new: New
 load: Load
 export: Export
 share: Share
+
+full-backup: Full backup
+full-backup-hint: Backup all shaders at once
+
 settings: Settings
 storage: Storage
 editor: Editor
@@ -45,9 +49,9 @@ export-shader: Export Shader
 expand: Expand
 directives: directives
 
-# Replace <...> #includes by "..."
-replace: Replace
-by: by
+# Replace #include <...> by #include "..."
+replace-includes-0: Replace
+replace-includes-1: by
 
 rename-symbols: Rename symbols
 
@@ -68,6 +72,10 @@ shader-copied: Shader code copied into the clipboard
 app: App
 show-minimap: Show code minimap
 reload-required: (Reload required)
+
+select-language: Select language
+select-value: Select value
+
 print-width: Print width
 tab-size: Tab size
 offline-link: Use offline method for generating shareable links
@@ -88,4 +96,5 @@ address-copied: Address copied into the clipboard
 # these two are one sentence the reason it's split because 'select-media' is highlighted
 select-media: Select media
 or-dnd: or drag and drop
+
 

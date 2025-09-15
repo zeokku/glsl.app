@@ -418,6 +418,10 @@ onBeforeUnmount(() => {
   font-size: 1.25rem;
 }
 
+.CModal__wrap:has(.list-content) {
+  justify-content: stretch;
+}
+
 .content-scroll {
   height: 100%;
   box-sizing: border-box;

@@ -6,6 +6,7 @@ import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite";
 import VueMacros from "vue-macros/vite";
 import Inspect from "vite-plugin-inspect";
 import { octiconsPlugin } from "./plugins/octicons";
+import svg from "vite-svg-loader";
 
 import { minify as minifyHtml } from "html-minifier-terser";
 
@@ -83,6 +84,11 @@ export default defineConfig(({ command }) => ({
 
     octiconsPlugin(),
 
+    svg({
+      svgo: true,
+      defaultImport: "component",
+    }),
+
     {
       name: "Add build timestamp",
 
@@ -110,7 +116,7 @@ export default defineConfig(({ command }) => ({
           html
             .replaceAll("%title", "<?=$title?>")
             .replaceAll("%desc", "<?=$desc?>")
-            .replaceAll("%img", "https://glsl.app/glsl-app-meta-image.png")
+            .replaceAll("%img", "https://glsl.app/glsl-app-meta-1.5.1.png")
         );
       },
     },

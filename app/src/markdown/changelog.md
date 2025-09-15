@@ -1,3 +1,15 @@
+## Version 1.5.1 `15 Sep 2025`
+
+### Features
+
+- Simplified Chinese localization thanks to [@IM1903](https://github.com/zeokku/glsl.app/pull/35)
+- Language selection in settings
+- Ability to backup entire shader library into single JSON file.<br>`File -> Full Backup`<br>(Turned out Chrome can just randomly wipe IndexedDB on account relogin)
+
+### Fixes
+
+- Shader library modal now has proper size
+
 ## Version 1.5 `01 May 2025`
 
 ### Features

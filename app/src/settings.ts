@@ -1,8 +1,8 @@
 import { renameLocalStorageEntry } from "@/utils/storeMigration2";
 
-const settingsStorageKey = "glsl-app-settings";
-renameLocalStorageEntry("\0settings", settingsStorageKey);
-renameLocalStorageEntry("\0glsl-app-settings", settingsStorageKey);
+const SETTINGS_STORAGE_KEY = "glsl-app-settings";
+renameLocalStorageEntry("\0settings", SETTINGS_STORAGE_KEY);
+renameLocalStorageEntry("\0glsl-app-settings", SETTINGS_STORAGE_KEY);
 
 const DEFAULT_SETTINGS = {
   glowUi: true,
@@ -13,6 +13,7 @@ const DEFAULT_SETTINGS = {
   npmPackageProvider: "https://www.unpkg.com/",
   cachePackages: false,
   manualRecompilation: false,
+  lang: (new URLSearchParams(location.search).get("lang") ?? navigator.language).split("-")[0],
 };
 
 /**
@@ -21,10 +22,10 @@ const DEFAULT_SETTINGS = {
 const settings = Object.assign(
   DEFAULT_SETTINGS,
   // because json can't parse undefined only null
-  JSON.parse(localStorage[settingsStorageKey] ?? null) as {}
+  JSON.parse(localStorage[SETTINGS_STORAGE_KEY] ?? null) as {}
 );
 
-type ISettings = typeof settings;
+type ISettings = typeof DEFAULT_SETTINGS;
 
 export const getAllSettings = () => settings;
 export const getSetting = <K extends keyof ISettings>(key: K) => settings[key];
@@ -34,5 +35,5 @@ export const getSetting = <K extends keyof ISettings>(key: K) => settings[key];
  */
 export const setSettings = (o: Partial<ISettings>) => {
   Object.assign(settings, o);
-  localStorage[settingsStorageKey] = JSON.stringify(settings);
+  localStorage[SETTINGS_STORAGE_KEY] = JSON.stringify(settings);
 };

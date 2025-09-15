@@ -1,5 +1,10 @@
 import { IShader } from "@/storage2";
 
+// @note delete obsolete entries
+localStorage.removeItem("\0glsl-app-last-shader");
+localStorage.removeItem("\0glsl-app-shader-ctr");
+localStorage.removeItem("\0glsl-app-version");
+
 const fetchDbContents = async (dbName: string, storeName: string) => {
   const { resolve, promise } = Promise.withResolvers<Array<[string, any]> | null>();
 

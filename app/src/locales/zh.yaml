@@ -10,6 +10,10 @@ new: 新建
 load: 加载
 export: 导出
 share: 分享
+
+full-backup: 完整备份
+full-backup-hint: 一次性备份所有着色器
+
 settings: 设置
 storage: 存储
 editor: 编辑器
@@ -45,11 +49,9 @@ export-shader: 导出着色器
 expand: 展开
 directives: 指令
 
-# Replace <...> #includes by "..."
-# yea I know this is wrong
-# just for Chinese grammar
-replace: 将
-by: 替换成
+# Replace #include <...> by #include "..."
+replace-includes-0: 将
+replace-includes-1: 替换成
 
 rename-symbols: 重命名符号
 
@@ -70,6 +72,11 @@ shader-copied: 着色器代码已复制到剪贴板
 app: 程序
 show-minimap: 代码略缩图
 reload-required: (需要刷新)
+
+select-language: 选择语言
+select-value: 选择项目
+
+
 print-width: 代码显示宽度
 tab-size: 缩进宽度
 offline-link: 用离线方式生成可分享链接

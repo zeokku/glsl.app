@@ -20,6 +20,16 @@
           | Glow UI
           | {{ " " }}
           span.muted {{ t("reload-required") }}
+
+        label
+          .CExportModal_Index__label.App__icon-title
+            translate-icon
+            | {{ t("select-language") }}
+          .App__input-wrap.App__glow-element-wrap
+            dropdown-select.App__glow-element(
+              :entries="{ English: 'en', Русский: 'ru', 中文: 'zh' }",
+              v-model="locale"
+            )
     section.App__section
       h2.App__font-shade.App__icon-title
         note-icon
@@ -78,6 +88,9 @@ import ServerIcon from "octicons:server";
 import NoteIcon from "octicons:note";
 import LogIcon from "octicons:log";
 import DbIcon from "octicons:database";
+import TranslateIcon from "@/assets/icons/translate.svg";
+
+import DropdownSelect from "@/components/UI/DropdownSelect.vue";
 
 import { getAllSettings, getSetting, setSettings } from "@/settings";
 import { watch, onMounted, shallowRef, reactive } from "vue";
@@ -98,6 +111,8 @@ updateCacheSize();
 
 const settingValues = reactive(getAllSettings());
 watch(settingValues, () => setSettings(settingValues));
+
+watch(locale, () => setSettings({ lang: locale.value }));
 
 const screen = useScreen();
 
@@ -144,6 +159,7 @@ const onClearCache = async () => {
 }
 
 .options {
+  max-width: 50ch;
   // same as for export modal
   font-size: 1.25rem;
 

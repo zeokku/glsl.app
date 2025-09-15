@@ -39,6 +39,7 @@
     "@graphql-typed-document-node/core": "^3.2.0",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@prettier/plugin-pug": "^3.3.0",
+    "@types/bun": "^1.2.22",
     "@types/html-minifier-terser": "^7.0.2",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
@@ -52,6 +53,7 @@
     "pug": "^3.0.3",
     "rollup-plugin-visualizer": "^5.14.0",
     "sitemap": "^7.1.1",
+    "tinyglobby": "0.2.15",
     "typescript": "^5.7.3",
     "vite": "^6.3.3",
     "vite-plugin-inspect": "^11.0.1",
@@ -59,7 +61,8 @@
     "vite-plugin-ssr": "^0.4.142",
     "vite-plugin-vue-css-modules": "^4.0.1",
     "vue-tsc": "^2.2.4",
-    "workbox-window": "^7.3.0"
+    "workbox-window": "^7.3.0",
+    "yaml": "^2.8.1"
   },
   "pnpm": {
     "patchedDependencies": {

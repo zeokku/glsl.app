@@ -1,0 +1,93 @@
+editor-loading: 编辑器加载中
+
+# casing doesn't matter
+
+#region menu bar
+file: 文件
+# create new shader
+new: 新建
+# open a list of saved shaders
+load: 加载
+export: 导出
+share: 分享
+settings: 设置
+storage: 存储
+editor: 编辑器
+formatting: 格式
+fullscreen: 全屏
+# support the author
+donate: 赞助
+info: 信息
+changelog: 更新日志
+
+loading: 加载中
+
+link-copied: 链接已复制到剪贴板
+#endregion
+
+#region info bar
+textures: 材质
+shader-name-tooltip: 当前着色器的名称
+shader-name-placeholder: 着色器名称
+compile: 编译
+manual-recomp: 手动重新编译着色器
+#endregion
+
+#region load modal
+your-shaders-title: 你的着色器库
+delete-shader: 删除着色器
+#endregion
+
+#region export modal
+export-shader: 导出着色器
+
+# "Expand #include directives"
+expand: 展开
+directives: 指令
+
+# Replace <...> #includes by "..."
+# yea I know this is wrong
+# just for Chinese grammar
+replace: 将
+by: 替换成
+
+rename-symbols: 重命名符号
+
+# these two probably shouldn't be translated
+inputs: Inputs
+# uniform shouldn't be translated explicitly either transliterated and added plural
+uniforms: Uniforms
+
+result: 最终代码
+
+click: 点击代码即可复制或
+download: 下载源代码文件
+
+shader-copied: 着色器代码已复制到剪贴板
+#endregion
+
+#region options modal
+app: 程序
+show-minimap: 代码略缩图
+reload-required: (需要刷新)
+print-width: 代码显示宽度
+tab-size: 缩进宽度
+offline-link: 用离线方式生成可分享链接
+npm: NPM模块源
+cache: 把模块缓存到本地
+cache-tip: (供离线用)
+cache-size: 缓存大小
+clear-cache: 清除离线缓存
+cache-cleared-alert: 缓存已清理!
+#endregion
+
+#region donate modal
+donate-title: 助力更新与新功能 — 赞助支持我们!
+address-copied: 地址已复制到剪贴板
+#endregion
+
+#region textures modal
+# these two are one sentence the reason it's split because 'select-media' is highlighted
+select-media: 浏览本地素材...
+or-dnd: 或直接拖放
+

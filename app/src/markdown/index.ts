@@ -32,7 +32,7 @@ export const md = (raw: string) => {
         .replace(/\b_([^_]+)_\b/g, "<i>$1</i>")
         .replace(/\*\*([^\*]+)\*\*/g, "<b>$1</b>")
         .replace(
-          /\[(.+)\]\((.+)\)/g,
+          /\[(.+?)\]\((.+?)\)/g,
           (_, title, url) => `<a target="_blank" href="${url}">${title}</a>`
         );
 

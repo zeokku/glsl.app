@@ -102,7 +102,7 @@ const onAddressClick = (address: string, chain: keyof typeof ADDRESSES) => {
 
   background-color: hsl(from currentColor h s l / 15%);
 
-  box-shadow: inset 0px 0px 8px 4px hsl(from currentColor h s l / 25%);
+  // box-shadow: inset 0px 0px 8px 4px hsl(from currentColor h s l / 25%);
 
   padding: 0.25lh 1ch;
   // @note align text with content

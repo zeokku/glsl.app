@@ -20,7 +20,7 @@ changelog: Обновления
 
 loading: Загрузка
 
-link-copied: Ссылка скопирована в буффер обмена
+link-copied: Ссылка скопирована в буфер обмена
 #endregion
 
 #region info bar
@@ -42,9 +42,10 @@ export-shader: Экспорт шейдера
 expand: Раскрыть
 directives: директивы
 
-# Replace <...> #includes by "..."
-replace: Заменить
-by: на
+# Replace #include <...> by #include "..."
+replace-includes-0: Заменить
+replace-includes-1: на
+
 
 rename-symbols: Переименовать символы
 
@@ -79,11 +80,14 @@ cache-cleared-alert: Кэш очищен!
 
 #region donate modal
 donate-title: Помогите развитию новых обновлений и функций — поддержите нас донатом!
-address-copied: Адрес скопирован в буффер обмена
+address-copied: Адрес скопирован в буфер обмена
 #endregion
 
 #region textures modal
 # these two are one sentence the reason it's split because 'select-media' is highlighted
 select-media: Выбрать медиа
 or-dnd: или перетащите файл сюда
+
+select-language: Выбор языка
+select-value: Выберите значение
 

@@ -45,11 +45,9 @@ export-shader: 导出着色器
 expand: 展开
 directives: 指令
 
-# Replace <...> #includes by "..."
-# yea I know this is wrong
-# just for Chinese grammar
-replace: 将
-by: 替换成
+# Replace #include <...> by #include "..."
+replace-includes-0: 将
+replace-includes-1: 替换成
 
 rename-symbols: 重命名符号
 
@@ -91,3 +89,5 @@ address-copied: 地址已复制到剪贴板
 select-media: 浏览本地素材...
 or-dnd: 或直接拖放
 
+select-language: 选择语言
+select-value: 选择项目

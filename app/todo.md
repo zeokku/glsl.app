@@ -19,3 +19,8 @@ use height: 0 on sticky, resize observe it's children, mutation observe
 
 ideas:
 random tetris loading (handle game over and explosions)
+
+# 1.5.1
+
++ language selection
+- full shaders backup because fuck chrome profile reset

@@ -300,7 +300,8 @@ if (matchMedia("(hover:hover)").matches && getSetting("glowUi")) {
   --gr: 5rem;
 
   input,
-  textarea {
+  textarea,
+  .input {
     display: block;
 
     padding: 0.5rem 0.75rem;

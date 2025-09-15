@@ -45,9 +45,9 @@ export-shader: Export Shader
 expand: Expand
 directives: directives
 
-# Replace <...> #includes by "..."
-replace: Replace
-by: by
+# Replace #include <...> by #include "..."
+replace-includes-0: Replace
+replace-includes-1: by
 
 rename-symbols: Rename symbols
 
@@ -89,3 +89,5 @@ address-copied: Address copied into the clipboard
 select-media: Select media
 or-dnd: or drag and drop
 
+select-language: Select language
+select-value: Select value

@@ -31,10 +31,10 @@
         label
           //- @todo
           input(type="checkbox", v-model="noAngleIncludes", @change="generateShader")
-          | {{ t("replace") }}
+          | {{ t("replace-includes-0") }}
           |
           code(style="text-wrap: nowrap") #include &lt;...&gt;
-          | {{ " " }}{{ t("by") }}{{ " " }}
+          | {{ " " }}{{ t("replace-includes-1") }}{{ " " }}
           code(style="text-wrap: nowrap") #include "..."
     section.App__section
       h2.App__font-shade.App__icon-title

@@ -52,6 +52,7 @@
     "postcss-size": "^5.0.0",
     "pug": "^3.0.3",
     "rollup-plugin-visualizer": "^5.14.0",
+    "sass-embedded": "^1.92.1",
     "sitemap": "^7.1.1",
     "tinyglobby": "0.2.15",
     "typescript": "^5.7.3",
@@ -60,6 +61,7 @@
     "vite-plugin-pwa": "^0.21.1",
     "vite-plugin-ssr": "^0.4.142",
     "vite-plugin-vue-css-modules": "^4.0.1",
+    "vite-svg-loader": "^5.1.0",
     "vue-tsc": "^2.2.4",
     "workbox-window": "^7.3.0",
     "yaml": "^2.8.1"

@@ -26,6 +26,11 @@ menu.menu(ref="menu")
           Button(@click="onShareLinkClick") 
             Link
             | {{ t("share") }}
+        hr
+        li
+          Button(@click="onFullBackupClick", :title="t('full-backup-hint')")
+            backup-icon
+            | {{ t("full-backup") }}
 
   li
     Button(@click="onSettingsClick", :title="t('settings')")
@@ -91,6 +96,7 @@ import Heart from "octicons:heart";
 import Discord from "+/icons/discord.vue";
 import Github from "+/icons/github.vue";
 import Log from "octicons:log";
+import BackupIcon from "octicons:package-dependents";
 
 import Modal from "+/Modal.vue";
 
@@ -112,7 +118,7 @@ import { graphql } from "@/gql";
 import { getSetting } from "@/settings";
 import { currentVersion } from "@/main";
 import { currentShader } from "@/App.vue";
-import { updateShader } from "@/storage2";
+import { getAllShaders, updateShader } from "@/storage2";
 import { onUnmounted } from "vue";
 
 const { t, locale } = useI18n();
@@ -181,6 +187,7 @@ const onShareLinkClick = async () => {
 
     const [{ base64urlnopad }, { compress }] = await Promise.all([
       import("@scure/base"),
+      // @todo CompressionStream
       import("fflate"),
     ]);
 
@@ -220,6 +227,21 @@ const onShareLinkClick = async () => {
       .writeText("https://glsl.app#" + hash)
       .then(() => useToast(t("link-copied")));
   }
+};
+
+const onFullBackupClick = async () => {
+  useToast(t("loading"));
+
+  const shaders = await getAllShaders();
+
+  const backupUrl = URL.createObjectURL(new Blob([JSON.stringify(shaders)]));
+
+  const a = document.createElement("a");
+  a.href = backupUrl;
+  a.download = `glsl.app backup (${new Date().toLocaleString().replace(/[\/\\:]/g, "-")}).json`;
+  a.click();
+
+  URL.revokeObjectURL(backupUrl);
 };
 
 const onSettingsClick = () => {
@@ -301,6 +323,13 @@ onUnmounted(() => {
   background: var(--bg);
   border-radius: 0.5rem;
   box-shadow: inset 0px 0px 1.5rem -0.5rem var(--glow);
+
+  hr {
+    width: 100%;
+    color: var(--border);
+    border-style: solid;
+    margin-block: 0;
+  }
 }
 
 .chevron {

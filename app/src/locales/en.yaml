@@ -10,6 +10,10 @@ new: New
 load: Load
 export: Export
 share: Share
+
+full-backup: Full backup
+full-backup-hint: Backup all shaders at once
+
 settings: Settings
 storage: Storage
 editor: Editor
@@ -68,6 +72,10 @@ shader-copied: Shader code copied into the clipboard
 app: App
 show-minimap: Show code minimap
 reload-required: (Reload required)
+
+select-language: Select language
+select-value: Select value
+
 print-width: Print width
 tab-size: Tab size
 offline-link: Use offline method for generating shareable links
@@ -89,5 +97,4 @@ address-copied: Address copied into the clipboard
 select-media: Select media
 or-dnd: or drag and drop
 
-select-language: Select language
-select-value: Select value
+

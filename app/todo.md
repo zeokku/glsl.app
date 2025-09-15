@@ -23,4 +23,10 @@ random tetris loading (handle game over and explosions)
 # 1.5.1
 
 + language selection
-- full shaders backup because fuck chrome profile reset
++ full shaders backup because fuck chrome profile reset
+
+# 1.next
+
+- uniforms
+- backbuffer
+- glue https://twigl.app/

@@ -8,6 +8,10 @@ new: Создать
 load: Открыть
 export: Экспорт
 share: Поделиться
+
+full-backup: Полный backup
+full-backup-hint: Сохраните все шейдеры за раз
+
 settings: Настройки
 storage: Хранилище
 editor: Редактор
@@ -66,6 +70,10 @@ shader-copied: Шейдер скопирован в буфер обмена
 app: Приложение
 show-minimap: Показывать мини-карту с кодом
 reload-required: (Требуется перезагрузка)
+
+select-language: Выбор языка
+select-value: Выберите значение
+
 print-width: Ширина строк
 tab-size: Размер отступов
 offline-link: Использовать оффлайн метод для генерации ссылок на шейдеры
@@ -88,6 +96,4 @@ address-copied: Адрес скопирован в буфер обмена
 select-media: Выбрать медиа
 or-dnd: или перетащите файл сюда
 
-select-language: Выбор языка
-select-value: Выберите значение
 

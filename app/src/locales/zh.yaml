@@ -10,6 +10,10 @@ new: 新建
 load: 加载
 export: 导出
 share: 分享
+
+full-backup: 完整备份
+full-backup-hint: 一次性备份所有着色器
+
 settings: 设置
 storage: 存储
 editor: 编辑器
@@ -68,6 +72,11 @@ shader-copied: 着色器代码已复制到剪贴板
 app: 程序
 show-minimap: 代码略缩图
 reload-required: (需要刷新)
+
+select-language: 选择语言
+select-value: 选择项目
+
+
 print-width: 代码显示宽度
 tab-size: 缩进宽度
 offline-link: 用离线方式生成可分享链接
@@ -89,5 +98,3 @@ address-copied: 地址已复制到剪贴板
 select-media: 浏览本地素材...
 or-dnd: 或直接拖放
 
-select-language: 选择语言
-select-value: 选择项目

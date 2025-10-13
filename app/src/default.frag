@@ -14,7 +14,7 @@ out vec4 out_color;
 uniform vec2 u_resolution;
 // elapsed time since shader compile in seconds
 uniform float u_time;
-// mouse pixel coordinates are in canvas space, (0,0) is top left
+// mouse pixel coordinates are in canvas space, (0,0) is bottom left, (u_resolution.x,u_resolution.y) is top right
 uniform vec4 u_mouse;
 // texture array
 uniform sampler2D u_textures[16];

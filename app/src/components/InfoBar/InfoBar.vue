@@ -139,6 +139,10 @@ window.addEventListener("dragenter", (e: DragEvent) => {
 .fps-graph {
   width: 10rem;
 
+  :global(.tp-lblv_v) {
+    max-width: 100%;
+  }
+
   @media (width < 600px) {
     width: 5em;
   }

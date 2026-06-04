@@ -32,3 +32,4 @@ if (!array_key_exists($lang, $localization)) {
 }
 
 [$title, $desc] = $localization[$lang];
+$img = 'https://glsl.app/glsl-app-meta-image-040626.jpg';

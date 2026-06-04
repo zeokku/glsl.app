@@ -116,7 +116,7 @@ export default defineConfig(({ command }) => ({
           html
             .replaceAll("%title", "<?=$title?>")
             .replaceAll("%desc", "<?=$desc?>")
-            .replaceAll("%img", "https://glsl.app/glsl-app-meta-1.5.1.png")
+            .replaceAll("%img", "<?=$img?>")
         );
       },
     },
@@ -184,7 +184,7 @@ export default defineConfig(({ command }) => ({
 
   build: {
     cssMinify: "lightningcss",
-    sourcemap: true, // @todo wait for css modules plugin update with correct source maps
+    sourcemap: true,
     minify: "terser",
     target: "es2022",
     terserOptions: {

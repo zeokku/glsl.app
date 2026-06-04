@@ -151,8 +151,4 @@ window.addEventListener("dragenter", (e: DragEvent) => {
     min-width: 10em;
   }
 }
-
-:global(.tp-lblv_v) {
-  width: 100% !important;
-}
 </style>

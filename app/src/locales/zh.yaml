@@ -62,8 +62,9 @@ uniforms: Uniforms
 
 result: 最终代码
 
-click: 点击代码即可复制或
-download: 下载源代码文件
+# click: 点击代码即可复制或
+copy-text: 复制为文本
+download-file: 下载源代码文件
 
 shader-copied: 着色器代码已复制到剪贴板
 #endregion

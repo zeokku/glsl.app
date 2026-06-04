@@ -92,7 +92,7 @@ const onAddressClick = (address: string, chain: keyof typeof ADDRESSES) => {
 .donate {
   max-width: 60ch;
 
-  font-size: 1.25rem;
+  // font-size: 1.25rem;
 
   overflow: hidden auto;
 }
@@ -110,7 +110,7 @@ const onAddressClick = (address: string, chain: keyof typeof ADDRESSES) => {
   margin-top: 0.5rem;
 
   border-radius: 1rem;
-  font-size: 1.2em;
+  font-size: 1.5em;
 
   // font-weight: bold;
   // font-size: 1.5rem;

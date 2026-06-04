@@ -79,7 +79,7 @@ onUnmounted(() => {
   padding: 3rem;
 
   @media (width < 650px) {
-    padding-inline: 1rem;
+    padding-inline: 0.5rem;
   }
 
   box-sizing: border-box;
@@ -132,11 +132,6 @@ onUnmounted(() => {
   border-radius: 2rem;
 
   font-size: 1rem;
-
-  a {
-    // -webkit-link
-    color: rgb(158, 158, 255);
-  }
 }
 
 .close {
@@ -186,7 +181,7 @@ onUnmounted(() => {
   mask-image: linear-gradient(to bottom, transparent, black 4rem calc(100% - 4rem), transparent);
 
   @media (width < 650px) {
-    padding: 1rem 1rem 4rem;
+    padding: 1rem 0.5rem 3rem;
 
     mask-image: linear-gradient(to bottom, transparent, black 2rem calc(100% - 2rem), transparent);
   }

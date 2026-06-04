@@ -415,7 +415,7 @@ onBeforeUnmount(() => {
 
   overflow: hidden;
 
-  font-size: 1.25rem;
+  // font-size: 1.25rem;
 }
 
 .CModal__wrap:has(.list-content) {

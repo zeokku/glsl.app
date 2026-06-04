@@ -161,11 +161,7 @@ const onClearCache = async () => {
 .options {
   max-width: 50ch;
   // same as for export modal
-  font-size: 1.25rem;
-
-  button {
-    font-size: 1rem;
-  }
+  // font-size: 1.25rem;
 }
 
 .cdn-input {

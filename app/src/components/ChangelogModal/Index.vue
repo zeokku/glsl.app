@@ -26,6 +26,12 @@ const onLinkClick = () => {
 
   overflow: hidden auto;
 
+  a {
+    // -webkit-link
+    // color: rgb(158, 158, 255);
+    color: color-mix(in oklab, var(--accent) 50%, white);
+  }
+
   section {
     margin-block: 2rem;
   }

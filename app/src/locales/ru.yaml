@@ -60,8 +60,9 @@ uniforms: Uniforms
 
 result: Результат
 
-click: Нажмите на код, чтобы скопировать, или
-download: скачать как файл
+# click: Нажмите на код, чтобы скопировать, или
+copy-text: Скопировать как текст
+download-file: скачать как файл
 
 shader-copied: Шейдер скопирован в буфер обмена
 #endregion

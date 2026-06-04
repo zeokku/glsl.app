@@ -1,9 +1,33 @@
 <template lang="pug">
-.button.click-fx.App__glow-element-wrap
-  button.App__glow-element
+.button.click-fx.App__glow-element-wrap(v-bind="splitAttrs[0]")
+  component.App__glow-element(:is="$attrs.href ? 'a' : 'button'", v-bind="splitAttrs[1]")
     .content.App__font-shade
       slot
 </template>
+
+<script setup lang="ts">
+import { useAttrs } from "vue";
+
+defineOptions({
+  inheritAttrs: false,
+});
+
+const attrs = useAttrs();
+/**
+ * `[outer, inner]`
+ */
+const splitAttrs = $computed(() => {
+  const { id: _id, class: _class, style: _style, ...rest } = attrs;
+  return [
+    {
+      id: _id,
+      class: _class,
+      style: _style,
+    },
+    rest,
+  ];
+});
+</script>
 
 <style module lang="less">
 .click-fx {
@@ -21,9 +45,18 @@
 
   color: white;
 
-  button {
+  // font-size: 1rem;
+
+  button,
+  a {
+    display: inline-block;
+
     // @todo why doesn't it take 100% of parent on its own???
     width: 100%;
+    // @note fix overflowing as flex child (export modal)
+    box-sizing: border-box;
+
+    text-decoration: none;
 
     text-transform: uppercase;
     font-weight: bold;

@@ -1,5 +1,5 @@
 <template lang="pug">
-article.App__article.CModal__content(style="font-size: 1.25rem")
+article.App__article.CModal__content
   h1.App__font-shade.App__icon-title
     image-icon
     | {{ t("textures") }}

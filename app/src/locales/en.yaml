@@ -62,8 +62,9 @@ uniforms: Uniforms
 
 result: Result code
 
-click: Click the code to copy or
-download: download as file
+# click: Click the code to copy or
+copy-text: Copy as text
+download-file: Download as file
 
 shader-copied: Shader code copied into the clipboard
 #endregion

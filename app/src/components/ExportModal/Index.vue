@@ -9,10 +9,14 @@
       h2.App__font-shade.App__icon-title
         file-icon
         | {{ t("result") }}
-      div
-        | {{ t("click") }}
+      div(style="display: flex; gap: 1rem")
+        glow-button(@click="copyExportContent")
+          copy-icon
+          | {{ t("copy-text") }}
         |
-        a(:download="currentShader.name + '.glsl'", :href="fileDownloadLink") {{ t("download") }}
+        glow-button(:download="currentShader.name + '.glsl'", :href="fileDownloadLink")
+          download-icon(style="color: white")
+          | {{ t("download-file") }}
       .App__input-wrap.App__glow-element-wrap
         textarea.code(readonly, :value="exportContent", @click="onTextareaClick")
 
@@ -20,7 +24,7 @@
       h2.App__font-shade.App__icon-title
         gear-icon
         | {{ t("settings") }}
-      .App__row-even
+      .App__row(style="flex-flow: column")
         label
           input(type="checkbox", v-model="expandIncludes", @change="generateShader")
           | {{ t("expand") }}
@@ -68,6 +72,8 @@ const renameMap = new Map();
 <script setup lang="ts">
 import { currentShader } from "@/App.vue";
 import UploadIcon from "octicons:upload";
+import DownloadIcon from "octicons:download";
+import CopyIcon from "octicons:copy";
 import GearIcon from "octicons:gear";
 import PencilIcon from "octicons:pencil";
 import FileIcon from "octicons:file";
@@ -76,6 +82,7 @@ import { useToast } from "@/composition/useToast";
 import type { Uri } from "monaco-editor";
 
 import { useI18n } from "petite-vue-i18n";
+import GlowButton from "../MenuBar/Button.vue";
 
 const { t, locale } = useI18n();
 
@@ -148,6 +155,10 @@ const renameSymbol = (symbol: string, e: InputEvent) => {
   generateShader();
 };
 
+const copyExportContent = () => {
+  return navigator.clipboard.writeText(exportContent).then(() => useToast(t("shader-copied")));
+};
+
 const onTextareaClick = ({ target }: PointerEvent<HTMLTextAreaElement>) => {
   const { value } = target;
 
@@ -155,7 +166,7 @@ const onTextareaClick = ({ target }: PointerEvent<HTMLTextAreaElement>) => {
   target.setSelectionRange(0, 0);
   target.setSelectionRange(0, value.length);
 
-  navigator.clipboard.writeText(value).then(() => useToast(t("shader-copied")));
+  copyExportContent();
 };
 </script>
 
@@ -164,7 +175,7 @@ const onTextareaClick = ({ target }: PointerEvent<HTMLTextAreaElement>) => {
 .export-content {
   max-width: 50rem;
 
-  font-size: 1.25rem;
+  // font-size: 1.25rem;
 
   & > section {
     margin-block: 3rem;
@@ -181,7 +192,7 @@ const onTextareaClick = ({ target }: PointerEvent<HTMLTextAreaElement>) => {
   box-sizing: border-box;
   width: 100%;
 
-  min-height: 20rem;
+  min-height: 15rem;
 
   font-family: monospace;
   font-size: 1rem;

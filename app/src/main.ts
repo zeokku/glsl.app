@@ -26,7 +26,7 @@ declare global {
  *
  * 010501 = 1.5.1
  */
-export const currentVersion = "010501";
+export const currentVersion = "010502";
 
 createApp(App) //
   .use(

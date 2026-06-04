@@ -1,3 +1,15 @@
+## Version 1.5.2 `05 Jun 2026`
+
+### Features
+
+- Updated [welcome shader](https://github.com/zeokku/glsl.app/blob/main/app/src/default.frag) with more tips and info about editor functionality.
+
+### Fixes
+
+- Tweak value widgets are properly displayed;
+- Align info pop-up to the right, so it's accessible on mobile;
+- Modal style fixes and QoL changes.
+
 ## Version 1.5.1 `15 Sep 2025`
 
 ### Features
@@ -22,7 +34,7 @@
 - Minimap can be hidden in settings
 - Glow UI can be disabled in settings
 - UI rework and overhaul
-- Better shaders storage and cache handling 
+- Better shaders storage and cache handling
 - Stability and performance optimizations
 
 ### Fixes

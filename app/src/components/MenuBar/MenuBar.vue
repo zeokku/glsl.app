@@ -1,5 +1,6 @@
 <template lang="pug">
-menu.menu(ref="menu")
+//- @todo figure how to bring back scrollability
+menu.menu(ref="menu", style="overflow: visible")
   //- @note the concept is that focusin for next item will be fired after focusout, so the flag would be set back if focus didn't leave the list/button AND we shouldn't toggle the flag on click, the state is only handled with focus(in/out)
   li(@focusin="isFileMenuShown = true", @focusout="isFileMenuShown = false")
     //- @note pointerdown is fired before focusin, so we can use it to toggle state (comparing to click). it won't close when pop menu item has focus first doe
@@ -48,13 +49,17 @@ menu.menu(ref="menu")
       Heart
       .hide-narrow {{ t("donate") }}
 
-  li(@focusin="isInfoMenuShown = true", @focusout="isInfoMenuShown = false")
+  li(
+    @focusin="isInfoMenuShown = true",
+    @focusout="isInfoMenuShown = false",
+    style="position: relative"
+  )
     Button(@pointerdown="isInfoMenuShown = !isInfoMenuShown", :title="t('info')")
       info-icon
       .hide-narrow {{ t("info") }}
       chevron-icon.chevron(:style="{ rotate: (isInfoMenuShown ? -180 : 0) + 'deg' }")
     transition(name="fade", style="transition-duration: 300ms")
-      menu.pop-menu(v-show="isInfoMenuShown", @click="isInfoMenuShown = false")
+      menu.pop-menu(v-show="isInfoMenuShown", @click="isInfoMenuShown = false", style="right: 0")
         li
           Button(@click="onChangelogClick")
             Log

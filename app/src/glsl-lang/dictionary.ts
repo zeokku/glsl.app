@@ -1,31 +1,38 @@
 import parsedOpenGLDocs from "./parsedOpenGLDocs";
 
 const uniformDefs = {
-  u_resolution: "Size of the canvas in pixels",
-  u_time: "Elapsed time since shader compile in seconds",
+  u_resolution: "Size of the canvas in pixels.",
+  u_time: "Elapsed time since shader compilation in seconds.",
   // prettier-ignore
   u_mouse: 
   `Mouse information
   
-  * \`xy\` - pixel coordinates in canvas space\\
-      (0,0) is the top left (DOM coordinates)
-  * \`p\`= 1.0 - left button is pressed
-  * \`q\`= 1.0 - right button is pressed
+  * \`xy\` - pixel coordinates in canvas space:\\
+      \`(0,0)\` — at the bottom-left,\\
+      \`(u_resolution.x, u_resolution.y)\` — at the top-right;
+  * \`p = 1.0\` — left button is pressed;
+  * \`q = 1.0\` — right button is pressed.
   `,
+  u_textures: "Texture array. Images and videos are allowed.",
+};
+
+const inputDefs = {
+  // prettier-ignore
+  uv: 
+`Normalized coordinates:
+
+(0,0) is at the bottom-left,\\
+(1,1) is at the top-right.`,
+};
+
+const outputDefs = {
+  // @note output name can be customized
+  "\0out": "Resulting fragment color.",
 };
 
 export const editorBuiltins = {
-  // prettier-ignore
-  uv: 
-  `Normalized coordinates
-  
-  (0,0) is the bottom left\\
-  (1,1) is the top right`,
-
-  // @note output name can be customized
-  "\0out": "Resulting fragment color",
-
-  // uniforms
+  ...inputDefs,
+  ...outputDefs,
   ...uniformDefs,
 };
 

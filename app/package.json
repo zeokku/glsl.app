@@ -65,14 +65,5 @@
     "vue-tsc": "^2.2.4",
     "workbox-window": "^7.3.0",
     "yaml": "^2.8.1"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "prettier-plugin-glsl": "patches/prettier-plugin-glsl.patch",
-      "monaco-editor": "patches/monaco-editor.patch"
-    },
-    "overrides": {
-      "@shaderfrog/glsl-parser": "link:..\\..\\glsl-parser"
-    }
   }
 }

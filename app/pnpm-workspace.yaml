@@ -1,0 +1,9 @@
+allowBuilds:
+  "@parcel/watcher": true
+  esbuild: true
+patchedDependencies:
+  "prettier-plugin-glsl": "patches/prettier-plugin-glsl.patch"
+  "monaco-editor": "patches/monaco-editor.patch"
+
+overrides:
+  "@shaderfrog/glsl-parser": "link:..\\..\\glsl-parser"
